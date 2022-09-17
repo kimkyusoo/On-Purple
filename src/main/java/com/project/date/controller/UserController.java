@@ -5,10 +5,9 @@ import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +22,8 @@ public class UserController {
     // POST방식 회원가입 API UserRequestDto에서 표현한 정규표현식을 따른 정보를 받아 UserService에서 정의한 createUser메소드에 따라 아이디와 비밀번호 확인을 거치고 이를 만족시키면 아이디 비밀번호를 생성.
 
     @RequestMapping(value = "/user/signup", method = RequestMethod.POST)
-    public ResponseDto<?> signup(@RequestBody @Valid SignupRequestDto requestDto) {
-        return userService.createUser(requestDto);
+    public ResponseDto<?> signup(@RequestBody @Valid SignupRequestDto requestDto, @RequestPart(value = "imageUrl", required = false) MultipartFile multipartFile){
+        return userService.createUser(requestDto, multipartFile);
     }
 
     // POST방식 로그인 API SignupRequestDto에서 정보를 받아 권한인증을 거치고 이를 UserService에서 정의한 login메소드에 따라 아이디와 비밀번호 확인을 거치고 이를 만족시키면 토큰을 발행. 로그인에 성공한 후 작업처리를 진행한다.

@@ -12,9 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 @RequiredArgsConstructor
 @Service
@@ -27,8 +29,11 @@ public class UserService {
 
     @Transactional
 //  회원가입. 유저가 존재하는지, 비밀번호와 비밀번호확인이 일치하는지의 여부를 if문을 통해 확인하고 이를 통과하면 user에 대한 정보를 생성.
-    public ResponseDto<?> createUser(SignupRequestDto requestDto) {
+    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, MultipartFile multipartFile) {
         if (null != isPresentUser(requestDto.getUsername()))
+            return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
+
+        if (null != isPresentNickname(requestDto.getNickname()))
             return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
 
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
@@ -40,13 +45,15 @@ public class UserService {
                 .username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
+                .imageUrl(requestDto.getImageUrl())
+                .filename(requestDto.getFilename())
                 .build();
         userRepository.save(user);
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
-
+                        .imageUrl(user.getImageUrl())
                         .build()
         );
 
@@ -75,6 +82,7 @@ public class UserService {
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
+                        .imageUrl(user.getImageUrl())
                         .build()
         );
     }
@@ -97,6 +105,12 @@ public class UserService {
     @Transactional(readOnly = true)
     public User isPresentUser(String username) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public User isPresentNickname(String nickname) {
+        Optional<User> optionalUser = userRepository.findByNickname(nickname);
         return optionalUser.orElse(null);
     }
 

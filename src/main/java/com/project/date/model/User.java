@@ -1,6 +1,7 @@
 package com.project.date.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.date.dto.request.UserUpdateRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,7 +10,6 @@ import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Builder
@@ -33,6 +33,12 @@ public class User {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    @Column(length = 1000)
+    private String imageUrl;
+
+    @Column
+    private String filename;
 
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //    private List<Comment> commentList;
@@ -61,5 +67,10 @@ public class User {
     public User(String username, String password){
         this.username = username;
         this.password = password;
+    }
+    public void update(UserUpdateRequestDto userUpdateRequestDto) {
+        this.nickname = userUpdateRequestDto.getNickname();
+        this.password = userUpdateRequestDto.getPassword();
+        this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
 }

@@ -32,4 +32,8 @@ public class SignupRequestDto {
 
     @NotBlank
     private String passwordConfirm;
+
+    private String imageUrl;
+
+    private String filename;
 }

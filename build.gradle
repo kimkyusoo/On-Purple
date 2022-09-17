@@ -43,6 +43,8 @@ dependencies {
     // AWS S3 이미지 업로드를 위한 디펜던시
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.12.290')
     implementation 'com.amazonaws:aws-java-sdk-s3'
+
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 }
 
 tasks.named('test') {

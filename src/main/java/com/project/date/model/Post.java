@@ -4,6 +4,7 @@ import com.project.date.dto.request.PostRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @Getter @Setter
@@ -23,6 +24,9 @@ public class Post extends Timestamped {
   //게시글내용
   @Column(nullable = false)
   private String content;
+
+  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Comment> comments;
 
 
   @JoinColumn(name = "userId", nullable = false)

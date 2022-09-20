@@ -61,7 +61,7 @@ public class SecurityConfiguration {
 //            권한없이 (=토큰없이) 이용가능한 api설정
         .authorizeRequests()
         .antMatchers("/user/**").permitAll()
-        .antMatchers("/post").permitAll()
+        .antMatchers("/post/**").permitAll()
         .antMatchers("/comment").permitAll()
         .antMatchers("/chat").permitAll()
         .antMatchers("/h2-console/**").permitAll() // h2-console 사용을 위해 추가

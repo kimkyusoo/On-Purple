@@ -2,11 +2,14 @@ package com.project.date.service;
 
 
 import com.project.date.dto.request.PostRequestDto;
+import com.project.date.dto.response.CommentResponseDto;
 import com.project.date.dto.response.PostResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
+import com.project.date.model.Comment;
 import com.project.date.model.Post;
 import com.project.date.model.User;
+import com.project.date.repository.CommentRepository;
 import com.project.date.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final TokenProvider tokenProvider;
+  private final CommentRepository commentRepository;
 
   // 게시글 작성
   @Transactional
@@ -70,17 +74,32 @@ public class PostService {
     if (null == post) {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
+      List<Comment> commentList = commentRepository.findAllByPost(post);
+      List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
-    return ResponseDto.success(
-        PostResponseDto.builder()
-                .id(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .nickname(post.getUser().getNickname())
-                .createdAt(post.getCreatedAt())
-                .modifiedAt(post.getModifiedAt())
-                .build()
-    );
+      for (Comment comment : commentList) {
+          commentResponseDtoList.add(
+                  CommentResponseDto.builder()
+                          .id(comment.getId())
+                          .nickname(comment.getUser().getNickname())
+                          .content(comment.getContent())
+                          .createdAt(comment.getCreatedAt())
+                          .modifiedAt(comment.getModifiedAt())
+                          .build()
+          );
+      }
+
+      return ResponseDto.success(
+              PostResponseDto.builder()
+                      .id(post.getId())
+                      .title(post.getTitle())
+                      .content(post.getContent())
+                      .commentResponseDtoList(commentResponseDtoList)
+                      .nickname(post.getUser().getNickname())
+                      .createdAt(post.getCreatedAt())
+                      .modifiedAt(post.getModifiedAt())
+                      .build()
+      );
   }
 
   // 전체 게시글 조회

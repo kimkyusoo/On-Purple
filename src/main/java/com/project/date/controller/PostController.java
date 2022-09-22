@@ -22,19 +22,17 @@ public class PostController {
                                    HttpServletRequest request) {
     return postService.createPost(requestDto,request);
   }
-
-  // 상세 게시글 가져오기
-  @GetMapping( "/post/{postId}")
-  public ResponseDto<?> getPost(@PathVariable Long postId) {
-    return postService.getPost(postId);
-  }
-
   // 전체 게시글 가져오기
   @GetMapping("/post")
   public ResponseDto<?> getAllPosts() {
     return postService.getAllPost();
   }
 
+  // 상세 게시글 가져오기
+  @GetMapping( "/post/{postId}")
+  public ResponseDto<?> getPost(@PathVariable Long postId) {
+    return postService.getPost(postId);
+  }
 
   // 게시글 수정
   @PutMapping( "/post/{postId}")
@@ -50,6 +48,5 @@ public class PostController {
       HttpServletRequest request) {
     return postService.deletePost(postId, request);
   }
-
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
-    private Long id;
+    private Long postId;
     private String title;
     private String nickname;
     private String content;

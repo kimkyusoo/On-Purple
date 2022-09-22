@@ -34,12 +34,12 @@ public class PostService {
                                    HttpServletRequest request) {
 
     if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
@@ -57,7 +57,7 @@ public class PostService {
     postRepository.save(post);
     return ResponseDto.success(
         PostResponseDto.builder()
-                .id(post.getId())
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .nickname(post.getUser().getNickname())
@@ -72,7 +72,7 @@ public class PostService {
   public ResponseDto<?> getPost(Long postId) {
     Post post = isPresentPost(postId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
       List<Comment> commentList = commentRepository.findAllByPost(post);
       List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
@@ -80,9 +80,9 @@ public class PostService {
       for (Comment comment : commentList) {
           commentResponseDtoList.add(
                   CommentResponseDto.builder()
-                          .id(comment.getId())
+                          .commentId(comment.getId())
                           .nickname(comment.getUser().getNickname())
-                          .content(comment.getContent())
+                          .comment(comment.getComment())
                           .createdAt(comment.getCreatedAt())
                           .modifiedAt(comment.getModifiedAt())
                           .build()
@@ -91,7 +91,7 @@ public class PostService {
 
       return ResponseDto.success(
               PostResponseDto.builder()
-                      .id(post.getId())
+                      .postId(post.getId())
                       .title(post.getTitle())
                       .content(post.getContent())
                       .commentResponseDtoList(commentResponseDtoList)
@@ -110,7 +110,7 @@ public class PostService {
     for (Post post : postList) {
       postResponseDto.add(
               PostResponseDto.builder()
-                      .id(post.getId())
+                      .postId(post.getId())
                       .title(post.getTitle())
                       .nickname(post.getUser().getNickname())
                       .createdAt(post.getCreatedAt())
@@ -126,14 +126,14 @@ public class PostService {
 
 
     @Transactional
-    public ResponseDto<PostResponseDto> updatePost(Long id, PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<PostResponseDto> updatePost(Long postId, PostRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
+            return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
         if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
+            return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
@@ -142,9 +142,9 @@ public class PostService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Post post = isPresentPost(id);
+        Post post = isPresentPost(postId);
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
 
         if (post.validateUser(user)) {
@@ -154,7 +154,7 @@ public class PostService {
         post.update(requestDto);
         return ResponseDto.success(
                 PostResponseDto.builder()
-                        .id(post.getId())
+                        .postId(post.getId())
                         .title(post.getTitle())
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
@@ -165,14 +165,14 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseDto<?> deletePost(Long id, HttpServletRequest request) {
+    public ResponseDto<?> deletePost(Long postId, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
+            return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
         if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
+            return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
@@ -181,9 +181,9 @@ public class PostService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Post post = isPresentPost(id);
+        Post post = isPresentPost(postId);
         if (null == post) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
 
         if (post.validateUser(user)) {
@@ -195,8 +195,8 @@ public class PostService {
     }
 
   @Transactional(readOnly = true)
-  public Post isPresentPost(Long id) {
-    Optional<Post> optionalPost = postRepository.findById(id);
+  public Post isPresentPost(Long postId) {
+    Optional<Post> optionalPost = postRepository.findById(postId);
     return optionalPost.orElse(null);
   }
 

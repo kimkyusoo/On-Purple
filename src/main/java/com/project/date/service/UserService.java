@@ -3,6 +3,7 @@ package com.project.date.service;
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.request.TokenDto;
+import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
@@ -34,7 +35,7 @@ public class UserService {
             return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
 
         if (null != isPresentNickname(requestDto.getNickname()))
-            return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
+            return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 닉네임 입니다.");
 
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
@@ -46,14 +47,13 @@ public class UserService {
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
                 .imageUrl(requestDto.getImageUrl())
-                .filename(requestDto.getFilename())
                 .build();
         userRepository.save(user);
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
-                        .imageUrl(user.getImageUrl())
+//                        .imageUrl(user.getImageUrl())
                         .build()
         );
 
@@ -90,17 +90,39 @@ public class UserService {
     //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없을 경우 오류 메시지를 출력
     //  정상일 경우 tokenProvider에 유저에게 있는 리프레시토큰 삭제를 진행
     public ResponseDto<?> logout(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("refreshtoken"))) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
         User user = tokenProvider.getUserFromAuthentication();
         if (null == user) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
+            return ResponseDto.fail("USER_NOT_FOUND",
                     "사용자를 찾을 수 없습니다.");
         }
 
         return tokenProvider.deleteRefreshToken(user);
     }
+
+//    public ResponseDto<?> updateUser(HttpServletRequest request, UserUpdateRequestDto requestDto) {
+//        User user = validateUser(request);
+//        if(null == user)
+//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+//
+//        user.update(requestDto);
+//        return ResponseDto.success(
+//                UserResponseDto.builder()
+//                        .nickname(user.getNickname())
+//                        .imageUrl(user.getImageUrl())
+//                        .build()
+//        );
+//    }
+//
+//    @Transactional
+//    public User validateUser(HttpServletRequest request) {
+//        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+//            return null;
+//        }
+//        return tokenProvider.getUserFromAuthentication();
+//    }
 
     @Transactional(readOnly = true)
     public User isPresentUser(String username) {
@@ -120,7 +142,7 @@ public class UserService {
     //  AccessToken의 유효기간을 추가한다.
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-        response.addHeader("refreshtoken", tokenDto.getRefreshToken());
+        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
 }

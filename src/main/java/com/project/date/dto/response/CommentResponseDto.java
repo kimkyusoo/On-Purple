@@ -1,6 +1,8 @@
 package com.project.date.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,9 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentResponseDto {
-  private Long id;
+  private Long commentId;
   private String nickname;
-  private String content;
+  private String comment;
+  private List<ReCommentResponseDto> reCommentResponseDtoList;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;
 }

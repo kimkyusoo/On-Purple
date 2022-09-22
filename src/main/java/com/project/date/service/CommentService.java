@@ -22,19 +22,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
 
   private final CommentRepository commentRepository;
-
   private final TokenProvider tokenProvider;
   private final PostService postService;
 
   @Transactional
-  public ResponseDto<?> createComment(CommentRequestDto requestDto, HttpServletRequest request) {
+  public ResponseDto<?> createComment(Long postId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
@@ -43,22 +42,22 @@ public class CommentService {
       return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
 
-    Post post = postService.isPresentPost(requestDto.getPostId());
+    Post post = postService.isPresentPost(postId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
 
     Comment comment = Comment.builder()
         .user(user)
         .post(post)
-        .content(requestDto.getContent())
+        .comment(requestDto.getComment())
         .build();
     commentRepository.save(comment);
     return ResponseDto.success(
         CommentResponseDto.builder()
-            .id(comment.getId())
+            .commentId(comment.getId())
             .nickname(comment.getUser().getNickname())
-            .content(comment.getContent())
+            .comment(comment.getComment())
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
             .build()
@@ -69,7 +68,7 @@ public class CommentService {
   public ResponseDto<?> getAllCommentsByPost(Long postId) {
     Post post = postService.isPresentPost(postId);
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
 
     List<Comment> commentList = commentRepository.findAllByPost(post);
@@ -78,9 +77,9 @@ public class CommentService {
     for (Comment comment : commentList) {
       commentResponseDtoList.add(
           CommentResponseDto.builder()
-              .id(comment.getId())
+              .commentId(comment.getId())
               .nickname(comment.getUser().getNickname())
-              .content(comment.getContent())
+              .comment(comment.getComment())
               .createdAt(comment.getCreatedAt())
               .modifiedAt(comment.getModifiedAt())
               .build()
@@ -90,14 +89,14 @@ public class CommentService {
   }
 
   @Transactional
-  public ResponseDto<?> updateComment(Long id, CommentRequestDto requestDto, HttpServletRequest request) {
+  public ResponseDto<?> updateComment(Long commentId, CommentRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
@@ -108,12 +107,12 @@ public class CommentService {
 
     Post post = postService.isPresentPost(requestDto.getPostId());
     if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
 
-    Comment comment = isPresentComment(id);
+    Comment comment = isPresentComment(commentId);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글입니다.");
     }
 
     if (comment.validateUser(user)) {
@@ -123,9 +122,9 @@ public class CommentService {
     comment.update(requestDto);
     return ResponseDto.success(
         CommentResponseDto.builder()
-            .id(comment.getId())
+            .commentId(comment.getId())
             .nickname(comment.getUser().getNickname())
-            .content(comment.getContent())
+            .comment(comment.getComment())
             .createdAt(comment.getCreatedAt())
             .modifiedAt(comment.getModifiedAt())
             .build()
@@ -133,14 +132,14 @@ public class CommentService {
   }
 
   @Transactional
-  public ResponseDto<?> deleteComment(Long id, HttpServletRequest request) {
+  public ResponseDto<?> deleteComment(Long commentId, HttpServletRequest request) {
     if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
     if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
+      return ResponseDto.fail("USER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
 
@@ -149,9 +148,9 @@ public class CommentService {
       return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
 
-    Comment comment = isPresentComment(id);
+    Comment comment = isPresentComment(commentId);
     if (null == comment) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글 id 입니다.");
+      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글입니다.");
     }
 
     if (comment.validateUser(user)) {
@@ -163,8 +162,8 @@ public class CommentService {
   }
 
   @Transactional(readOnly = true)
-  public Comment isPresentComment(Long id) {
-    Optional<Comment> optionalComment = commentRepository.findById(id);
+  public Comment isPresentComment(Long commentId) {
+    Optional<Comment> optionalComment = commentRepository.findById(commentId);
     return optionalComment.orElse(null);
   }
 

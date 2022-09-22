@@ -27,7 +27,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -73,4 +73,6 @@ public class User {
         this.password = userUpdateRequestDto.getPassword();
         this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
+
+
 }

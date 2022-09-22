@@ -63,7 +63,8 @@ public class SecurityConfiguration {
         .antMatchers("/user/**").permitAll()
         .antMatchers("/post/**").permitAll()
         .antMatchers("/comment/**").permitAll()
-        .antMatchers("/chat").permitAll()
+        .antMatchers("/reComment/**").permitAll()
+//        .antMatchers("/chat").permitAll()
         .antMatchers("/h2-console/**").permitAll() // h2-console 사용을 위해 추가
         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight 허용을 위해 추가
         .anyRequest().authenticated()

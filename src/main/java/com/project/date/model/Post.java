@@ -28,7 +28,6 @@ public class Post extends Timestamped {
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
 
-
   @JoinColumn(name = "userId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
@@ -47,8 +46,4 @@ public class Post extends Timestamped {
 
     return !this.user.equals(user);
   }
-
-
-
-
 }

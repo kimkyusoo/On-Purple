@@ -4,9 +4,12 @@ package com.project.date.controller;
 import com.project.date.dto.request.PostRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.PostService;
+import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -14,14 +17,21 @@ import javax.servlet.http.HttpServletRequest;
 public class PostController {
 
   private final PostService postService;
+  private final AwsS3UploadService s3Service;
 
 
   // 게시글 작성
   @PostMapping( "/post")
   public ResponseDto<?> createPost(@RequestPart(value = "data") PostRequestDto requestDto,
-                                   HttpServletRequest request) {
-    return postService.createPost(requestDto,request);
+                                   HttpServletRequest request, @RequestPart("imageUrl") List<MultipartFile> multipartFiles) {
+
+    if (multipartFiles == null) {
+      throw new NullPointerException("사진을 업로드해주세요");
+    }
+    List<String> imgPaths = s3Service.upload(multipartFiles);
+    return postService.createPost(requestDto,request, imgPaths);
   }
+
   // 전체 게시글 가져오기
   @GetMapping("/post")
   public ResponseDto<?> getAllPosts() {
@@ -34,19 +44,27 @@ public class PostController {
     return postService.getPost(postId);
   }
 
+
   // 게시글 수정
   @PutMapping( "/post/{postId}")
   public ResponseDto<?> updatePost(@PathVariable Long postId,
                                    @RequestPart(value = "data") PostRequestDto requestDto,
+                                   @RequestPart("imageUrl") List<MultipartFile> multipartFiles,
                                    HttpServletRequest request) {
-    return postService.updatePost(postId, requestDto, request);
+
+    if (multipartFiles == null) {
+      throw new NullPointerException("사진을 업로드해주세요");
+    }
+    List<String> imgPaths = s3Service.upload(multipartFiles);
+    return postService.updatePost(postId, requestDto, request, imgPaths);
   }
 
   //게시글 삭제
   @DeleteMapping( "/post/{postId}")
   public ResponseDto<?> deletePost(@PathVariable Long postId,
-      HttpServletRequest request) {
+                                   HttpServletRequest request) {
     return postService.deletePost(postId, request);
   }
+
 
 }

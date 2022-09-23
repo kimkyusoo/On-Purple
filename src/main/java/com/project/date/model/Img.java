@@ -20,13 +20,23 @@ public class Img {
     private String imgUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId", nullable = false)
+    @JoinColumn(name = "postId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userId")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User user;
 
 
     public Img(String imgUrl, Post post) {
         this.imgUrl = imgUrl;
         this.post = post;
+    }
+
+    public Img(String imgUrl, User user) {
+        this.imgUrl = imgUrl;
+        this.user = user;
     }
 }

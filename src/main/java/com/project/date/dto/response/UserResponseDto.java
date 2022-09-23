@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -12,5 +14,6 @@ import lombok.NoArgsConstructor;
 public class UserResponseDto {
     private Long id;
     private String nickname;
-    private String imageUrl;
+    private String imgUrl;
+    private List<String> imgList;
 }

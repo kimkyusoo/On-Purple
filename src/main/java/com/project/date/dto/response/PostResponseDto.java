@@ -1,5 +1,6 @@
 package com.project.date.dto.response;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,10 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
-    private Long postId;
+    private Long id;
     private String title;
     private String nickname;
     private String content;
+    private String imgUrl;
+    private List<String> imgList;
     private List<CommentResponseDto> commentResponseDtoList;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

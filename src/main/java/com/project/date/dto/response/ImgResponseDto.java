@@ -2,6 +2,7 @@ package com.project.date.dto.response;
 
 
 import com.project.date.model.Post;
+import com.project.date.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,4 +17,5 @@ public class ImgResponseDto {
     private Long id;
     private String imgUrl;
     private Post post;
+    private User user;
 }

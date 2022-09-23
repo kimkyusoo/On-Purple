@@ -7,10 +7,13 @@ import com.project.date.dto.response.PostResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.Comment;
+import com.project.date.model.Img;
 import com.project.date.model.Post;
 import com.project.date.model.User;
 import com.project.date.repository.CommentRepository;
+import com.project.date.repository.ImgRepository;
 import com.project.date.repository.PostRepository;
+import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,11 +30,15 @@ public class PostService {
   private final PostRepository postRepository;
   private final TokenProvider tokenProvider;
   private final CommentRepository commentRepository;
+  private final ImgRepository imgRepository;
+  private final AwsS3UploadService awsS3UploadService;
 
-  // 게시글 작성
+
+    // 게시글 작성
   @Transactional
   public ResponseDto<?> createPost(PostRequestDto requestDto,
-                                   HttpServletRequest request) {
+                                   HttpServletRequest request,
+                                   List<String> imgPaths) {
 
     if (null == request.getHeader("RefreshToken")) {
       return ResponseDto.fail("USER_NOT_FOUND",
@@ -55,17 +62,33 @@ public class PostService {
             .build();
 
     postRepository.save(post);
+
+      postBlankCheck(imgPaths);
+
+      List<String> imgList = new ArrayList<>();
+      for (String imgUrl : imgPaths) {
+          Img img = new Img(imgUrl, post);
+          imgRepository.save(img);
+          imgList.add(img.getImgUrl());
+      }
     return ResponseDto.success(
         PostResponseDto.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .nickname(post.getUser().getNickname())
+                .imgList(imgList)
                 .createdAt(post.getCreatedAt())
                 .modifiedAt(post.getModifiedAt())
                 .build()
     );
   }
+
+    private void postBlankCheck(List<String> imgPaths) {
+        if(imgPaths == null || imgPaths.isEmpty()){ //.isEmpty()도 되는지 확인해보기
+            throw new NullPointerException("이미지를 등록해주세요(Blank Check)");
+        }
+    }
 
   // 게시글 단건 조회
   @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
@@ -89,6 +112,12 @@ public class PostService {
           );
       }
 
+      List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+      List<String> imgList = new ArrayList<>();
+      for (Img img : findImgList) {
+          imgList.add(img.getImgUrl());
+      }
+
       return ResponseDto.success(
               PostResponseDto.builder()
                       .postId(post.getId())
@@ -96,6 +125,7 @@ public class PostService {
                       .content(post.getContent())
                       .commentResponseDtoList(commentResponseDtoList)
                       .nickname(post.getUser().getNickname())
+                      .imgList(imgList)
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
                       .build()
@@ -108,10 +138,16 @@ public class PostService {
     List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
     List<PostResponseDto> postResponseDto = new ArrayList<>();
     for (Post post : postList) {
+        List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+        List<String> imgList = new ArrayList<>();
+        for (Img img : findImgList) {
+            imgList.add(img.getImgUrl());
+        }
       postResponseDto.add(
               PostResponseDto.builder()
                       .postId(post.getId())
                       .title(post.getTitle())
+                      .imgUrl(imgList.get(0))
                       .nickname(post.getUser().getNickname())
                       .createdAt(post.getCreatedAt())
                       .modifiedAt(post.getModifiedAt())
@@ -126,7 +162,10 @@ public class PostService {
 
 
     @Transactional
-    public ResponseDto<PostResponseDto> updatePost(Long postId, PostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<PostResponseDto> updatePost(Long postId,
+                                                   PostRequestDto requestDto,
+                                                   HttpServletRequest request,
+                                                   List<String> imgPaths) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -150,6 +189,26 @@ public class PostService {
         if (post.validateUser(user)) {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
+        //저장된 이미지 리스트 가져오기
+        List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+        List<String> imgList = new ArrayList<>();
+        for (Img img : findImgList) {
+            imgList.add(img.getImgUrl());
+        }
+        //s3에 저장되어 있는 img list 삭제
+        for (String imgUrl : imgList) {
+            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+        }
+        imgRepository.deleteByPost_Id(post.getId());
+
+        postBlankCheck(imgPaths);
+
+        List<String> newImgList = new ArrayList<>();
+        for (String imgUrl : imgPaths) {
+            Img img = new Img(imgUrl, post);
+            imgRepository.save(img);
+            newImgList.add(img.getImgUrl());
+        }
 
         post.update(requestDto);
         return ResponseDto.success(
@@ -158,6 +217,7 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
+                        .imgList(newImgList)
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .build()
@@ -191,6 +251,15 @@ public class PostService {
         }
 
         postRepository.delete(post);
+        List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+        List<String> imgList = new ArrayList<>();
+        for (Img img : findImgList) {
+            imgList.add(img.getImgUrl());
+        }
+
+        for (String imgUrl : imgList) {
+            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+        }
         return ResponseDto.success("delete success");
     }
 

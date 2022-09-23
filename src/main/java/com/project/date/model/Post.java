@@ -4,6 +4,7 @@ import com.project.date.dto.request.PostRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -27,6 +28,11 @@ public class Post extends Timestamped {
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Comment> comments;
+
+
+  @Transient
+  @OneToMany(fetch = FetchType.LAZY)
+  private final List<Img> imgList = new ArrayList<>();
 
   @JoinColumn(name = "userId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)

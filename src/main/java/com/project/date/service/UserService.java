@@ -7,17 +7,20 @@ import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
+import com.project.date.model.Img;
 import com.project.date.model.User;
+import com.project.date.repository.ImgRepository;
 import com.project.date.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Service
@@ -27,10 +30,11 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final ImgRepository imgRepository;
 
     @Transactional
 //  회원가입. 유저가 존재하는지, 비밀번호와 비밀번호확인이 일치하는지의 여부를 if문을 통해 확인하고 이를 통과하면 user에 대한 정보를 생성.
-    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, List<String> imgPaths) {
         if (null != isPresentUser(requestDto.getUsername()))
             return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
 
@@ -46,17 +50,31 @@ public class UserService {
                 .username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
-                .imageUrl(requestDto.getImageUrl())
                 .build();
         userRepository.save(user);
+
+        postBlankCheck(imgPaths);
+
+        List<String> imgList = new ArrayList<>();
+        for (String imgUrl : imgPaths) {
+            Img img = new Img(imgUrl, user);
+            imgRepository.save(img);
+            imgList.add(img.getImgUrl());
+        }
+
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
-//                        .imageUrl(user.getImageUrl())
+                        .imgUrl(imgList.get(0))
                         .build()
         );
 
+    }
+    private void postBlankCheck(List<String> imgPaths) {
+        if(imgPaths == null || imgPaths.isEmpty()){ //.isEmpty()도 되는지 확인해보기
+            throw new NullPointerException("이미지를 등록해주세요(Blank Check)");
+        }
     }
 
     @Transactional
@@ -82,7 +100,6 @@ public class UserService {
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
-                        .imageUrl(user.getImageUrl())
                         .build()
         );
     }

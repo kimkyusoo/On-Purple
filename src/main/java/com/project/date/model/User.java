@@ -10,6 +10,8 @@ import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Builder
@@ -37,8 +39,10 @@ public class User {
     @Column(length = 1000)
     private String imageUrl;
 
-    @Column
-    private String filename;
+    //img
+    @Transient
+    @OneToMany(fetch = FetchType.LAZY)
+    private final List<Img> imgList = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //    private List<Comment> commentList;

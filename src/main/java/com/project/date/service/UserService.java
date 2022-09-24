@@ -32,15 +32,23 @@ public class UserService {
     private final TokenProvider tokenProvider;
     private final ImgRepository imgRepository;
 
-    @Transactional
 //  회원가입. 유저가 존재하는지, 비밀번호와 비밀번호확인이 일치하는지의 여부를 if문을 통해 확인하고 이를 통과하면 user에 대한 정보를 생성.
-    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, List<String> imgPaths) {
-        if (null != isPresentUser(requestDto.getUsername()))
+    @Transactional
+    public ResponseDto<?> checkUser(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        if (null != isPresentUser(username))
             return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 ID 입니다.");
-
-        if (null != isPresentNickname(requestDto.getNickname()))
-            return ResponseDto.fail("DUPLICATED_USERNAME", "중복된 닉네임 입니다.");
-
+        return ResponseDto.success("사용 가능한 ID입니다.");
+    }
+    @Transactional
+    public ResponseDto<?> checkNickname(String nickname) {
+        Optional<User> user = userRepository.findByNickname(nickname);
+        if (null != isPresentNickname(nickname))
+            return ResponseDto.fail("DUPLICATED_NICKANAME", "중복된 닉네임 입니다.");
+        return ResponseDto.success("사용 가능한 닉네임 입니다.");
+    }
+    @Transactional
+    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, List<String> imgPaths) {
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
                     "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
@@ -71,6 +79,7 @@ public class UserService {
         );
 
     }
+
     private void postBlankCheck(List<String> imgPaths) {
         if(imgPaths == null || imgPaths.isEmpty()){ //.isEmpty()도 되는지 확인해보기
             throw new NullPointerException("이미지를 등록해주세요(Blank Check)");

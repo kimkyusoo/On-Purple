@@ -44,6 +44,26 @@ public class UserController {
         return userService.login(requestDto, response);
     }
 
+
+    @GetMapping("/user/idCheck/{username}")
+    public ResponseDto<?> checkUser(@PathVariable String username) {
+        return userService.checkUser(username);
+    }
+//        @RequestMapping(value = "/user/idCheck/{username}", method = RequestMethod.POST)
+//    public ResponseDto<?> checkUser(@RequestBody @Valid SignupRequestDto requestDto) {
+//        return userService.checkUser(requestDto);
+//    }
+
+    @GetMapping("/user/nicknameCheck/{nickname}")
+    public ResponseDto<?> checkNickname(@PathVariable String nickname) {
+        return userService.checkNickname(nickname);
+    }
+
+//    @RequestMapping(value = "/user/nicknameCheck/{nickname}", method = RequestMethod.POST)
+//    public ResponseDto<?> checkNickname(@RequestBody @Valid SignupRequestDto requestDto) {
+//        return userService.checkNickname(requestDto);
+//    }
+
     //  POST방식 로그아웃 API 권한인증을 받은 사용자가 해당 api를 요청하면 UserService에 정의한 logout 메소드를 따라 로그아웃을 진행.
     @RequestMapping(value = "/user/logout", method = RequestMethod.POST)
     public ResponseDto<?> logout(HttpServletRequest request) {

@@ -17,7 +17,7 @@ public class CommentController {
   private final CommentService commentService;
 
   @PostMapping("/comment/{postId}")
-  public ResponseDto<?> createComment(Long postId, @RequestBody CommentRequestDto requestDto,
+  public ResponseDto<?> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto,
                                       HttpServletRequest request) {
     return commentService.createComment(postId, requestDto, request);
   }

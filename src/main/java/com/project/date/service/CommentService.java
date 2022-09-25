@@ -55,12 +55,13 @@ public class CommentService {
     commentRepository.save(comment);
     return ResponseDto.success(
         CommentResponseDto.builder()
-            .commentId(comment.getId())
-            .nickname(comment.getUser().getNickname())
-            .comment(comment.getComment())
-            .createdAt(comment.getCreatedAt())
-            .modifiedAt(comment.getModifiedAt())
-            .build()
+                .commentId(comment.getId())
+                .nickname(comment.getUser().getNickname())
+                .comment(comment.getComment())
+                .likes(comment.getLikes())
+                .createdAt(comment.getCreatedAt())
+                .modifiedAt(comment.getModifiedAt())
+                .build()
     );
   }
 
@@ -77,12 +78,13 @@ public class CommentService {
     for (Comment comment : commentList) {
       commentResponseDtoList.add(
           CommentResponseDto.builder()
-              .commentId(comment.getId())
-              .nickname(comment.getUser().getNickname())
-              .comment(comment.getComment())
-              .createdAt(comment.getCreatedAt())
-              .modifiedAt(comment.getModifiedAt())
-              .build()
+                  .commentId(comment.getId())
+                  .nickname(comment.getUser().getNickname())
+                  .comment(comment.getComment())
+                  .likes(comment.getLikes())
+                  .createdAt(comment.getCreatedAt())
+                  .modifiedAt(comment.getModifiedAt())
+                  .build()
       );
     }
     return ResponseDto.success(commentResponseDtoList);
@@ -122,12 +124,13 @@ public class CommentService {
     comment.update(requestDto);
     return ResponseDto.success(
         CommentResponseDto.builder()
-            .commentId(comment.getId())
-            .nickname(comment.getUser().getNickname())
-            .comment(comment.getComment())
-            .createdAt(comment.getCreatedAt())
-            .modifiedAt(comment.getModifiedAt())
-            .build()
+                .commentId(comment.getId())
+                .nickname(comment.getUser().getNickname())
+                .comment(comment.getComment())
+                .likes(comment.getLikes())
+                .createdAt(comment.getCreatedAt())
+                .modifiedAt(comment.getModifiedAt())
+                .build()
     );
   }
 

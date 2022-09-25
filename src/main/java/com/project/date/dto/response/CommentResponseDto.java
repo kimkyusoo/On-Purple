@@ -16,6 +16,7 @@ public class CommentResponseDto {
   private Long commentId;
   private String nickname;
   private String comment;
+  private Integer likes;
   private List<ReCommentResponseDto> reCommentResponseDtoList;
   private LocalDateTime createdAt;
   private LocalDateTime modifiedAt;

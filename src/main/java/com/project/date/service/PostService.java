@@ -27,63 +27,63 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostService {
 
-  private final PostRepository postRepository;
-  private final TokenProvider tokenProvider;
-  private final CommentRepository commentRepository;
-  private final ImgRepository imgRepository;
-  private final AwsS3UploadService awsS3UploadService;
+    private final PostRepository postRepository;
+    private final TokenProvider tokenProvider;
+    private final CommentRepository commentRepository;
+    private final ImgRepository imgRepository;
+    private final AwsS3UploadService awsS3UploadService;
 
 
     // 게시글 작성
-  @Transactional
-  public ResponseDto<?> createPost(PostRequestDto requestDto,
-                                   HttpServletRequest request,
-                                   List<String> imgPaths) {
+    @Transactional
+    public ResponseDto<?> createPost(PostRequestDto requestDto,
+                                     HttpServletRequest request,
+                                     List<String> imgPaths) {
 
-    if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("USER_NOT_FOUND",
-              "로그인이 필요합니다.");
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Post post = Post.builder()
+                .user(user)
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .build();
+
+        postRepository.save(post);
+
+        postBlankCheck(imgPaths);
+
+        List<String> imgList = new ArrayList<>();
+        for (String imgUrl : imgPaths) {
+            Img img = new Img(imgUrl, post);
+            imgRepository.save(img);
+            imgList.add(img.getImgUrl());
+        }
+        return ResponseDto.success(
+                PostResponseDto.builder()
+                        .postId(post.getId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .nickname(post.getUser().getNickname())
+                        .imgList(imgList)
+                        .likes(post.getLikes())
+                        .createdAt(post.getCreatedAt())
+                        .modifiedAt(post.getModifiedAt())
+                        .build()
+        );
     }
-
-    if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("USER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
-
-    User user = validateUser(request);
-    if (null == user) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-    }
-
-    Post post = Post.builder()
-            .user(user)
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .build();
-
-    postRepository.save(post);
-
-      postBlankCheck(imgPaths);
-
-      List<String> imgList = new ArrayList<>();
-      for (String imgUrl : imgPaths) {
-          Img img = new Img(imgUrl, post);
-          imgRepository.save(img);
-          imgList.add(img.getImgUrl());
-      }
-    return ResponseDto.success(
-        PostResponseDto.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .content(post.getContent())
-                .nickname(post.getUser().getNickname())
-                .imgList(imgList)
-                .likes(post.getLikes())
-                .createdAt(post.getCreatedAt())
-                .modifiedAt(post.getModifiedAt())
-                .build()
-    );
-  }
 
     private void postBlankCheck(List<String> imgPaths) {
         if(imgPaths == null || imgPaths.isEmpty()){ //.isEmpty()도 되는지 확인해보기
@@ -91,76 +91,77 @@ public class PostService {
         }
     }
 
-  // 게시글 단건 조회
-  @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
-  public ResponseDto<?> getPost(Long postId) {
-    Post post = isPresentPost(postId);
-    if (null == post) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
-    }
-      List<Comment> commentList = commentRepository.findAllByPost(post);
-      List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
+    // 게시글 단건 조회
+    @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
+    public ResponseDto<?> getPost(Long postId) {
+        Post post = isPresentPost(postId);
+        if (null == post) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
+        }
+        List<Comment> commentList = commentRepository.findAllByPost(post);
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
 
-      for (Comment comment : commentList) {
-          commentResponseDtoList.add(
-                  CommentResponseDto.builder()
-                          .commentId(comment.getId())
-                          .nickname(comment.getUser().getNickname())
-                          .comment(comment.getComment())
-                          .createdAt(comment.getCreatedAt())
-                          .modifiedAt(comment.getModifiedAt())
-                          .build()
-          );
-      }
+        for (Comment comment : commentList) {
+            commentResponseDtoList.add(
+                    CommentResponseDto.builder()
+                            .commentId(comment.getId())
+                            .nickname(comment.getUser().getNickname())
+                            .comment(comment.getComment())
+                            .likes(comment.getLikes())
+                            .createdAt(comment.getCreatedAt())
+                            .modifiedAt(comment.getModifiedAt())
+                            .build()
+            );
+        }
 
-      List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-      List<String> imgList = new ArrayList<>();
-      for (Img img : findImgList) {
-          imgList.add(img.getImgUrl());
-      }
-
-      return ResponseDto.success(
-              PostResponseDto.builder()
-                      .postId(post.getId())
-                      .title(post.getTitle())
-                      .content(post.getContent())
-                      .commentResponseDtoList(commentResponseDtoList)
-                      .nickname(post.getUser().getNickname())
-                      .likes(post.getLikes())
-                      .imgList(imgList)
-                      .createdAt(post.getCreatedAt())
-                      .modifiedAt(post.getModifiedAt())
-                      .build()
-      );
-  }
-
-  // 전체 게시글 조회
-  @Transactional(readOnly = true)
-  public ResponseDto<?> getAllPost() {
-    List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
-    List<PostResponseDto> postResponseDto = new ArrayList<>();
-    for (Post post : postList) {
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
         for (Img img : findImgList) {
             imgList.add(img.getImgUrl());
         }
-      postResponseDto.add(
-              PostResponseDto.builder()
-                      .postId(post.getId())
-                      .title(post.getTitle())
-                      .imgUrl(imgList.get(0))
-                      .likes(post.getLikes())
-                      .nickname(post.getUser().getNickname())
-                      .createdAt(post.getCreatedAt())
-                      .modifiedAt(post.getModifiedAt())
-                      .build()
-      );
+
+        return ResponseDto.success(
+                PostResponseDto.builder()
+                        .postId(post.getId())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .commentResponseDtoList(commentResponseDtoList)
+                        .nickname(post.getUser().getNickname())
+                        .likes(post.getLikes())
+                        .imgList(imgList)
+                        .createdAt(post.getCreatedAt())
+                        .modifiedAt(post.getModifiedAt())
+                        .build()
+        );
     }
 
-    return ResponseDto.success(postResponseDto);
+    // 전체 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPost() {
+        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+        List<PostResponseDto> postResponseDto = new ArrayList<>();
+        for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImgUrl());
+            }
+            postResponseDto.add(
+                    PostResponseDto.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .imgUrl(imgList.get(0))
+                            .likes(post.getLikes())
+                            .nickname(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
+        }
 
-  }
+        return ResponseDto.success(postResponseDto);
+
+    }
 
 
 
@@ -267,17 +268,17 @@ public class PostService {
         return ResponseDto.success("delete success");
     }
 
-  @Transactional(readOnly = true)
-  public Post isPresentPost(Long postId) {
-    Optional<Post> optionalPost = postRepository.findById(postId);
-    return optionalPost.orElse(null);
-  }
-
-  @Transactional
-  public User validateUser(HttpServletRequest request) {
-    if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-      return null;
+    @Transactional(readOnly = true)
+    public Post isPresentPost(Long postId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        return optionalPost.orElse(null);
     }
-    return tokenProvider.getUserFromAuthentication();
-  }
+
+    @Transactional
+    public User validateUser(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return null;
+        }
+        return tokenProvider.getUserFromAuthentication();
+    }
 }

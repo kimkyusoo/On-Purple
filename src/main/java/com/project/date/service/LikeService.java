@@ -51,7 +51,7 @@ public class LikeService {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
         //좋아요 한 적 있는지 체크
-        Likes liked = likeRepository.findByUserAndPost(user, post).orElse(null);
+        Likes liked = likeRepository.findByUserAndPostId(user, postId).orElse(null);
 
         if (liked == null) {
             Likes postLike = Likes.builder()
@@ -67,7 +67,6 @@ public class LikeService {
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
-
 
 
 

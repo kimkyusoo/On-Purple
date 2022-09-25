@@ -24,10 +24,10 @@ public class LikeController {
     public ResponseDto<?> createPostLike(@PathVariable Long postId, HttpServletRequest request) {
         return likeService.PostLike(postId, request);
     }
-//    // 댓글 좋아요
-//    @PostMapping( "/comment/like/{commentId}")
-//    public ResponseDto<?> createCommentLike(@PathVariable Long commentId, HttpServletRequest request) {
-//        return likeService.PostLike(commentId, request);
-//    }
+    // 댓글 좋아요
+    @PostMapping( "/comment/like/{commentId}")
+    public ResponseDto<?> createCommentLike(@PathVariable Long commentId, HttpServletRequest request) {
+        return likeService.PostLike(commentId, request);
+    }
 
 }

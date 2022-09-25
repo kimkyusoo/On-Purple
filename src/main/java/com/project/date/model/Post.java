@@ -38,8 +38,8 @@ public class Post extends Timestamped {
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
 
-//  @Column(nullable = false)
-//  private int likes;
+  @Column(nullable = false)
+  private int likes;
 
 
   public void update(PostRequestDto postRequestDto) {
@@ -51,5 +51,13 @@ public class Post extends Timestamped {
   public boolean validateUser(User user) {
 
     return !this.user.equals(user);
+  }
+  //좋아요
+  public void addLike(){
+    this.likes++;
+  }
+  //좋아요 취소
+  public void minusLike(){
+    this.likes--;
   }
 }

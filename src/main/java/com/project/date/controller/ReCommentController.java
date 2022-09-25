@@ -20,7 +20,7 @@ public class ReCommentController {
 
     // 대댓글 작성
     @PostMapping( "/reComment/{commentId}")
-    public ResponseDto<?> createReComment(Long commentId, @RequestPart(value = "data") ReCommentRequestDto requestDto,
+    public ResponseDto<?> createReComment(@PathVariable Long commentId, @RequestPart(value = "data") ReCommentRequestDto requestDto,
                                      HttpServletRequest request) {
         return reCommentService.createReComment(commentId, requestDto,request);
     }

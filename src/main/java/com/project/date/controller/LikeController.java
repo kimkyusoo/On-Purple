@@ -27,7 +27,7 @@ public class LikeController {
     // 댓글 좋아요
     @PostMapping( "/comment/like/{commentId}")
     public ResponseDto<?> createCommentLike(@PathVariable Long commentId, HttpServletRequest request) {
-        return likeService.PostLike(commentId, request);
+        return likeService.CommentLike(commentId, request);
     }
 
 }

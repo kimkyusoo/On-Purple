@@ -68,6 +68,48 @@ public class LikeService {
         }
     }
 
+    // 게시글 좋아요
+    @Transactional
+    public ResponseDto<?> CommentLike(Long commentId,
+                                      HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Comment comment = isPresentComment(commentId);
+        if (null == comment)
+            return ResponseDto.fail("COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다.");
+
+        //좋아요 한 적 있는지 체크
+        Likes liked = likeRepository.findByUserAndCommentId(user,commentId).orElse(null);
+
+        if (liked == null) {
+            Likes commentLike = Likes.builder()
+                    .user(user)
+                    .comment(comment)
+                    .build();
+            likeRepository.save(commentLike);
+            comment.addLike();
+            return ResponseDto.success("좋아요 성공");
+        } else {
+            likeRepository.delete(liked);
+            comment.minusLike();
+            return ResponseDto.success("좋아요가 취소되었습니다.");
+        }
+    }
+
 
 
 

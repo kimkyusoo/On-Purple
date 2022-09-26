@@ -22,8 +22,8 @@ public class PostController {
 
   // 게시글 작성
   @PostMapping( "/post")
-  public ResponseDto<?> createPost(@RequestPart(value = "data") PostRequestDto requestDto,
-                                   HttpServletRequest request, @RequestPart("imageUrl") List<MultipartFile> multipartFiles) {
+  public ResponseDto<?> createPost(@RequestPart(value = "data",required = false) PostRequestDto requestDto,
+                                   HttpServletRequest request, @RequestPart(value = "imageUrl",required = false) List<MultipartFile> multipartFiles) {
 
     if (multipartFiles == null) {
       throw new NullPointerException("사진을 업로드해주세요");

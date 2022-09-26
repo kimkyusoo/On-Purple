@@ -1,6 +1,6 @@
 package com.project.date.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.response.ResponseDto;
@@ -27,7 +27,7 @@ public class UserController {
     // POST방식 회원가입 API UserRequestDto에서 표현한 정규표현식을 따른 정보를 받아 UserService에서 정의한 createUser메소드에 따라 아이디와 비밀번호 확인을 거치고 이를 만족시키면 아이디 비밀번호를 생성.
 
     @RequestMapping(value = "/user/signup", method = RequestMethod.POST)
-    public ResponseDto<?> signup(@RequestPart(value = "info") @Valid SignupRequestDto requestDto,
+    public ResponseDto<?> signup(@RequestPart(value = "info",required = false) @Valid SignupRequestDto requestDto,
                                  @RequestPart(value = "imageUrl", required = false) List<MultipartFile> multipartFiles){
         if (multipartFiles == null) {
             throw new NullPointerException("사진을 업로드해주세요");
@@ -43,26 +43,18 @@ public class UserController {
                                 HttpServletResponse response) {
         return userService.login(requestDto, response);
     }
-
-
-    @GetMapping("/user/idCheck/{username}")
+    @PostMapping("/user/idCheck/{username}")
     public ResponseDto<?> checkUser(@PathVariable String username) {
         return userService.checkUser(username);
     }
-//        @RequestMapping(value = "/user/idCheck/{username}", method = RequestMethod.POST)
-//    public ResponseDto<?> checkUser(@RequestBody @Valid SignupRequestDto requestDto) {
-//        return userService.checkUser(requestDto);
-//    }
 
-    @GetMapping("/user/nicknameCheck/{nickname}")
+
+    @PostMapping("/user/nicknameCheck/{nickname}")
     public ResponseDto<?> checkNickname(@PathVariable String nickname) {
         return userService.checkNickname(nickname);
     }
 
-//    @RequestMapping(value = "/user/nicknameCheck/{nickname}", method = RequestMethod.POST)
-//    public ResponseDto<?> checkNickname(@RequestBody @Valid SignupRequestDto requestDto) {
-//        return userService.checkNickname(requestDto);
-//    }
+
 
     //  POST방식 로그아웃 API 권한인증을 받은 사용자가 해당 api를 요청하면 UserService에 정의한 logout 메소드를 따라 로그아웃을 진행.
     @RequestMapping(value = "/user/logout", method = RequestMethod.POST)

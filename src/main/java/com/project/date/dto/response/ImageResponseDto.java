@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ImgResponseDto {
+public class ImageResponseDto {
 
     private Long id;
     private String imageUrl;

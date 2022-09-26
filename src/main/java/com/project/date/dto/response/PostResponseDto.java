@@ -17,7 +17,7 @@ public class PostResponseDto {
     private String title;
     private String nickname;
     private String content;
-    private String imgUrl;
+    private String imageUrl;
     private Integer likes;
     private List<String> imgList;
     private List<CommentResponseDto> commentResponseDtoList;

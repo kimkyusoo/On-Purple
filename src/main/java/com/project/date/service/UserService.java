@@ -67,14 +67,14 @@ public class UserService {
         for (String imgUrl : imgPaths) {
             Img img = new Img(imgUrl, user);
             imgRepository.save(img);
-            imgList.add(img.getImgUrl());
+            imgList.add(img.getImageUrl());
         }
 
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
-                        .imgUrl(imgList.get(0))
+                        .imageUrl(imgList.get(0))
                         .build()
         );
 

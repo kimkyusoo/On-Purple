@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class ImgResponseDto {
 
     private Long id;
-    private String imgUrl;
+    private String imageUrl;
     private Post post;
     private User user;
 }

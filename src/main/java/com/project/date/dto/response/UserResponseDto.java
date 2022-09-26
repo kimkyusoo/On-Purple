@@ -14,6 +14,6 @@ import java.util.List;
 public class UserResponseDto {
     private Long id;
     private String nickname;
-    private String imgUrl;
+    private String imageUrl;
     private List<String> imgList;
 }

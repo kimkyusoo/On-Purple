@@ -69,7 +69,7 @@ public class PostService {
         for (String imgUrl : imgPaths) {
             Img img = new Img(imgUrl, post);
             imgRepository.save(img);
-            imgList.add(img.getImgUrl());
+            imgList.add(img.getImageUrl());
         }
         return ResponseDto.success(
                 PostResponseDto.builder()
@@ -117,7 +117,7 @@ public class PostService {
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
         for (Img img : findImgList) {
-            imgList.add(img.getImgUrl());
+            imgList.add(img.getImageUrl());
         }
 
         return ResponseDto.success(
@@ -144,13 +144,13 @@ public class PostService {
             List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
             List<String> imgList = new ArrayList<>();
             for (Img img : findImgList) {
-                imgList.add(img.getImgUrl());
+                imgList.add(img.getImageUrl());
             }
             postResponseDto.add(
                     PostResponseDto.builder()
                             .postId(post.getId())
                             .title(post.getTitle())
-                            .imgUrl(imgList.get(0))
+                            .imageUrl(imgList.get(0))
                             .likes(post.getLikes())
                             .nickname(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
@@ -197,7 +197,7 @@ public class PostService {
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
         for (Img img : findImgList) {
-            imgList.add(img.getImgUrl());
+            imgList.add(img.getImageUrl());
         }
         //s3에 저장되어 있는 img list 삭제
         for (String imgUrl : imgList) {
@@ -211,7 +211,7 @@ public class PostService {
         for (String imgUrl : imgPaths) {
             Img img = new Img(imgUrl, post);
             imgRepository.save(img);
-            newImgList.add(img.getImgUrl());
+            newImgList.add(img.getImageUrl());
         }
 
         post.update(requestDto);
@@ -259,7 +259,7 @@ public class PostService {
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
         for (Img img : findImgList) {
-            imgList.add(img.getImgUrl());
+            imgList.add(img.getImageUrl());
         }
 
         for (String imgUrl : imgList) {

@@ -1,6 +1,7 @@
 package com.project.date.controller;
 
 import com.project.date.dto.response.ResponseDto;
+import com.project.date.model.User;
 import com.project.date.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +16,9 @@ public class ProfileController {
 
 
     @GetMapping("/main")
-    public ResponseDto<?> getAllProfiles() {
+    public ResponseDto<?> getAllProfiles(@PathVariable Long userId) {
 
-        return profileService.getAllProfile();
+        return profileService.getAllProfiles(userId);
     }
 
 

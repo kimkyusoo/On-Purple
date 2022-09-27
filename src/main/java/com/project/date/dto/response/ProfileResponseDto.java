@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class ProfileResponseDto {
     private Long profileId;
+//    private List<UserResponseDto> userResponseDtoList;
     private String imageUrl;
     private String nickname;
-    private String imgUrl;
     private int age;
     private String mbti;
     private String introduction;

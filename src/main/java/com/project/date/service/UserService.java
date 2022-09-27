@@ -3,7 +3,6 @@ package com.project.date.service;
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.request.TokenDto;
-import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
@@ -109,8 +108,10 @@ public class UserService {
                 UserResponseDto.builder()
                         .id(user.getId())
                         .nickname(user.getNickname())
+                        .imageUrl(user.getImageUrl())
                         .build()
         );
+
     }
 
     //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없을 경우 오류 메시지를 출력

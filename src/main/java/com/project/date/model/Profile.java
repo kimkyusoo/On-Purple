@@ -1,6 +1,7 @@
 package com.project.date.model;
 
 import lombok.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 
@@ -16,7 +17,7 @@ public class Profile extends Timestamped{
     private Long id;
 
     @JoinColumn(name = "userId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private User user;
 
 

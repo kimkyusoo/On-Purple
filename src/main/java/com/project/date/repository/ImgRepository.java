@@ -8,4 +8,8 @@ import java.util.List;
 public interface ImgRepository extends JpaRepository<Img, Long> {
     List<Img> findByPost_Id(Long id);
     List<Img> deleteByPost_Id(Long id);
+
+    List<Img> findByUser_id(Long id);
+
+    List<Img> findByProfile_id(Long id);
 }

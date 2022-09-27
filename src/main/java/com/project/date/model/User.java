@@ -44,6 +44,10 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY)
     private final List<Img> imgList = new ArrayList<>();
 
+    @Transient
+    @OneToMany(fetch = FetchType.LAZY)
+    private final List<Profile> profileList = new ArrayList<>();
+
 //    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 //    private List<Comment> commentList;
 

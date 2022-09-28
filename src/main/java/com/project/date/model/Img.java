@@ -29,7 +29,6 @@ public class Img {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-
     public Img(String imageUrl, Post post) {
         this.imageUrl = imageUrl;
         this.post = post;

@@ -155,6 +155,7 @@ public class PostService {
                             .postId(post.getId())
                             .title(post.getTitle())
                             .imageUrl(imgList.get(0))
+                            .content(post.getContent())
                             .likes(post.getLikes())
                             .view(post.getView())
                             .nickname(post.getUser().getNickname())

@@ -79,6 +79,7 @@ public class PostService {
                         .nickname(post.getUser().getNickname())
                         .imgList(imgList)
                         .likes(post.getLikes())
+                        .view(0)
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
                         .build()
@@ -113,6 +114,8 @@ public class PostService {
                             .build()
             );
         }
+        //단건 조회 조회수 증가
+        post.updateViewCount();
 
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
@@ -128,6 +131,7 @@ public class PostService {
                         .commentResponseDtoList(commentResponseDtoList)
                         .nickname(post.getUser().getNickname())
                         .likes(post.getLikes())
+                        .view(post.getView())
                         .imgList(imgList)
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
@@ -152,6 +156,7 @@ public class PostService {
                             .title(post.getTitle())
                             .imageUrl(imgList.get(0))
                             .likes(post.getLikes())
+                            .view(post.getView())
                             .nickname(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
@@ -222,6 +227,7 @@ public class PostService {
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
                         .imgList(newImgList)
+                        .view(post.getView())
                         .likes(post.getLikes())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())

@@ -64,7 +64,7 @@ public class Post extends Timestamped {
     this.likes--;
   }
   //조회수 증가
-  public void updateviewCount(){
+  public void updateViewCount(){
     this.view++;
   }
 }

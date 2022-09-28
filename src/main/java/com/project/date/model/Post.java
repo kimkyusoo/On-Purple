@@ -32,7 +32,7 @@ public class Post extends Timestamped {
 
   @Transient
   @OneToMany(fetch = FetchType.LAZY)
-  private final List<Img> imgList = new ArrayList<>();
+  private final List<Img> imageList = new ArrayList<>();
 
   @JoinColumn(name = "userId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)

@@ -19,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class User {
+public class User extends Timestamped {
 
     @Id
     @Column(name = "userId")
@@ -39,17 +39,16 @@ public class User {
     @Column(length = 1000)
     private String imageUrl;
 
+    @JoinColumn(name = "userInfoId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private UserInfo userInfo;
+
     //img
     @Transient
     @OneToMany(fetch = FetchType.LAZY)
     private final List<Img> imgList = new ArrayList<>();
 
-    @Transient
-    @OneToMany(fetch = FetchType.LAZY)
-    private final List<Profile> profileList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//    private List<Comment> commentList;
 
     @Override
     public boolean equals(Object o) {

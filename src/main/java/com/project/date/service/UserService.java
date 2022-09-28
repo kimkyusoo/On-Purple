@@ -3,6 +3,7 @@ package com.project.date.service;
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.request.TokenDto;
+import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
@@ -71,7 +72,7 @@ public class UserService {
 
         return ResponseDto.success(
                 UserResponseDto.builder()
-                        .id(user.getId())
+                        .userId(user.getId())
                         .nickname(user.getNickname())
                         .imageUrl(imgList.get(0))
                         .build()
@@ -106,7 +107,7 @@ public class UserService {
 
         return ResponseDto.success(
                 UserResponseDto.builder()
-                        .id(user.getId())
+                        .userId(user.getId())
                         .nickname(user.getNickname())
                         .imageUrl(user.getImageUrl())
                         .build()
@@ -116,6 +117,24 @@ public class UserService {
 
     //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없을 경우 오류 메시지를 출력
     //  정상일 경우 tokenProvider에 유저에게 있는 리프레시토큰 삭제를 진행
+//    public ResponseDto<?> updateUser(HttpServletRequest request, UserUpdateRequestDto requestDto) {
+//        User user = validateUser(request);
+//        if(null == user)
+//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+//        user.update(requestDto);
+//        List<Img> findImgList = imgRepository.findByUser_id(user.getId());
+//        List<String> imgList = new ArrayList<>();
+//        for (Img img : findImgList) {
+//            imgList.add(img.getImageUrl());
+//        }
+//        return ResponseDto.success(
+//                UserResponseDto.builder()
+//                        .nickname(user.getNickname())
+//                        .imageUrl(imgList.get(0))
+//                        .build()
+//        );
+//    }
+
     public ResponseDto<?> logout(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
@@ -128,28 +147,71 @@ public class UserService {
 
         return tokenProvider.deleteRefreshToken(user);
     }
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllProfiles() {
+        List<User> userList = userRepository.findAllByOrderByModifiedAtDesc();
+        List<UserResponseDto> userResponseDto = new ArrayList<>();
+        for (User user : userList) {
+            List<Img> findImgList = imgRepository.findByUser_id(user.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
+            userResponseDto.add(
+                    UserResponseDto.builder()
+                            .userId(user.getId())
+                            .nickname(user.getNickname())
+//                            .age(user.getUserInfo().getAge())
+                            .imageUrl(imgList.get(0))
+                            .build()
+            );
+        }
+        return ResponseDto.success(userResponseDto);
+    }
 
-//    public ResponseDto<?> updateUser(HttpServletRequest request, UserUpdateRequestDto requestDto) {
-//        User user = validateUser(request);
-//        if(null == user)
-//            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-//
-//        user.update(requestDto);
-//        return ResponseDto.success(
-//                UserResponseDto.builder()
-//                        .nickname(user.getNickname())
-//                        .imageUrl(user.getImageUrl())
-//                        .build()
-//        );
-//    }
-//
-//    @Transactional
-//    public User validateUser(HttpServletRequest request) {
-//        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-//            return null;
-//        }
-//        return tokenProvider.getUserFromAuthentication();
-//    }
+    @Transactional
+    public ResponseDto<?> getProfile(Long userId) {
+        User user= isPresentUserId(userId);
+        if (null == user) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 사용자입니다.");
+        }
+//        List<Profile> profileList = profileRepository.findAllById(profileId);
+//        List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
+
+        List<Img> findImgList = imgRepository.findByUser_id(user.getId());
+        List<String> imgList = new ArrayList<>();
+        for (Img img : findImgList) {
+            imgList.add(img.getImageUrl());
+        }
+
+        return ResponseDto.success(
+                UserResponseDto.builder()
+                        .userId(user.getId())
+                        .imageUrl(imgList.get(0))
+                        .nickname(user.getNickname())
+//                        .age(user.getUserInfo().getAge())
+//                        .mbti(user.getUserInfo().getMbti())
+//                        .introduction(user.getUserInfo().getIntroduction())
+//                        .idealType(user.getUserInfo().getIdealType())
+//                        .job(user.getUserInfo().getJob())
+//                        .hobby(user.getUserInfo().getHobby())
+//                        .pet(user.getUserInfo().getPet())
+//                        .smoke(user.getUserInfo().getSmoke())
+//                        .likeMovieType(user.getUserInfo().getLikeMovieType())
+//                        .area(user.getUserInfo().getArea())
+
+                        .build()
+        );
+    }
+
+
+    @Transactional
+    public User validateUser(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return null;
+        }
+        return tokenProvider.getUserFromAuthentication();
+    }
 
     @Transactional(readOnly = true)
     public User isPresentUser(String username) {
@@ -157,9 +219,16 @@ public class UserService {
         return optionalUser.orElse(null);
     }
 
+
     @Transactional(readOnly = true)
     public User isPresentNickname(String nickname) {
         Optional<User> optionalUser = userRepository.findByNickname(nickname);
+        return optionalUser.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public User isPresentUserId(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
         return optionalUser.orElse(null);
     }
 

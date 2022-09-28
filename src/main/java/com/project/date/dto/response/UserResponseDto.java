@@ -12,8 +12,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseDto {
-    private Long id;
+    private Long userId;
     private String nickname;
     private String imageUrl;
     private List<String> imgList;
+    private int age;
+    private String mbti;
+    private String introduction;
+    private String idealType;
+    private String job;
+    private String hobby;
+    private String pet;
+    private String smoke;
+    private String likeMovieType;
+    private String area;
 }

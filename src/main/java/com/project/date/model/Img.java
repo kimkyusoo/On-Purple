@@ -29,12 +29,6 @@ public class Img {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profileId")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private Profile profile;
-
-
     public Img(String imageUrl, Post post) {
         this.imageUrl = imageUrl;
         this.post = post;

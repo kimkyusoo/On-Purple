@@ -3,6 +3,7 @@ package com.project.date.controller;
 
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
+import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.UserService;
 import com.project.date.util.AwsS3UploadService;
@@ -43,18 +44,21 @@ public class UserController {
                                 HttpServletResponse response) {
         return userService.login(requestDto, response);
     }
+
     @PostMapping("/user/idCheck/{username}")
     public ResponseDto<?> checkUser(@PathVariable String username) {
         return userService.checkUser(username);
     }
-
 
     @PostMapping("/user/nicknameCheck/{nickname}")
     public ResponseDto<?> checkNickname(@PathVariable String nickname) {
         return userService.checkNickname(nickname);
     }
 
-
+//    @RequestMapping(value = "/user/userUpdate", method = RequestMethod.PUT)
+//    public ResponseDto<?> userUpdate(HttpServletRequest request, UserUpdateRequestDto requestDto) {
+//        return userService.updateUser(request, requestDto);
+//    }
 
     //  POST방식 로그아웃 API 권한인증을 받은 사용자가 해당 api를 요청하면 UserService에 정의한 logout 메소드를 따라 로그아웃을 진행.
     @RequestMapping(value = "/user/logout", method = RequestMethod.POST)
@@ -62,5 +66,14 @@ public class UserController {
         return userService.logout(request);
 
     }
+    @GetMapping("/main")
+    public ResponseDto<?> getAllProfiles() {
+        return userService.getAllProfiles();
+    }
 
+    @GetMapping( "/profile/{userId}")
+    public ResponseDto<?> getProfile(@PathVariable Long userId) {
+        return userService.getProfile(userId);
+    }
 }
+

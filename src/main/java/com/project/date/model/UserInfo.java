@@ -22,11 +22,6 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    @JoinColumn(name = "profileId", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Profile profile;
-
     @JoinColumn(name = "userId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

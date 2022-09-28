@@ -37,9 +37,12 @@ public class Post extends Timestamped {
   @JoinColumn(name = "userId", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private User user;
-
+ //좋아요 count
   @Column(nullable = false)
   private int likes;
+  //조회수 count
+  @Column(nullable = false)
+  private int view;
 
 
   public void update(PostRequestDto postRequestDto) {
@@ -59,5 +62,9 @@ public class Post extends Timestamped {
   //좋아요 취소
   public void minusLike(){
     this.likes--;
+  }
+  //조회수 증가
+  public void updateViewCount(){
+    this.view++;
   }
 }

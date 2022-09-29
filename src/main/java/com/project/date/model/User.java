@@ -25,7 +25,6 @@ public class User extends Timestamped {
     @Column(name = "userId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false, unique = true)
     private String username;
 
@@ -38,10 +37,6 @@ public class User extends Timestamped {
 
     @Column(length = 1000)
     private String imageUrl;
-
-    @JoinColumn(name = "userInfoId")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private UserInfo userInfo;
 
     //img
     @Transient
@@ -75,11 +70,10 @@ public class User extends Timestamped {
         this.username = username;
         this.password = password;
     }
-    public void update(UserUpdateRequestDto userUpdateRequestDto) {
+    public void userUpdate(UserUpdateRequestDto userUpdateRequestDto) {
         this.nickname = userUpdateRequestDto.getNickname();
         this.password = userUpdateRequestDto.getPassword();
         this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
-
 
 }

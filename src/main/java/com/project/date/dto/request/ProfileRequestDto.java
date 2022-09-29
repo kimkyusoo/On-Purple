@@ -1,11 +1,13 @@
 package com.project.date.dto.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
-public class UserInfoUpdateRequestDto {
+public class ProfileRequestDto {
 
     private int age;
     private String mbti;

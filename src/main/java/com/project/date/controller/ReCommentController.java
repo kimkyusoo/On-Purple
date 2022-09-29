@@ -1,14 +1,11 @@
 package com.project.date.controller;
 
 
-import com.project.date.dto.request.PostRequestDto;
 import com.project.date.dto.request.ReCommentRequestDto;
 import com.project.date.dto.response.ResponseDto;
-
 import com.project.date.service.ReCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 
 @RequiredArgsConstructor

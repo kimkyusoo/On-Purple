@@ -66,14 +66,5 @@ public class UserController {
         return userService.logout(request);
 
     }
-    @GetMapping("/main")
-    public ResponseDto<?> getAllProfiles() {
-        return userService.getAllProfiles();
-    }
-
-    @GetMapping( "/profile/{userId}")
-    public ResponseDto<?> getProfile(@PathVariable Long userId) {
-        return userService.getProfile(userId);
-    }
 }
 

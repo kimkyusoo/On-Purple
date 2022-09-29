@@ -54,6 +54,10 @@ public class Profile extends Timestamped{
     @Column
     private String area;
 
+    //좋아요 count
+    @Column(nullable = false)
+    private int likes;
+
     public void profileUpdate(ProfileRequestDto profileRequestDto) {
         this.age = profileRequestDto.getAge();
         this.mbti = profileRequestDto.getMbti();

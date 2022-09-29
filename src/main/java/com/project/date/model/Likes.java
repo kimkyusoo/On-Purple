@@ -32,6 +32,10 @@ public class Likes {
     @JoinColumn(name = "commentId")
     private Comment comment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profileId")
+    private Profile profile;
+
 
 
 }

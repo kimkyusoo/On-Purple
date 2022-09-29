@@ -2,13 +2,11 @@ package com.project.date.service;
 
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
-import com.project.date.model.Comment;
-import com.project.date.model.Likes;
-import com.project.date.model.Post;
-import com.project.date.model.User;
+import com.project.date.model.*;
 import com.project.date.repository.CommentRepository;
 import com.project.date.repository.LikeRepository;
 import com.project.date.repository.PostRepository;
+import com.project.date.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +23,7 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final ProfileRepository profileRepository;
 
     // 게시글 좋아요
     @Transactional
@@ -110,6 +109,55 @@ public class LikeService {
         }
     }
 
+
+    @Transactional
+    public ResponseDto<?> ProfileLike(Long profileId,
+                                      HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Profile profile = isPresentProfile(profileId);
+        if (null == profile)
+            return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
+
+
+
+        //좋아요 한 적 있는지 체크
+        Likes liked = likeRepository.findByUserAndProfileId(user,profileId).orElse(null);
+
+        if (liked == null) {
+            Likes profileLike = Likes.builder()
+                    .user(user)
+                    .profile(profile)
+                    .build();
+            likeRepository.save(profileLike);
+            profile.addLike();
+            return ResponseDto.success("좋아요 성공");
+        } else {
+            likeRepository.delete(liked);
+            profile.minusLike();
+            return ResponseDto.success("좋아요가 취소되었습니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Profile isPresentProfile(Long profileId) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+        return optionalProfile.orElse(null);
+    }
 
 
 

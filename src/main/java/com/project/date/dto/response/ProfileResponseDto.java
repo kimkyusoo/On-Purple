@@ -26,4 +26,5 @@ public class ProfileResponseDto {
     private String smoke;
     private String likeMovieType;
     private String area;
+    private Integer likes;
 }

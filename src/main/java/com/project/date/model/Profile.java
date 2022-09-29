@@ -71,4 +71,11 @@ public class Profile extends Timestamped{
         this.area = profileRequestDto.getArea();
 
     }
+    public void addLike(){
+        this.likes++;
+    }
+
+    public void minusLike(){
+        this.likes--;
+    }
 }

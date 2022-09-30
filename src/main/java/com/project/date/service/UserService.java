@@ -1,12 +1,11 @@
 package com.project.date.service;
 
-import com.project.date.dto.request.LoginRequestDto;
-import com.project.date.dto.request.SignupRequestDto;
-import com.project.date.dto.request.TokenDto;
+import com.project.date.dto.request.*;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.Img;
+import com.project.date.model.Profile;
 import com.project.date.model.User;
 import com.project.date.repository.ImgRepository;
 import com.project.date.repository.UserRepository;
@@ -26,7 +25,6 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final ImgRepository imgRepository;
@@ -75,6 +73,7 @@ public class UserService {
                         .nickname(user.getNickname())
                         .imageUrl(imgList.get(0))
                         .build()
+
         );
 
     }
@@ -114,21 +113,63 @@ public class UserService {
 
     }
 
-    //  정상일 경우 tokenProvider에 유저에게 있는 리프레시토큰 삭제를 진행
-//    public ResponseDto<?> updateUser(HttpServletRequest request, UserUpdateRequestDto requestDto) {
+//    @Transactional
+//    public ResponseDto<PostResponseDto> updateUser(Long userId,
+//                                                   UserUpdateRequestDto requestDto,
+//                                                   HttpServletRequest request,
+//                                                   List<String> imgPaths) {
+//        if (null == request.getHeader("RefreshToken")) {
+//            return ResponseDto.fail("USER_NOT_FOUND",
+//                    "로그인이 필요합니다.");
+//        }
+//
+//        if (null == request.getHeader("Authorization")) {
+//            return ResponseDto.fail("USER_NOT_FOUND",
+//                    "로그인이 필요합니다.");
+//        }
+//
 //        User user = validateUser(request);
-//        if(null == user)
+//        if (null == user) {
 //            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-//        user.update(requestDto);
-//        List<Img> findImgList = imgRepository.findByUser_id(user.getId());
+//        }
+//
+//
+//        if (user.validateUser(user)) {
+//            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+//        }
+//        //저장된 이미지 리스트 가져오기
+//        List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
 //        List<String> imgList = new ArrayList<>();
 //        for (Img img : findImgList) {
 //            imgList.add(img.getImageUrl());
 //        }
+//        //s3에 저장되어 있는 img list 삭제
+//        for (String imgUrl : imgList) {
+//            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+//        }
+//        imgRepository.deleteByPost_Id(post.getId());
+//
+//        postBlankCheck(imgPaths);
+//
+//        List<String> newImgList = new ArrayList<>();
+//        for (String imgUrl : imgPaths) {
+//            Img img = new Img(imgUrl, post);
+//            imgRepository.save(img);
+//            newImgList.add(img.getImageUrl());
+//        }
+//
+//        post.update(requestDto);
 //        return ResponseDto.success(
-//                UserResponseDto.builder()
-//                        .nickname(user.getNickname())
-//                        .imageUrl(imgList.get(0))
+//                PostResponseDto.builder()
+//                        .postId(post.getId())
+//                        .title(post.getTitle())
+//                        .content(post.getContent())
+//                        .nickname(post.getUser().getNickname())
+//                        .imgList(newImgList)
+//                        .view(post.getView())
+//                        .likes(post.getLikes())
+//                        .createdAt(post.getCreatedAt())
+//                        .modifiedAt(post.getModifiedAt())
 //                        .build()
 //        );
 //    }
@@ -166,6 +207,14 @@ public class UserService {
     public User isPresentNickname(String nickname) {
         Optional<User> optionalUser = userRepository.findByNickname(nickname);
         return optionalUser.orElse(null);
+    }
+
+    @Transactional
+    public User validateUser(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return null;
+        }
+        return tokenProvider.getUserFromAuthentication();
     }
 
 

@@ -59,6 +59,7 @@ public class PostService {
                 .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .category(requestDto.getCategory())
                 .build();
 
         postRepository.save(post);
@@ -78,6 +79,7 @@ public class PostService {
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
                         .imgList(imgList)
+                        .category(post.getCategory())
                         .likes(post.getLikes())
                         .view(0)
                         .createdAt(post.getCreatedAt())
@@ -132,6 +134,7 @@ public class PostService {
                         .nickname(post.getUser().getNickname())
                         .likes(post.getLikes())
                         .view(post.getView())
+                        .category(post.getCategory())
                         .imgList(imgList)
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())
@@ -141,8 +144,8 @@ public class PostService {
 
     // 전체 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost() {
-        List<Post> postList = postRepository.findAllByOrderByModifiedAtDesc();
+    public ResponseDto<?> getAllPost(String category) {
+        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
         List<PostResponseDto> postResponseDto = new ArrayList<>();
         for (Post post : postList) {
             List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
@@ -158,6 +161,7 @@ public class PostService {
                             .content(post.getContent())
                             .likes(post.getLikes())
                             .view(post.getView())
+                            .category(post.getCategory())
                             .nickname(post.getUser().getNickname())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
@@ -229,6 +233,7 @@ public class PostService {
                         .nickname(post.getUser().getNickname())
                         .imgList(newImgList)
                         .view(post.getView())
+                        .category(post.getCategory())
                         .likes(post.getLikes())
                         .createdAt(post.getCreatedAt())
                         .modifiedAt(post.getModifiedAt())

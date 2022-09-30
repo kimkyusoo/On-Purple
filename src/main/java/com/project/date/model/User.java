@@ -25,7 +25,11 @@ public class User extends Timestamped {
     @Column(name = "userId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
+
+    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Profile profile;
+    @Column( unique = true)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -37,6 +41,9 @@ public class User extends Timestamped {
 
     @Column(length = 1000)
     private String imageUrl;
+
+    @Column (unique = true)
+    private Long kakaoId;
 
     //img
     @Transient
@@ -65,6 +72,11 @@ public class User extends Timestamped {
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
     }
+
+//    public boolean validateUser(User user) {
+//
+//        return !this.user.equals(user);
+//    }
 
     public User(String username, String password){
         this.username = username;

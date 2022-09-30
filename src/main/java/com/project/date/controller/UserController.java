@@ -1,14 +1,18 @@
 package com.project.date.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.project.date.dto.request.KakaoUserRequestDto;
 import com.project.date.dto.request.LoginRequestDto;
 import com.project.date.dto.request.SignupRequestDto;
 import com.project.date.dto.request.UserUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
+import com.project.date.service.KakaoService;
 import com.project.date.service.UserService;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,14 +20,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class UserController {
 
     private final UserService userService;
     private final AwsS3UploadService s3Service;
-//    private final KakaoLoginService kakaoLoginService;
+
+    private final KakaoService kakaoService;
 
     // POST방식 회원가입 API UserRequestDto에서 표현한 정규표현식을 따른 정보를 받아 UserService에서 정의한 createUser메소드에 따라 아이디와 비밀번호 확인을 거치고 이를 만족시키면 아이디 비밀번호를 생성.
 
@@ -65,6 +70,12 @@ public class UserController {
     public ResponseDto<?> logout(HttpServletRequest request) {
         return userService.logout(request);
 
+    }
+
+    @RequestMapping(value = "/user/kakaoLogin", method = RequestMethod.GET)
+    public KakaoUserRequestDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+        log.info(code);
+        return kakaoService.kakaoLogin(code, response);
     }
 }
 

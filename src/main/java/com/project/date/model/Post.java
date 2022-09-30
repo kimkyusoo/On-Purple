@@ -58,6 +58,7 @@ public class Post extends Timestamped {
     public void update(PostRequestDto requestDto) {
     this.title = requestDto.getTitle();
     this.content = requestDto.getContent();
+    this.category= requestDto.getCategory();
   }
 
   // 회원정보 검증

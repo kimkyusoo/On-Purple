@@ -43,11 +43,22 @@ public class Post extends Timestamped {
   //조회수 count
   @Column(nullable = false)
   private int view;
+  /* 카테고리
+  맛집 taste,
+  데이트 dateCourse,
+  번개 meet,
+  술집 bar,
+  드라이브 drive
+   */
+  @Column(nullable = false)
+  private String category;
 
 
-  public void update(PostRequestDto postRequestDto) {
-    this.title = postRequestDto.getTitle();
-    this.content = postRequestDto.getContent();
+
+    public void update(PostRequestDto requestDto) {
+    this.title = requestDto.getTitle();
+    this.content = requestDto.getContent();
+    this.category= requestDto.getCategory();
   }
 
   // 회원정보 검증

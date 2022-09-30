@@ -33,9 +33,9 @@ public class PostController {
   }
 
   // 전체 게시글 가져오기
-  @GetMapping("/post")
-  public ResponseDto<?> getAllPosts() {
-    return postService.getAllPost();
+  @GetMapping("/post") //기본 카테고리 meet 번개
+  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category) {
+    return postService.getAllPost(category);
   }
 
   // 상세 게시글 가져오기

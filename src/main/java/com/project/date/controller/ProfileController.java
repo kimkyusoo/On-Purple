@@ -14,9 +14,9 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-   @PostMapping("/profile/{userId}")
-   public ResponseDto<?> createProfile(@PathVariable Long userId, @RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
-       return profileService.createProfile(userId, requestDto, request);
+   @PostMapping("/profile")
+   public ResponseDto<?> createProfile(@RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
+       return profileService.createProfile(requestDto, request);
    }
 
     @GetMapping("/main")

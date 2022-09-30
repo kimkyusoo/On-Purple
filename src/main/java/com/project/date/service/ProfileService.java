@@ -3,6 +3,7 @@ package com.project.date.service;
 import com.project.date.dto.request.ProfileRequestDto;
 import com.project.date.dto.response.ProfileResponseDto;
 import com.project.date.dto.response.ResponseDto;
+import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-
 @Service
 public class ProfileService {
 
@@ -30,7 +30,7 @@ public class ProfileService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public ResponseDto<?> createProfile(Long userId, ProfileRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> createProfile(ProfileRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -46,10 +46,6 @@ public class ProfileService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        User userid = isPresentUser(userId);
-        if (null == userid) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
        Profile profile = Profile.builder()
                 .user(user)
@@ -59,6 +55,7 @@ public class ProfileService {
                 .idealType(requestDto.getIdealType())
                 .job(requestDto.getJob())
                 .hobby(requestDto.getHobby())
+                .drink(requestDto.getDrink())
                 .pet(requestDto.getPet())
                 .smoke(requestDto.getSmoke())
                 .likeMovieType(requestDto.getLikeMovieType())
@@ -76,6 +73,7 @@ public class ProfileService {
                         .idealType(profile.getIdealType())
                         .job(profile.getJob())
                         .hobby(profile.getHobby())
+                        .drink(profile.getDrink())
                         .pet(profile.getPet())
                         .smoke(profile.getSmoke())
                         .likeMovieType(profile.getLikeMovieType())
@@ -99,7 +97,9 @@ public class ProfileService {
                             .profileId(profile.getId())
                             .nickname(profile.getUser().getNickname())
                             .age(profile.getAge())
+                            .introduction(profile.getIntroduction())
                             .imageUrl(imgList.get(0))
+                            .area(profile.getArea())
                             .build()
             );
         }
@@ -130,6 +130,7 @@ public class ProfileService {
                         .idealType(profile.getIdealType())
                         .job(profile.getJob())
                         .hobby(profile.getHobby())
+                        .drink(profile.getDrink())
                         .pet(profile.getPet())
                         .smoke(profile.getSmoke())
                         .likeMovieType(profile.getLikeMovieType())

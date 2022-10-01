@@ -209,13 +209,13 @@ public class PostService {
         for (Img img : findImgList) {
             imgList.add(img.getImageUrl());
         }
-        //s3에 저장되어 있는 img list 삭제
-        for (String imgUrl : imgList) {
-            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+        if(imgPaths != null) {
+            //s3에 저장되어 있는 img list 삭제
+            for (String imgUrl : imgList) {
+                awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+            }
+            imgRepository.deleteByPost_Id(post.getId());
         }
-        imgRepository.deleteByPost_Id(post.getId());
-
-        postBlankCheck(imgPaths);
 
         List<String> newImgList = new ArrayList<>();
         for (String imgUrl : imgPaths) {

@@ -50,7 +50,7 @@ public class Post extends Timestamped {
   술집 bar,
   드라이브 drive
    */
-  @Column(nullable = false)
+  @Column
   private String category;
 
 

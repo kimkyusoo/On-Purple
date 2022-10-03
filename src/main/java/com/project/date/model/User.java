@@ -88,4 +88,9 @@ public class User extends Timestamped {
         this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
 
+    //리스트 첫번째 이미지 저장
+    public void imageSave(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
+
 }

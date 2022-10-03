@@ -15,6 +15,9 @@ import com.project.date.repository.ImgRepository;
 import com.project.date.repository.PostRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -144,34 +147,48 @@ public class PostService {
 
     // 전체 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category) {
-        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
-        List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) {
-            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
-            postResponseDto.add(
-                    PostResponseDto.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .imageUrl(imgList.get(0))
-                            .content(post.getContent())
-                            .likes(post.getLikes())
-                            .view(post.getView())
-                            .category(post.getCategory())
-                            .nickname(post.getUser().getNickname())
-                            .createdAt(post.getCreatedAt())
-                            .modifiedAt(post.getModifiedAt())
-                            .build()
-            );
-        }
+    public ResponseDto<?> getAllPost(String category, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, keyword, pageable);
+        if (postList.isEmpty()) {
+            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
 
-        return ResponseDto.success(postResponseDto);
+        }
+        return ResponseDto.success(postList);
 
     }
+
+
+    // 전체 게시글 조회 테스트 복원용
+//    @Transactional(readOnly = true)
+//    public ResponseDto<?> getAllPost(String category) {
+//        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+//        List<PostResponseDto> postResponseDto = new ArrayList<>();
+//        for (Post post : postList) {
+//            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+//            List<String> imgList = new ArrayList<>();
+//            for (Img img : findImgList) {
+//                imgList.add(img.getImageUrl());
+//            }
+//            postResponseDto.add(
+//                    PostResponseDto.builder()
+//                            .postId(post.getId())
+//                            .title(post.getTitle())
+//                            .imageUrl(imgList.get(0))
+//                            .content(post.getContent())
+//                            .likes(post.getLikes())
+//                            .view(post.getView())
+//                            .category(post.getCategory())
+//                            .nickname(post.getUser().getNickname())
+//                            .createdAt(post.getCreatedAt())
+//                            .modifiedAt(post.getModifiedAt())
+//                            .build()
+//            );
+//        }
+//
+//        return ResponseDto.success(postResponseDto);
+//
+//    }
 
 
 

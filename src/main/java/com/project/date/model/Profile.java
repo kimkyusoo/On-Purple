@@ -61,6 +61,10 @@ public class Profile extends Timestamped{
     @Column(nullable = false)
     private int likes;
 
+    //싫어요 count
+    @Column(nullable = false)
+    private int unLike;
+
     public void profileUpdate(ProfileRequestDto profileRequestDto) {
         this.age = profileRequestDto.getAge();
         this.mbti = profileRequestDto.getMbti();
@@ -80,5 +84,12 @@ public class Profile extends Timestamped{
 
     public void minusLike(){
         this.likes--;
+    }
+    public void addUnLike(){
+        this.unLike++;
+    }
+
+    public void minusUnLike(){
+        this.unLike--;
     }
 }

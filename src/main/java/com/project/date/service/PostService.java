@@ -75,6 +75,7 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
+        post.imgSave(imgList.get(0));
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())

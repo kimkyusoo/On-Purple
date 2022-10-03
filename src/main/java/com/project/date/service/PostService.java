@@ -146,11 +146,26 @@ public class PostService {
         );
     }
 
-    // 전체 게시글 조회
+    // 카테고리 조회, 검색
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllPost(String category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, keyword, pageable);
+
+        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
+        if (postList.isEmpty()) {
+            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+
+        }
+        return ResponseDto.success(postList);
+
+    }
+
+    // 전체 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPost(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, pageable);
         if (postList.isEmpty()) {
             return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
 

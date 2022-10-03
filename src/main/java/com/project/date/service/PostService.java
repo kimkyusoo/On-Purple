@@ -160,7 +160,7 @@ public class PostService {
 
     }
 
-    // 전체 게시글 조회
+    // 카테고리 전체 게시글 조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllPost(String category, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

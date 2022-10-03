@@ -47,6 +47,10 @@ public class LikeService {
         if (null == post) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
+
+        if (!post.validateUser(user)) {
+            return ResponseDto.fail("BAD_REQUEST", "본인에게 좋아요 할 수 없습니다.");
+        }
         //좋아요 한 적 있는지 체크
         Likes liked = likeRepository.findByUserAndPostId(user, postId).orElse(null);
 
@@ -88,6 +92,10 @@ public class LikeService {
         Comment comment = isPresentComment(commentId);
         if (null == comment)
             return ResponseDto.fail("COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다.");
+
+        if (!comment.validateUser(user)) {
+            return ResponseDto.fail("BAD_REQUEST", "본인에게 좋아요 할 수 없습니다.");
+        }
 
         //좋아요 한 적 있는지 체크
         Likes liked = likeRepository.findByUserAndCommentId(user,commentId).orElse(null);
@@ -131,7 +139,9 @@ public class LikeService {
         if (null == profile)
             return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
 
-
+        if (!profile.validateUser(user)) {
+            return ResponseDto.fail("BAD_REQUEST", "본인에게 좋아요 할 수 없습니다.");
+        }
 
         //좋아요 한 적 있는지 체크
         Likes liked = likeRepository.findByUserAndProfileId(user,profileId).orElse(null);
@@ -173,6 +183,9 @@ public class LikeService {
         if (null == profile)
             return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
 
+        if (!profile.validateUser(user)) {
+            return ResponseDto.fail("BAD_REQUEST", "본인에게 싫어요 할 수 없습니다.");
+        }
 
 
         //좋아요 한 적 있는지 체크

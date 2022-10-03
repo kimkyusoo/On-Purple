@@ -92,4 +92,10 @@ public class Profile extends Timestamped{
     public void minusUnLike(){
         this.unLike--;
     }
+
+    // 회원정보 검증
+    public boolean validateUser(User user) {
+
+        return !this.user.equals(user);
+    }
 }

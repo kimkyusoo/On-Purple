@@ -3,10 +3,7 @@ package com.project.date.service;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
-import com.project.date.repository.CommentRepository;
-import com.project.date.repository.LikeRepository;
-import com.project.date.repository.PostRepository;
-import com.project.date.repository.ProfileRepository;
+import com.project.date.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +21,7 @@ public class LikeService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ProfileRepository profileRepository;
+    private final UnLikeRepository unLikeRepository;
 
     // 게시글 좋아요
     @Transactional
@@ -67,7 +65,7 @@ public class LikeService {
         }
     }
 
-    // 게시글 좋아요
+    // 댓글 좋아요
     @Transactional
     public ResponseDto<?> CommentLike(Long commentId,
                                       HttpServletRequest request) {
@@ -109,7 +107,7 @@ public class LikeService {
         }
     }
 
-
+    //회원 좋아요
     @Transactional
     public ResponseDto<?> ProfileLike(Long profileId,
                                       HttpServletRequest request) {
@@ -150,6 +148,48 @@ public class LikeService {
             likeRepository.delete(liked);
             profile.minusLike();
             return ResponseDto.success("좋아요가 취소되었습니다.");
+        }
+    }
+    //회원 싫어요
+    public ResponseDto<?> ProfileUnLike(Long profileId,
+                                        HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Profile profile = isPresentProfile(profileId);
+        if (null == profile)
+            return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
+
+
+
+        //좋아요 한 적 있는지 체크
+        UnLike unLiked = unLikeRepository.findByUserAndProfileId(user,profileId).orElse(null);
+
+        if (unLiked == null) {
+            UnLike profileUnLike = UnLike.builder()
+                    .user(user)
+                    .profile(profile)
+                    .build();
+            unLikeRepository.save(profileUnLike);
+            profile.addUnLike();
+            return ResponseDto.success("싫어요 성공");
+        } else {
+            unLikeRepository.delete(unLiked);
+            profile.minusUnLike();
+            return ResponseDto.success("싫어요가 취소되었습니다.");
         }
     }
 

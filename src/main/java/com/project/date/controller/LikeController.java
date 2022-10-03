@@ -23,4 +23,16 @@ public class LikeController {
         return likeService.CommentLike(commentId, request);
     }
 
+    // 댓글 좋아요
+    @PostMapping( "/comment/like/{profileId}")
+    public ResponseDto<?> createProfileLike(@PathVariable Long profileId, HttpServletRequest request) {
+        return likeService.ProfileLike(profileId, request);
+    }
+
+    // 댓글 좋아요
+    @PostMapping( "/comment/like/{profileId}")
+    public ResponseDto<?> createProfileUnLike(@PathVariable Long profileId, HttpServletRequest request) {
+        return likeService.CommentLike(profileId, request);
+    }
+
 }

@@ -24,7 +24,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
 
     @Override
-    public Slice<PostResponseDto> findAllByCategory(String category,String keyword, Pageable pageable) {
+    public Slice<PostResponseDto> findAllByCategorySearch(String category,String keyword, Pageable pageable) {
         QueryResults<Post> postResult = jpaQueryFactory
                 .selectFrom(post)
                 .offset(pageable.getOffset())
@@ -45,6 +45,8 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                             .category(post.getCategory())
                             .nickname(post.getUser().getNickname())
                             .imageUrl(post.getImgUrl())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
                             .build());
         }
 
@@ -56,6 +58,42 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         return new SliceImpl<>(responseDtoList, pageable, hasNext);
 
         }
+
+    @Override
+    public Slice<PostResponseDto> findAllByCategory(String category,Pageable pageable) {
+        QueryResults<Post> postResult = jpaQueryFactory
+                .selectFrom(post)
+                .offset(pageable.getOffset())
+                .orderBy(post.createdAt.desc())
+                .where(categoryEq(category))
+                .limit(pageable.getPageSize() + 1)
+                .fetchResults();
+
+        List<PostResponseDto> responseDtoList = new ArrayList<>();
+
+        for(Post post : postResult.getResults()){
+            responseDtoList.add(PostResponseDto.builder()
+                    .postId(post.getId())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .view(post.getView())
+                    .likes(post.getLikes())
+                    .category(post.getCategory())
+                    .nickname(post.getUser().getNickname())
+                    .imageUrl(post.getImgUrl())
+                    .createdAt(post.getCreatedAt())
+                    .modifiedAt(post.getModifiedAt())
+                    .build());
+        }
+
+        boolean hasNext = false;
+        if(responseDtoList.size() >pageable.getPageSize()) {
+            responseDtoList.remove(pageable.getPageSize());
+            hasNext = true;
+        }
+        return new SliceImpl<>(responseDtoList, pageable, hasNext);
+
+    }
 
 
         private BooleanExpression categoryEq(String category) {

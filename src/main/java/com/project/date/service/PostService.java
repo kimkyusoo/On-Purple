@@ -148,7 +148,7 @@ public class PostService {
 
     // 카테고리 조회, 검색
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category, String keyword, int page, int size) {
+    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);

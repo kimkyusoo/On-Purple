@@ -22,20 +22,20 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
     private final JPAQueryFactory jpaQueryFactory;
     QPost post = QPost.post;
 
-
+    // 카테고리 검색
     @Override
     public Slice<PostResponseDto> findAllByCategorySearch(String category,String keyword, Pageable pageable) {
-        QueryResults<Post> postResult = jpaQueryFactory
+        List<Post> postResult = jpaQueryFactory
                 .selectFrom(post)
                 .offset(pageable.getOffset())
                 .orderBy(post.createdAt.desc())
                 .where(categoryEq(category),keywordEq(keyword))
                 .limit(pageable.getPageSize() + 1)
-                .fetchResults();
+                .fetch();
 
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
-        for(Post post : postResult.getResults()){
+        for(Post post : postResult){
             responseDtoList.add(PostResponseDto.builder()
                             .postId(post.getId())
                             .title(post.getTitle())
@@ -61,17 +61,17 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     @Override
     public Slice<PostResponseDto> findAllByCategory(String category,Pageable pageable) {
-        QueryResults<Post> postResult = jpaQueryFactory
+        List<Post> postResult = jpaQueryFactory
                 .selectFrom(post)
                 .offset(pageable.getOffset())
                 .orderBy(post.createdAt.desc())
                 .where(categoryEq(category))
                 .limit(pageable.getPageSize() + 1)
-                .fetchResults();
+                .fetch();
 
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
-        for(Post post : postResult.getResults()){
+        for(Post post : postResult){
             responseDtoList.add(PostResponseDto.builder()
                     .postId(post.getId())
                     .title(post.getTitle())

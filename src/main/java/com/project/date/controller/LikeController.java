@@ -32,7 +32,7 @@ public class LikeController {
     // 댓글 좋아요
     @PostMapping( "/user/unlike/{profileId}")
     public ResponseDto<?> createProfileUnLike(@PathVariable Long profileId, HttpServletRequest request) {
-        return likeService.CommentLike(profileId, request);
+        return likeService.ProfileUnLike(profileId, request);
     }
 
 }

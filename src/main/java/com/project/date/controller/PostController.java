@@ -32,10 +32,18 @@ public class PostController {
     return postService.createPost(requestDto,request, imgPaths);
   }
 
-  // 전체 게시글 가져오기
+  // 카테고리별 전체 게시글 가져오기
   @GetMapping("/post") //기본 카테고리 meet 번개
-  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category) {
-    return postService.getAllPost(category);
+  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category,
+                                    @RequestParam int page, @RequestParam int size) {
+    return postService.getAllPost(category,page,size);
+  }
+
+  // 카테고리별 전체 게시글 검색
+  @PostMapping("/post/search") //기본 카테고리 meet 번개
+  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category,
+                                    @RequestParam String keyword, @RequestParam int page, @RequestParam int size) {
+    return postService.getAllPost(category, keyword,page,size);
   }
 
   // 상세 게시글 가져오기

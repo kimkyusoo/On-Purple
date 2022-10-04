@@ -75,7 +75,6 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
-        post.imgSave(imgList.get(0));
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
@@ -155,11 +154,16 @@ public class PostService {
         List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
         List<PostResponseDto> postResponseDto = new ArrayList<>();
         for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
             postResponseDto.add(
                     PostResponseDto.builder()
                             .postId(post.getId())
                             .title(post.getTitle())
-                            .imageUrl(post.getImgUrl())
+                            .imageUrl(imgList.get(0))
                             .content(post.getContent())
                             .likes(post.getLikes())
                             .view(post.getView())

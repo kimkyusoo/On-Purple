@@ -71,15 +71,16 @@ public class Post extends Timestamped {
   }
   //좋아요
   public void addLike(){
-    this.likes++;
+
+        this.likes +=1;
   }
   //좋아요 취소
   public void minusLike(){
-    this.likes--;
+    this.likes -=1;
   }
   //조회수 증가
   public void updateViewCount(){
-    this.view++;
+    this.view +=1;
   }
   //리스트 첫번째 이미지 저장
   public void imgSave(String imgUrl){

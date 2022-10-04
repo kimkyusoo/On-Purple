@@ -79,18 +79,21 @@ public class Profile extends Timestamped{
 
     }
     public void addLike(){
-        this.likes++;
+
+        this.likes +=1;
     }
 
     public void minusLike(){
-        this.likes--;
+
+        this.likes -=1;
     }
     public void addUnLike(){
-        this.unLike++;
+        this.likes +=1;
     }
 
     public void minusUnLike(){
-        this.unLike--;
+
+        this.unLike -=1;
     }
 
     // 회원정보 검증

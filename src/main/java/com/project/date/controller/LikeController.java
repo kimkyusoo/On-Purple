@@ -35,4 +35,12 @@ public class LikeController {
         return likeService.ProfileUnLike(profileId, request);
     }
 
+    //나를 좋아요
+   @PostMapping("/user/likes/{profileId}")
+    public ResponseDto<?> getAllLikeUser(@PathVariable Long profileId, HttpServletRequest request) {
+        return likeService.getAllLikeUser(profileId, request);
+    }
+
+
+
 }

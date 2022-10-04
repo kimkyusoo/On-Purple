@@ -47,10 +47,10 @@ public class Comment extends Timestamped {
   }
 
   public void addLike(){
-    this.likes++;
+    this.likes+=1;
   }
 
   public void minusLike(){
-    this.likes--;
+    this.likes-=1;
   }
 }

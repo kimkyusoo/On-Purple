@@ -1,5 +1,6 @@
 package com.project.date.service;
 
+import com.project.date.dto.response.LikeResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
@@ -9,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,6 +25,7 @@ public class LikeService {
     private final CommentRepository commentRepository;
     private final ProfileRepository profileRepository;
     private final UnLikeRepository unLikeRepository;
+    private final UserRepository userRepository;
 
     // 게시글 좋아요
     @Transactional
@@ -205,6 +209,61 @@ public class LikeService {
             return ResponseDto.success("싫어요가 취소되었습니다.");
         }
     }
+
+    // 날 좋아요 리스트
+    @Transactional
+    public ResponseDto<?> getAllLikeUser(Long profileId, HttpServletRequest request) {
+
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Profile profile = isPresentProfile(profileId);
+        if (null == profile) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
+        }
+
+        if (profile.validateUser(user)) {
+            return ResponseDto.fail("BAD_REQUEST", "본인 정보만 조회 할 수 있습니다.");
+        }
+
+        List<Likes> likeList = likeRepository.findByProfileId(profileId);
+        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
+        for (Likes likes : likeList) {
+            if(likes == null) {
+                return ResponseDto.fail("LIKE NOT FOUND", "좋아요가 없습니다");
+            }
+
+            likeResponseDto.add(
+                    LikeResponseDto.builder()
+                            .nickname(likes.getUser().getNickname())
+                            .build()
+            );
+        }
+
+        return ResponseDto.success(likeResponseDto);
+
+    }
+
+    @Transactional(readOnly = true)
+    public User isPresentUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        return optionalUser.orElse(null);
+    }
+
+
 
     @Transactional(readOnly = true)
     public Profile isPresentProfile(Long profileId) {

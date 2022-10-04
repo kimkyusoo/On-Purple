@@ -43,13 +43,17 @@ public class KakaoService {
         // 3. 필요시에 회원가입
        User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        // 4. 강제 로그인 처리
-        forceLogin(kakaoUser);
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        // 5. response Header에 JWT 토큰 추가
-        kakaoUsersAuthorizationInput(kakaoUser, response);
+        TokenDto tokenDto = tokenProvider.generateTokenDto(kakaoUser);
+        // 헤더에 토큰 담기
+        response.setContentType("application/json;charset=UTF-8");
+        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
+
         return kakaoUserInfo;
-
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -105,7 +109,7 @@ public class KakaoService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties").get("nickname").asText();
         String imageUrl = jsonNode.get("properties").get("profile_image").asText();
-        log.info("카카오 사용자 정보: " + id + ", " + nickname);
+        log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + imageUrl);
         return new KakaoUserRequestDto(id, nickname, imageUrl);
     }
 
@@ -118,36 +122,20 @@ public class KakaoService {
             // 회원가입
             // nickname: kakao nickname
             String nickname = kakaoUserInfo.getNickname();
-
+            String imageUrl = kakaoUserInfo.getImageUrl();
             // password: random UUID
             String password = UUID.randomUUID().toString();
             String encodedPassword = passwordEncoder.encode(password);
-
             kakaoUser = User.builder()
                     .nickname(nickname)
                     .password(encodedPassword)
                     .kakaoId(kakaoId)
+                    .imageUrl(imageUrl)
                     .build();
             userRepository.save(kakaoUser);
             log.info(nickname + "회원가입이 완료되었습니다.");
         }
         return kakaoUser;
     }
-
-    private void forceLogin(User kakaoUser) {
-        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private void kakaoUsersAuthorizationInput(User kakaouser, HttpServletResponse response) {
-        // response header에 token 추가
-
-        TokenDto token = tokenProvider.generateTokenDto(kakaouser);
-        response.addHeader("Authorization", "BEARER" + " " + token.getAccessToken());
-        response.addHeader("RefreshToken", token.getRefreshToken());
-        response.addHeader("Access-Token-Expire-Time", token.getAccessTokenExpiresIn().toString());
-    }
-
 }
 // https://kauth.kakao.com/oauth/authorize?client_id=fdb42734830cbb186c8221bf3acdd6c6&redirect_uri=http://localhost:8080/api/member/kakao/callback&response_type=code

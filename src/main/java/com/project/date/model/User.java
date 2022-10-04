@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -29,7 +31,7 @@ public class User extends Timestamped {
     @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     private Profile profile;
-    @Column( unique = true)
+    @Column(unique = true)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -39,7 +41,7 @@ public class User extends Timestamped {
     @JsonIgnore
     private String password;
 
-    @Column(length = 1000)
+    @Column
     private String imageUrl;
 
     @Column (unique = true)

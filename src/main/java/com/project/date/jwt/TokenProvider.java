@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -32,8 +34,8 @@ public class TokenProvider {
   private static final String AUTHORITIES_KEY = "auth";
   private static final String BEARER_PREFIX = "Bearer ";
 //  AccessToken의 유효기간을 30분으로, RefreshToken의 유효기간을 7일로 설정.
-  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 10;        //10분
-  private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 30;     //30분
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;        //10분
+  private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24;     //30분
 
   private final Key key;
 
@@ -48,15 +50,24 @@ public class TokenProvider {
   }
 
   public TokenDto generateTokenDto(User user) {
+    Map<String, Object> headers = new HashMap<>();
+    headers.put("typ", "JWT");
+    headers.put("alg","HS256");
+
+    Map<String, Object> payloads = new HashMap<>();
+    payloads.put("data", "My First JWT !!");
+
     long now = (new Date().getTime());
 
     Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
     String accessToken = Jwts.builder()
-        .setSubject(user.getUsername())
-        .claim(AUTHORITIES_KEY, Authority.ROLE_USER.toString())
-        .setExpiration(accessTokenExpiresIn)
-        .signWith(key, SignatureAlgorithm.HS256)
-        .compact();
+            .setHeader((headers))
+            .claim("userId", user.getId())
+            .setSubject(user.getUsername())
+            .claim(AUTHORITIES_KEY, Authority.ROLE_USER.toString())
+            .setExpiration(accessTokenExpiresIn)
+            .signWith(key, SignatureAlgorithm.HS256)
+            .compact();
 
     String refreshToken = Jwts.builder()
         .setExpiration(new Date(now + REFRESH_TOKEN_EXPRIRE_TIME))

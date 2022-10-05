@@ -14,5 +14,7 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
     //나를 좋아요 한 회원
     List<Likes> findByProfileId(Long profileId);
     //내가 좋아요 한 회원
-    List<Likes> findByUserId(Long userId);
+    List<Likes> findByUser(User user);
+
+    Optional<Likes>findAllByUserAndProfileId(User user, Long profileId);
 }

@@ -56,6 +56,30 @@ dependencies {
     // querydsl dependencies 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    //websocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+
+    //websocket 지원 안하는 낮은 버전 브라우저에서도 websocket 사용할 수 있게 해주는 라이브러리
+    implementation 'org.webjars:sockjs-client:1.1.2'
+
+    //stomp 라이브러리
+    implementation 'org.webjars:stomp-websocket:2.3.3-1'
+
+    //front - 채팅 웹 화면 구현위해 필요한 JS로드하기 위해 선언, stomp방식 js 추가
+    implementation 'org.webjars.bower:bootstrap:4.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-freemarker'
+    implementation 'org.webjars.bower:vue:2.5.16'
+    implementation 'org.webjars.bower:axios:0.17.1'
+    implementation 'org.webjars:sockjs-client:1.1.2'
+    implementation 'com.google.code.gson:gson:2.8.0'
+
+    //Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    //embedded-redis
+    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+
 }
 
 tasks.named('test') {

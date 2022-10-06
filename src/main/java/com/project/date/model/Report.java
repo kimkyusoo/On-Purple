@@ -1,5 +1,6 @@
 package com.project.date.model;
 
+import com.project.date.dto.request.ReportRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +30,10 @@ public class Report extends Timestamped{
     @Column
     private String imageUrl;
 
+    @Column(nullable = false)
+    private int view;
+
+
     @JoinColumn(name = "userId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
@@ -42,5 +47,16 @@ public class Report extends Timestamped{
     //리스트 첫번째 이미지 저장
     public void imageSave(String imageUrl){
         this.imageUrl = imageUrl;
+    }
+
+    //조회수 증가
+    public void updateViewCount(){
+        this.view +=1;
+    }
+
+    public void update(ReportRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.category= requestDto.getCategory();
     }
 }

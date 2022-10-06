@@ -8,10 +8,8 @@ import com.project.date.dto.response.ReportResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.Img;
-import com.project.date.model.Post;
 import com.project.date.model.Report;
 import com.project.date.model.User;
-import com.project.date.repository.ImgRepository;
 import com.project.date.repository.ReportRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +27,6 @@ public class ReportService {
 
     private final ReportRepository reportRepository;
     private final TokenProvider tokenProvider;
-    private final ImgRepository imgRepository;
     private final AwsS3UploadService awsS3UploadService;
 
     // 신고글 작성

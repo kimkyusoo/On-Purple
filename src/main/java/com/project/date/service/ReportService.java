@@ -112,8 +112,8 @@ public class ReportService {
 
     // 전체 게시글 조회
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllReport(String category) {
-        List<Report> reportList = reportRepository.findAllOrderByCreatedAtDesc();
+    public ResponseDto<?> getAllReport() {
+        List<Report> reportList = reportRepository.findAllByOrderByModifiedAtDesc();
         List<ReportResponseDto> reportResponseDto = new ArrayList<>();
         for (Report report : reportList) {
             reportResponseDto.add(

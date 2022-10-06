@@ -18,7 +18,7 @@ public class ReportController {
     private final ReportService reportService;
     private final AwsS3UploadService s3Service;
 
-    // 게시글 작성
+    // 신고글 작성
     @PostMapping( "/report")
     public ResponseDto<?> createReport(@RequestPart(value = "data",required = false) ReportRequestDto requestDto,
                                      HttpServletRequest request, @RequestPart(value = "imageUrl",required = false) List<MultipartFile> multipartFiles) {
@@ -30,20 +30,19 @@ public class ReportController {
         return reportService.createReport(requestDto,request, imgPaths);
     }
 
-    // 카테고리별 전체 게시글 가져오기
-    @GetMapping("/report") //기본 카테고리 meet 번개
+    @GetMapping("/report")
     public ResponseDto<?> getAllPosts() {
         return reportService.getAllReport();
     }
 
-    // 상세 게시글 가져오기
+    // 상세 신고글 가져오기
     @GetMapping( "/report/{reportId}")
     public ResponseDto<?> getPost(@PathVariable Long reportId) {
         return reportService.getReport(reportId);
     }
 
 
-    // 게시글 수정
+    // 신고글 수정
     @PutMapping( "/report/{reportId}")
     public ResponseDto<?> updatePost(@PathVariable Long reportId,
                                      @RequestPart(value = "data") ReportRequestDto requestDto,
@@ -57,7 +56,7 @@ public class ReportController {
         return reportService.updateReport(reportId, requestDto, request, imgPaths);
     }
 
-    //게시글 삭제
+    //신고글 삭제
     @DeleteMapping( "/report/{reportId}")
     public ResponseDto<?> deleteReport(@PathVariable Long reportId,
                                      HttpServletRequest request) {

@@ -32,7 +32,7 @@ public class ReportService {
     private final ImgRepository imgRepository;
     private final AwsS3UploadService awsS3UploadService;
 
-    // 게시글 작성
+    // 신고글 작성
     @Transactional
     public ResponseDto<?> createReport(ReportRequestDto requestDto,
                                        HttpServletRequest request,
@@ -85,7 +85,7 @@ public class ReportService {
         );
     }
 
-    // 게시글 단건 조회
+    // 신고글 단건 조회
     @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
     public ResponseDto<?> getReport(Long reportId) {
         Report report = isPresentReport(reportId);
@@ -110,7 +110,7 @@ public class ReportService {
         );
     }
 
-    // 전체 게시글 조회
+    // 전체 신고글 조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllReport() {
         List<Report> reportList = reportRepository.findAllByOrderByModifiedAtDesc();
@@ -136,7 +136,7 @@ public class ReportService {
     }
 
 
-
+    //신고글 업데이트
     @Transactional
     public ResponseDto<ReportResponseDto> updateReport(Long reportId,
                                                    ReportRequestDto requestDto,

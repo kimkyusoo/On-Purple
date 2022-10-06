@@ -1,6 +1,7 @@
 package com.project.date.service;
 
 import com.project.date.dto.response.LikeResponseDto;
+import com.project.date.dto.response.PostResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
@@ -65,11 +66,16 @@ public class LikeService {
                     .build();
             likeRepository.save(postLike);
             post.addLike();
-            return ResponseDto.success("좋아요 성공");
+            return ResponseDto.success(
+                    LikeResponseDto.builder()
+                            .likes(postLike.getPost().getLikes())
+                            .build()
+            );
         } else {
             likeRepository.delete(liked);
             post.minusLike();
-            return ResponseDto.success("좋아요가 취소되었습니다.");
+            return ResponseDto.success(false);
+
         }
     }
 
@@ -111,11 +117,14 @@ public class LikeService {
                     .build();
             likeRepository.save(commentLike);
             comment.addLike();
-            return ResponseDto.success("좋아요 성공");
+            return ResponseDto.success(
+                    LikeResponseDto.builder()
+                            .likes(commentLike.getComment().getLikes()).build()
+            );
         } else {
             likeRepository.delete(liked);
             comment.minusLike();
-            return ResponseDto.success("좋아요가 취소되었습니다.");
+            return ResponseDto.success(false);
         }
     }
 

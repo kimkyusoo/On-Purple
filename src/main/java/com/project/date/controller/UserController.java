@@ -62,10 +62,17 @@ public class UserController {
         return userService.checkNickname(nickname);
     }
 
-//    @RequestMapping(value = "/user/userUpdate", method = RequestMethod.PUT)
-//    public ResponseDto<?> userUpdate(HttpServletRequest request, UserUpdateRequestDto requestDto) {
-//        return userService.updateUser(request, requestDto);
-//    }
+    @RequestMapping(value = "/user/update/{userId}", method = RequestMethod.PUT)
+    public ResponseDto<?> userUpdate(@PathVariable Long userId, @RequestPart(value = "info",required = false) @Valid UserUpdateRequestDto requestDto,
+                                     @RequestPart(value = "imageUrl", required = false)List<MultipartFile> multipartFiles, HttpServletRequest request) {
+
+
+        if (multipartFiles == null) {
+            throw new NullPointerException("사진을 업로드해주세요");
+        }
+        List<String> imgPaths = s3Service.upload(multipartFiles);
+        return userService.updateUser(userId, requestDto, request, imgPaths);
+    }
 
 
     @RequestMapping(value = "/user/me", method = RequestMethod.GET)

@@ -75,13 +75,14 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
+        post.imageSave(imgList.get(0));
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
                         .title(post.getTitle())
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
-                        .imgList(imgList)
+                        .imageUrl(post.getImgUrl())
                         .category(post.getCategory())
                         .likes(post.getLikes())
                         .view(0)

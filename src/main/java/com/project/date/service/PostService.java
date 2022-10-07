@@ -97,6 +97,34 @@ public class PostService {
         }
     }
 
+    //    // 카테고리 조회, 검색
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
+        if (postList.isEmpty()) {
+            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+
+        }
+        return ResponseDto.success(postList);
+
+    }
+
+    // 카테고리 전체 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPost(String category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, pageable);
+        if (postList.isEmpty()) {
+            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+
+        }
+        return ResponseDto.success(postList);
+
+    }
+
     // 게시글 단건 조회
     @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
     public ResponseDto<?> getPost(Long postId) {
@@ -144,42 +172,6 @@ public class PostService {
                         .build()
         );
     }
-
-
-
-
-    // 전체 게시글 조회
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category) {
-        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
-        List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) {
-            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
-            postResponseDto.add(
-                    PostResponseDto.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .imageUrl(imgList.get(0))
-                            .content(post.getContent())
-                            .likes(post.getLikes())
-                            .view(post.getView())
-                            .category(post.getCategory())
-                            .nickname(post.getUser().getNickname())
-                            .createdAt(post.getCreatedAt())
-                            .modifiedAt(post.getModifiedAt())
-                            .build()
-            );
-        }
-
-        return ResponseDto.success(postResponseDto);
-
-    }
-
-
 
     @Transactional
     public ResponseDto<PostResponseDto> updatePost(Long postId,
@@ -300,32 +292,38 @@ public class PostService {
         return tokenProvider.getUserFromAuthentication();
     }
 
+/*
+    // 전체 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPost(String category) {
+        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+        List<PostResponseDto> postResponseDto = new ArrayList<>();
+        for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
+            postResponseDto.add(
+                    PostResponseDto.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .imageUrl(imgList.get(0))
+                            .content(post.getContent())
+                            .likes(post.getLikes())
+                            .view(post.getView())
+                            .category(post.getCategory())
+                            .nickname(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
+        }
 
-    //    // 카테고리 조회, 검색
-//    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//
-//        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
-//        if (postList.isEmpty()) {
-//            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
-//
-//        }
-//        return ResponseDto.success(postList);
-//
-//    }
-//
-//    // 카테고리 전체 게시글 조회
-//    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllPost(String category, int page, int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//
-//        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, pageable);
-//        if (postList.isEmpty()) {
-//            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
-//
-//        }
-//        return ResponseDto.success(postList);
-//
-//    }
+        return ResponseDto.success(postResponseDto);
+
+    }
+*/
+
+
 }

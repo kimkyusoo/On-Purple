@@ -44,7 +44,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                             .likes(post.getLikes())
                             .category(post.getCategory())
                             .nickname(post.getUser().getNickname())
-                            .imageUrl(post.getImgUrl())
+                            .imageUrl(post.getImageUrl())
                             .createdAt(post.getCreatedAt())
                             .modifiedAt(post.getModifiedAt())
                             .build());
@@ -80,7 +80,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                     .likes(post.getLikes())
                     .category(post.getCategory())
                     .nickname(post.getUser().getNickname())
-                    .imageUrl(post.getImgUrl())
+                    .imageUrl(post.getImageUrl())
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build());
@@ -111,6 +111,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
             }else if (keyword == ""){
                 return null;
             }
-            return (post.title.contains(keyword)).or(post.content.contains(keyword));
+            return (post.title.contains(keyword));
+            //.or(post.content.contains(keyword)
         }
 }

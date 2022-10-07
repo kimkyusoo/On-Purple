@@ -54,7 +54,7 @@ public class Post extends Timestamped {
   private String category;
   //단일 게시글 리스트 이미지 처리를 위한 컬럼
   @Column
-  private String imgUrl;
+  private String imageUrl;
 
 
 
@@ -82,10 +82,10 @@ public class Post extends Timestamped {
   public void updateViewCount(){
     this.view +=1;
   }
-//  //리스트 첫번째 이미지 저장
-//  public void imgSave(String imgUrl){
-//        this.imgUrl = imgUrl;
-//    }
+  //리스트 첫번째 이미지 저장
+  public void imageSave(String imageUrl){
+        this.imageUrl = imageUrl;
+    }
 }
 
 

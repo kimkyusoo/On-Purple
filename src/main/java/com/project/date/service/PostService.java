@@ -82,7 +82,7 @@ public class PostService {
                         .title(post.getTitle())
                         .content(post.getContent())
                         .nickname(post.getUser().getNickname())
-                        .imageUrl(post.getImgUrl())
+                        .imgList(imgList)
                         .category(post.getCategory())
                         .likes(post.getLikes())
                         .view(0)
@@ -214,6 +214,8 @@ public class PostService {
                 awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
             }
             imgRepository.deleteByPost_Id(post.getId());
+            String deleteImage = post.getImageUrl();
+            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         }
 
         List<String> newImgList = new ArrayList<>();
@@ -222,6 +224,7 @@ public class PostService {
             imgRepository.save(img);
             newImgList.add(img.getImageUrl());
         }
+        post.imageSave(newImgList.get(0));
 
         post.update(requestDto);
         return ResponseDto.success(
@@ -239,7 +242,7 @@ public class PostService {
                         .build()
         );
     }
-
+    //게시글 삭제
     @Transactional
     public ResponseDto<?> deletePost(Long postId, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
@@ -276,6 +279,8 @@ public class PostService {
         for (String imgUrl : imgList) {
             awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
         }
+        String deleteImage = post.getImageUrl();
+        awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         return ResponseDto.success("delete success");
     }
 

@@ -38,14 +38,7 @@ public class PostController {
     return postService.getAllPost(category);
   }
 
-  // 카테고리별 전체 게시글 가져오기 // 페이지네이션 테스트
-  @GetMapping("/post/test") //기본 카테고리 meet 번개
-  public ResponseDto<?> getAllPostTest(@RequestParam(defaultValue = "meet", value="category")  String category,
-                                       @RequestParam int page, @RequestParam int size) {
-    return postService.getAllPostTest(category, page, size);
-  }
-
-
+  
   // 상세 게시글 가져오기
   @GetMapping( "/post/{postId}")
   public ResponseDto<?> getPost(@PathVariable Long postId) {

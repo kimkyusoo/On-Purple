@@ -100,7 +100,7 @@ public class PostService {
     }
 
 
-    // 전체 게시글 조회 1
+    // 전체 게시글 조회
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllPost(String category) {
         List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
@@ -130,40 +130,6 @@ public class PostService {
         return ResponseDto.success(postResponseDto);
 
     }
-
-    // 전체 게시글 조회 2
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPostTest(String category, int page,int size ) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category, pageable);
-        List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) {
-            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
-            postResponseDto.add(
-                    PostResponseDto.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .imageUrl(imgList.get(0))
-                            .content(post.getContent())
-                            .likes(post.getLikes())
-                            .view(post.getView())
-                            .category(post.getCategory())
-                            .nickname(post.getUser().getNickname())
-                            .createdAt(post.getCreatedAt())
-                            .modifiedAt(post.getModifiedAt())
-                            .build()
-            );
-        }
-
-        return ResponseDto.success(postResponseDto);
-
-    }
-
-
 
 
 

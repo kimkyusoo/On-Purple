@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class ProfileRequestDto {
-    private int age;
+    private Integer age;
     private String mbti;
     private String introduction;
     private String idealType;

@@ -25,7 +25,7 @@ public class Profile extends Timestamped{
     private User user;
 
     @Column
-    private Long age;
+    private int age;
 
     @Column
     private String mbti;

@@ -84,7 +84,6 @@ public class User extends Timestamped {
     }
     public void update(UserUpdateRequestDto userUpdateRequestDto) {
         this.password = userUpdateRequestDto.getPassword();
-        this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
 
     //리스트 첫번째 이미지 저장

@@ -173,7 +173,8 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<UserResponseDto> updateUser(Long userId,UserUpdateRequestDto requestDto, HttpServletRequest request, List<String> imgPaths) {
+    public ResponseDto<UserResponseDto> updateUser(Long userId,UserUpdateRequestDto requestDto,
+                                                   HttpServletRequest request, List<String> imgPaths) {
 
 
         if (null == request.getHeader("RefreshToken")) {
@@ -191,31 +192,24 @@ public class UserService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        //저장된 이미지 리스트 가져오기
-        List<Img> findImgList = imgRepository.findByUser_id(user.getId());
-        List<String> imgList = new ArrayList<>();
-        for (Img img : findImgList) {
-            imgList.add(img.getImageUrl());
-        }
         if(imgPaths != null) {
             String deleteImage = user.getImageUrl();
             awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         }
 
-        List<String> newImgList = new ArrayList<>();
+        List<String> imgList = new ArrayList<>();
         for (String imgUrl : imgPaths) {
             Img img = new Img(imgUrl, user);
-            imgRepository.save(img);
-            newImgList.add(img.getImageUrl());
+            imgList.add(img.getImageUrl());
         }
-        user.imageSave(newImgList.get(0));
+        user.imageSave(imgList.get(0));
 
         user.update(requestDto);
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .userId(user.getId())
                         .nickname(user.getNickname())
-                        .imgList(newImgList)
+                        .imageUrl(user.getImageUrl())
                         .build()
         );
     }

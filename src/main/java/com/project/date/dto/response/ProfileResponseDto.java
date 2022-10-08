@@ -16,7 +16,7 @@ public class ProfileResponseDto{
     private String nickname;
     private String imageUrl;
     private List<String> imgList;
-    private int age;
+    private Integer age;
     private String mbti;
     private String introduction;
     private String idealType;
@@ -29,6 +29,6 @@ public class ProfileResponseDto{
     private String area;
     private Integer likes;
     private Integer unLike;
-    private List<OtherLikeResponseDto> otherLikeResponseDtoList;
+    //private List<OtherLikeResponseDto> otherLikeResponseDtoList;
     private List<LikedResponseDto> likedResponseDtoList;
 }

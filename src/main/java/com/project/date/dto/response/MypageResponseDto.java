@@ -15,7 +15,7 @@ public class MypageResponseDto{
     private Long profileId;
     private String nickname;
     private String imageUrl;
-    private Long age;
+    private Integer age;
     private String mbti;
     private String introduction;
     private String area;

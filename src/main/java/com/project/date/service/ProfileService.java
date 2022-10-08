@@ -76,11 +76,7 @@ public class ProfileService {
         List<Profile> profileList = profileRepository.findAllByOrderByModifiedAtDesc();
         List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
         for (Profile profile : profileList) {
-            List<Img> findImgList = imgRepository.findByUser_id(profile.getUser().getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
+
             profileResponseDto.add(
                     ProfileResponseDto.builder()
                             .profileId(profile.getId())
@@ -131,7 +127,7 @@ public class ProfileService {
     }
 
     @Transactional
-    public ResponseDto<ProfileUpdateResponseDto> updateProfile(Long profileId,
+    public ResponseDto<ProfileResponseDto> updateProfile(Long profileId,
                                                                ProfileRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -156,9 +152,9 @@ public class ProfileService {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
-        profile.update(requestDto);
+        profile.profileUpdate(requestDto);
         return ResponseDto.success(
-                ProfileUpdateResponseDto.builder()
+                ProfileResponseDto.builder()
                         .profileId(profile.getId())
                         .age(profile.getAge())
                         .mbti(profile.getMbti())

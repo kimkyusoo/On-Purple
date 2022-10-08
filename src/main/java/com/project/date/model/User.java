@@ -2,13 +2,8 @@ package com.project.date.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.date.dto.request.UserUpdateRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -21,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Setter
 public class User extends Timestamped {
 
     @Id
@@ -84,10 +80,8 @@ public class User extends Timestamped {
         this.username = username;
         this.password = password;
     }
-    public void userUpdate(UserUpdateRequestDto userUpdateRequestDto) {
-        this.nickname = userUpdateRequestDto.getNickname();
+    public void update(UserUpdateRequestDto userUpdateRequestDto) {
         this.password = userUpdateRequestDto.getPassword();
-        this.imageUrl = userUpdateRequestDto.getImageUrl();
     }
 
     //리스트 첫번째 이미지 저장

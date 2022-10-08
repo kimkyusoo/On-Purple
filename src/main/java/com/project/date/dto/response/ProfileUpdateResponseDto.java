@@ -1,14 +1,19 @@
-package com.project.date.dto.request;
+package com.project.date.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+@Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class ProfileRequestDto {
-    private Integer age;
+public class ProfileUpdateResponseDto {
+    private Long profileId;
+    private int age;
     private String mbti;
     private String introduction;
     private String idealType;
@@ -19,5 +24,4 @@ public class ProfileRequestDto {
     private String smoke;
     private String likeMovieType;
     private String area;
-
 }

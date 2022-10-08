@@ -12,4 +12,5 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     List<Profile> findAllByOrderByModifiedAtDesc();
 
     List<Profile> findByUser(User user);
+
 }

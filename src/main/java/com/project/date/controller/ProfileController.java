@@ -5,6 +5,7 @@ import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -28,4 +29,11 @@ public class ProfileController {
     public ResponseDto<?> getProfile(@PathVariable Long profileId) {
         return profileService.getProfile(profileId);
     }
+
+    @PutMapping( "/mypage/userInfo/{profileId}")
+    public ResponseDto<?> updateProfile(@PathVariable Long profileId, @RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
+
+       return profileService.updateProfile(profileId, requestDto, request);
+    }
+
 }

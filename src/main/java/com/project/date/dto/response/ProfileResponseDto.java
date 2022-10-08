@@ -11,12 +11,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDto {
+public class ProfileResponseDto{
     private Long profileId;
     private String nickname;
     private String imageUrl;
     private List<String> imgList;
-    private Long age;
+    private Integer age;
     private String mbti;
     private String introduction;
     private String idealType;
@@ -28,4 +28,8 @@ public class ProfileResponseDto {
     private String likeMovieType;
     private String area;
     private Integer likes;
+    private Integer unLike;
+    private List<OtherLikeResponseDto> otherLikeResponseDtoList;
+    private List<LikedResponseDto> likedResponseDtoList;
+
 }

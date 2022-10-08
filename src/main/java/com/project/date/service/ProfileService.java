@@ -3,7 +3,6 @@ package com.project.date.service;
 import com.project.date.dto.request.ProfileRequestDto;
 import com.project.date.dto.response.ProfileResponseDto;
 import com.project.date.dto.response.ResponseDto;
-import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;
@@ -136,6 +135,51 @@ public class ProfileService {
                         .likeMovieType(profile.getLikeMovieType())
                         .area(profile.getArea())
 
+                        .build()
+        );
+    }
+
+    @Transactional
+    public ResponseDto<ProfileResponseDto> updateProfile(Long profileId,
+                                                               ProfileRequestDto requestDto, HttpServletRequest request) {
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        Profile profile = isPresentProfile(profileId);
+        if (null == profile) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
+        }
+        if(profile.validateUser(user)){
+            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
+        }
+
+        profile.update(requestDto);
+        return ResponseDto.success(
+                ProfileResponseDto.builder()
+                        .profileId(profile.getId())
+                        .age(profile.getAge())
+                        .mbti(profile.getMbti())
+                        .introduction(profile.getIntroduction())
+                        .idealType(profile.getIdealType())
+                        .job(profile.getJob())
+                        .hobby(profile.getHobby())
+                        .drink(profile.getDrink())
+                        .pet(profile.getPet())
+                        .smoke(profile.getSmoke())
+                        .likeMovieType(profile.getLikeMovieType())
+                        .area(profile.getArea())
                         .build()
         );
     }

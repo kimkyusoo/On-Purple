@@ -21,8 +21,8 @@ public class SignupRequestDto {
     private String username;
 
     @NotBlank
-    @Size(min = 4, max = 12)
-    @Pattern(regexp = "[a-zA-Z\\d]*${4,12}")
+    @Size(min = 2, max = 8)
+    @Pattern(regexp = "^([가-힣]+[0-9]*)${2,8}")
     private String nickname;
 
     @NotBlank

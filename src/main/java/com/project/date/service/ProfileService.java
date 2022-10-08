@@ -3,7 +3,6 @@ package com.project.date.service;
 import com.project.date.dto.request.ProfileRequestDto;
 import com.project.date.dto.response.ProfileResponseDto;
 import com.project.date.dto.response.ResponseDto;
-import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;

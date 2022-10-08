@@ -1,8 +1,6 @@
 package com.project.date.model;
 
-import com.project.date.dto.request.PostRequestDto;
 import com.project.date.dto.request.ProfileRequestDto;
-import com.sun.istack.NotNull;
 import lombok.*;
 
 import javax.persistence.*;

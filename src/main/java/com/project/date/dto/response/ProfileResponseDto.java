@@ -31,4 +31,5 @@ public class ProfileResponseDto{
     private Integer unLike;
     private List<OtherLikeResponseDto> otherLikeResponseDtoList;
     private List<LikedResponseDto> likedResponseDtoList;
+
 }

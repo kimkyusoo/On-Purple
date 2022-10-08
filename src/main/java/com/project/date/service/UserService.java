@@ -255,10 +255,6 @@ public class UserService {
         return tokenProvider.getUserFromAuthentication();
     }
 
-
-
-
-
     //  TokenDto와 HttpServletResponse 응답을 헤더에 보낼 경우
     //  권한과 tokenDto에 있는 AccessToken을 추가
     //  Refresh-token을 추가

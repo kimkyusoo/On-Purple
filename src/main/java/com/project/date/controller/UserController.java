@@ -1,6 +1,5 @@
 package com.project.date.controller;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.project.date.dto.request.KakaoUserRequestDto;
 import com.project.date.dto.request.LoginRequestDto;
@@ -49,8 +48,6 @@ public class UserController {
                                 HttpServletResponse response) {
         return userService.login(requestDto, response);
     }
-
-
 
     @PostMapping("/user/idCheck/{username}")
     public ResponseDto<?> checkUser(@PathVariable String username) {

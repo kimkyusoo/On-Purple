@@ -1,15 +1,15 @@
 package com.project.date.model;
 
+import com.project.date.dto.request.PostRequestDto;
 import com.project.date.dto.request.ProfileRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.sun.istack.NotNull;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,7 +24,7 @@ public class Profile extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @Column
+    @Column(nullable = false)
     private int age;
 
     @Column
@@ -65,17 +65,18 @@ public class Profile extends Timestamped{
     @Column(nullable = false)
     private int unLike;
 
-    public void profileUpdate(ProfileRequestDto profileRequestDto) {
-        this.age = profileRequestDto.getAge();
-        this.mbti = profileRequestDto.getMbti();
-        this.introduction = profileRequestDto.getIntroduction();
-        this.idealType = profileRequestDto.getIdealType();
-        this.job = profileRequestDto.getJob();
-        this.hobby = profileRequestDto.getHobby();
-        this.pet = profileRequestDto.getPet();
-        this.smoke = profileRequestDto.getSmoke();
-        this.likeMovieType = profileRequestDto.getLikeMovieType();
-        this.area = profileRequestDto.getArea();
+    public void update(ProfileRequestDto requestDto) {
+        this.age = requestDto.getAge();
+        this.mbti = requestDto.getMbti();
+        this.introduction = requestDto.getIntroduction();
+        this.idealType = requestDto.getIdealType();
+        this.job = requestDto.getJob();
+        this.hobby = requestDto.getHobby();
+        this.drink = requestDto.getDrink();
+        this.pet = requestDto.getPet();
+        this.smoke = requestDto.getSmoke();
+        this.likeMovieType = requestDto.getLikeMovieType();
+        this.area = requestDto.getArea();
 
     }
     public void addLike(){
@@ -101,4 +102,5 @@ public class Profile extends Timestamped{
 
         return !this.user.equals(user);
     }
+
 }

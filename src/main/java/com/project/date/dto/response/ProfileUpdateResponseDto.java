@@ -11,12 +11,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDto{
+public class ProfileUpdateResponseDto {
     private Long profileId;
-    private String nickname;
-    private String imageUrl;
-    private List<String> imgList;
-    private Integer age;
+    private int age;
     private String mbti;
     private String introduction;
     private String idealType;
@@ -27,8 +24,4 @@ public class ProfileResponseDto{
     private String smoke;
     private String likeMovieType;
     private String area;
-    private Integer likes;
-    private Integer unLike;
-    private List<OtherLikeResponseDto> otherLikeResponseDtoList;
-    private List<LikedResponseDto> likedResponseDtoList;
 }

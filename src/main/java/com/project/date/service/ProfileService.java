@@ -1,7 +1,9 @@
 package com.project.date.service;
 
 import com.project.date.dto.request.ProfileRequestDto;
-import com.project.date.dto.response.*;
+import com.project.date.dto.response.ProfileResponseDto;
+import com.project.date.dto.response.ResponseDto;
+import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;
@@ -29,6 +31,15 @@ public class ProfileService {
 
     @Transactional
     public ResponseDto<?> createProfile(ProfileRequestDto requestDto, HttpServletRequest request) {
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
 
         User user = validateUser(request);
         if (null == user) {
@@ -76,17 +87,19 @@ public class ProfileService {
         List<Profile> profileList = profileRepository.findAllByOrderByModifiedAtDesc();
         List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
         for (Profile profile : profileList) {
-
+            List<Img> findImgList = imgRepository.findByUser_id(profile.getUser().getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
             profileResponseDto.add(
                     ProfileResponseDto.builder()
                             .profileId(profile.getId())
                             .nickname(profile.getUser().getNickname())
                             .age(profile.getAge())
                             .introduction(profile.getIntroduction())
-                            .imageUrl(profile.getUser().getImageUrl())
+                            .imageUrl(imgList.get(0))
                             .area(profile.getArea())
-                            .likes(profile.getLikes())
-                            .unLike(profile.getUnLike())
                             .build()
             );
         }
@@ -105,10 +118,11 @@ public class ProfileService {
         for (Img img : findImgList) {
             imgList.add(img.getImageUrl());
         }
+
         return ResponseDto.success(
                 ProfileResponseDto.builder()
                         .profileId(profile.getId())
-                        .imageUrl(profile.getUser().getImageUrl())
+                        .imageUrl(imgList.get(0))
                         .nickname(profile.getUser().getNickname())
                         .age(profile.getAge())
                         .mbti(profile.getMbti())
@@ -152,7 +166,7 @@ public class ProfileService {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
-        profile.profileUpdate(requestDto);
+        profile.update(requestDto);
         return ResponseDto.success(
                 ProfileResponseDto.builder()
                         .profileId(profile.getId())
@@ -177,6 +191,11 @@ public class ProfileService {
             return null;
         }
         return tokenProvider.getUserFromAuthentication();
+    }
+    @Transactional(readOnly = true)
+    public User isPresentUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        return optionalUser.orElse(null);
     }
 
     @Transactional(readOnly = true)

@@ -15,6 +15,7 @@ import com.project.date.repository.ImgRepository;
 import com.project.date.repository.PostRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -75,7 +76,7 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
-        post.imageSave(imgList.get(0));
+//        post.imageSave(imgList.get(0));
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
@@ -98,33 +99,73 @@ public class PostService {
         }
     }
 
-    //    // 카테고리 조회, 검색
+
+    // 전체 게시글 조회 1
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
-        if (postList.isEmpty()) {
-            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
-
+    public ResponseDto<?> getAllPost(String category) {
+        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+        List<PostResponseDto> postResponseDto = new ArrayList<>();
+        for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
+            postResponseDto.add(
+                    PostResponseDto.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .imageUrl(imgList.get(0))
+                            .content(post.getContent())
+                            .likes(post.getLikes())
+                            .view(post.getView())
+                            .category(post.getCategory())
+                            .nickname(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
         }
-        return ResponseDto.success(postList);
+
+        return ResponseDto.success(postResponseDto);
 
     }
 
-    // 카테고리 전체 게시글 조회
+    // 전체 게시글 조회 2
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category, int page, int size) {
+    public ResponseDto<?> getAllPostTest(String category, int page,int size ) {
         Pageable pageable = PageRequest.of(page, size);
-
-        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, pageable);
-        if (postList.isEmpty()) {
-            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
-
+        Page<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category, pageable);
+        List<PostResponseDto> postResponseDto = new ArrayList<>();
+        for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
+            postResponseDto.add(
+                    PostResponseDto.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .imageUrl(imgList.get(0))
+                            .content(post.getContent())
+                            .likes(post.getLikes())
+                            .view(post.getView())
+                            .category(post.getCategory())
+                            .nickname(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
         }
-        return ResponseDto.success(postList);
+
+        return ResponseDto.success(postResponseDto);
 
     }
+
+
+
+
 
     // 게시글 단건 조회
     @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
@@ -214,8 +255,8 @@ public class PostService {
                 awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
             }
             imgRepository.deleteByPost_Id(post.getId());
-            String deleteImage = post.getImageUrl();
-            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
+//            String deleteImage = post.getImageUrl();
+//            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         }
 
         List<String> newImgList = new ArrayList<>();
@@ -224,7 +265,7 @@ public class PostService {
             imgRepository.save(img);
             newImgList.add(img.getImageUrl());
         }
-        post.imageSave(newImgList.get(0));
+//        post.imageSave(newImgList.get(0));
 
         post.update(requestDto);
         return ResponseDto.success(
@@ -298,38 +339,33 @@ public class PostService {
         return tokenProvider.getUserFromAuthentication();
     }
 
-/*
-    // 전체 게시글 조회
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category) {
-        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
-        List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) {
-            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
-            postResponseDto.add(
-                    PostResponseDto.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .imageUrl(imgList.get(0))
-                            .content(post.getContent())
-                            .likes(post.getLikes())
-                            .view(post.getView())
-                            .category(post.getCategory())
-                            .nickname(post.getUser().getNickname())
-                            .createdAt(post.getCreatedAt())
-                            .modifiedAt(post.getModifiedAt())
-                            .build()
-            );
-        }
-
-        return ResponseDto.success(postResponseDto);
-
-    }
-*/
+//    //    // 카테고리 조회, 검색
+//    @Transactional(readOnly = true)
+//    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
+//        if (postList.isEmpty()) {
+//            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+//
+//        }
+//        return ResponseDto.success(postList);
+//
+//    }
+//
+//    // 카테고리 전체 게시글 조회
+//    @Transactional(readOnly = true)
+//    public ResponseDto<?> getAllPost(String category, int page, int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//
+//        Slice<PostResponseDto> postList = postRepository.findAllByCategory(category, pageable);
+//        if (postList.isEmpty()) {
+//            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+//
+//        }
+//        return ResponseDto.success(postList);
+//
+//    }
 
 
 }

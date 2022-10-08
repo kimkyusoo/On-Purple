@@ -15,7 +15,6 @@ import com.project.date.repository.ImgRepository;
 import com.project.date.repository.PostRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -76,7 +75,7 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
-//        post.imageSave(imgList.get(0));
+
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
@@ -180,7 +179,7 @@ public class PostService {
                         .build()
         );
     }
-
+    //게시글 업데이트
     @Transactional
     public ResponseDto<PostResponseDto> updatePost(Long postId,
                                                    PostRequestDto requestDto,
@@ -231,7 +230,6 @@ public class PostService {
             imgRepository.save(img);
             newImgList.add(img.getImageUrl());
         }
-//        post.imageSave(newImgList.get(0));
 
         post.update(requestDto);
         return ResponseDto.success(
@@ -305,9 +303,9 @@ public class PostService {
         return tokenProvider.getUserFromAuthentication();
     }
 
-//    //    // 카테고리 조회, 검색
+//    // 카테고리 전체 게시글 조회
 //    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
+//    public ResponseDto<?> getAllPost(String category, String keyword, int page, int size) {
 //        Pageable pageable = PageRequest.of(page, size);
 //
 //        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
@@ -318,7 +316,7 @@ public class PostService {
 //        return ResponseDto.success(postList);
 //
 //    }
-//
+
 //    // 카테고리 전체 게시글 조회
 //    @Transactional(readOnly = true)
 //    public ResponseDto<?> getAllPost(String category, int page, int size) {
@@ -332,6 +330,7 @@ public class PostService {
 //        return ResponseDto.success(postList);
 //
 //    }
+
 
 
 }

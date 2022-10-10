@@ -42,7 +42,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<?> checkNickname(String nickname) {
+    public ResponseDto checkNickname(String nickname) {
         Optional<User> user = userRepository.findByNickname(nickname);
         if (null != isPresentNickname(nickname))
             return ResponseDto.fail("DUPLICATED_NICKANAME", "중복된 닉네임 입니다.");
@@ -148,7 +148,7 @@ public class UserService {
 //    }
 
     @Transactional
-    public ResponseDto<?> getUser(HttpServletRequest request){
+    public ResponseDto<?> getUser(HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -173,8 +173,8 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<UserResponseDto> updateUser(Long userId,UserUpdateRequestDto requestDto,
-                                                   HttpServletRequest request, List<String> imgPaths) {
+    public ResponseDto<?> updateUser(UserUpdateRequestDto requestDto,
+                                     HttpServletRequest request) {
 
 
         if (null == request.getHeader("RefreshToken")) {
@@ -187,15 +187,58 @@ public class UserService {
                     "로그인이 필요합니다.");
         }
 
-        User user = isPresentUserId(userId);
+        User user = validateUser(request);
         if (null == user) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        if(imgPaths != null) {
+        if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
+            return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
+                    "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+        }
+
+
+        user.update(requestDto);
+        user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        userRepository.save(user);
+
+        return ResponseDto.success("비밀번호 수정이 완료되었습니다!");
+
+//        if(imgPaths != null) {
+//            String deleteImage = user.getImageUrl();
+//            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
+//        }
+//
+//        List<String> imgList = new ArrayList<>();
+//        for (String imgUrl : imgPaths) {
+//            Img img = new Img(imgUrl, user);
+//            imgList.add(img.getImageUrl());
+//        }
+//        user.imageSave(imgList.get(0));
+    }
+
+
+    @Transactional
+    public ResponseDto<?> updateImage(HttpServletRequest request, List<String> imgPaths, ImageUpdateRequestDto requestDto) {
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+        if (imgPaths != null) {
             String deleteImage = user.getImageUrl();
             awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         }
+        user.update(requestDto);
 
         List<String> imgList = new ArrayList<>();
         for (String imgUrl : imgPaths) {
@@ -204,15 +247,12 @@ public class UserService {
         }
         user.imageSave(imgList.get(0));
 
-        user.update(requestDto);
-        return ResponseDto.success(
-                UserResponseDto.builder()
-                        .userId(user.getId())
-                        .nickname(user.getNickname())
-                        .imageUrl(user.getImageUrl())
-                        .build()
-        );
-    }
+        userRepository.save(user);
+
+        return ResponseDto.success("프로필 사진 수정이 완료되었습니다!");
+
+}
+
 
         //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없
         public ResponseDto<?> logout (HttpServletRequest request){
@@ -233,13 +273,6 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByUsername(username);
         return optionalUser.orElse(null);
     }
-
-    @Transactional(readOnly = true)
-    public User isPresentUserId(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.orElse(null);
-    }
-
 
     @Transactional(readOnly = true)
     public User isPresentNickname(String nickname) {

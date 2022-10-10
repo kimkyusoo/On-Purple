@@ -1,10 +1,7 @@
 package com.project.date.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.project.date.dto.request.KakaoUserRequestDto;
-import com.project.date.dto.request.LoginRequestDto;
-import com.project.date.dto.request.SignupRequestDto;
-import com.project.date.dto.request.UserUpdateRequestDto;
+import com.project.date.dto.request.*;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.KakaoService;
 import com.project.date.service.UserService;
@@ -59,16 +56,22 @@ public class UserController {
         return userService.checkNickname(nickname);
     }
 
-    @RequestMapping(value = "/user/update/{userId}", method = RequestMethod.PUT)
-    public ResponseDto<?> userUpdate(@PathVariable Long userId, @RequestPart(value = "info",required = false) @Valid UserUpdateRequestDto requestDto,
-                                     @RequestPart(value = "imageUrl", required = false)List<MultipartFile> multipartFiles, HttpServletRequest request) {
+    @RequestMapping(value = "/mypage/password", method = RequestMethod.PUT)
+    public ResponseDto<?> userUpdate(@RequestBody UserUpdateRequestDto requestDto,
+                                     HttpServletRequest request) {
 
 
+        return userService.updateUser(requestDto, request);
+    }
+
+    @RequestMapping(value = "/mypage/image", method = RequestMethod.PUT)
+    public ResponseDto<?> imageUpdate(ImageUpdateRequestDto requestDto, @RequestPart("imageUrl")List<MultipartFile> multipartFiles,
+                                      HttpServletRequest request){
         if (multipartFiles == null) {
             throw new NullPointerException("사진을 업로드해주세요");
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
-        return userService.updateUser(userId, requestDto, request, imgPaths);
+        return userService.updateImage(request, imgPaths, requestDto);
     }
 
 

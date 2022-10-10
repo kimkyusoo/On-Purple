@@ -19,6 +19,7 @@ public class UserUpdateRequestDto {
     @Pattern(regexp = "[a-zA-Z\\d]*${4,20}")
     private String password;
 
-    private String imageUrl;
+    @NotBlank
+    private String passwordConfirm;
 
 }

@@ -1,6 +1,7 @@
 package com.project.date.service;
 
 import com.project.date.dto.request.ProfileRequestDto;
+import com.project.date.dto.request.ProfileUpdateRequestDto;
 import com.project.date.dto.response.ProfileResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
@@ -97,7 +98,7 @@ public class ProfileService {
                             .nickname(profile.getUser().getNickname())
                             .age(profile.getAge())
                             .introduction(profile.getIntroduction())
-                            .imageUrl(imgList.get(0))
+                            .imageUrl(profile.getUser().getImageUrl())
                             .area(profile.getArea())
                             .build()
             );
@@ -121,7 +122,7 @@ public class ProfileService {
         return ResponseDto.success(
                 ProfileResponseDto.builder()
                         .profileId(profile.getId())
-                        .imageUrl(imgList.get(0))
+                        .imageUrl(profile.getUser().getImageUrl())
                         .nickname(profile.getUser().getNickname())
                         .age(profile.getAge())
                         .mbti(profile.getMbti())
@@ -141,7 +142,7 @@ public class ProfileService {
 
     @Transactional
     public ResponseDto<ProfileResponseDto> updateProfile(Long profileId,
-                                                               ProfileRequestDto requestDto, HttpServletRequest request) {
+                                                         ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");

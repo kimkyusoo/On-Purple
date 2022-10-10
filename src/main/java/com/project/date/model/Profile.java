@@ -1,6 +1,7 @@
 package com.project.date.model;
 
 import com.project.date.dto.request.ProfileRequestDto;
+import com.project.date.dto.request.ProfileUpdateRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -63,9 +64,7 @@ public class Profile extends Timestamped{
     @Column(nullable = false)
     private int unLike;
 
-    public void update(ProfileRequestDto requestDto) {
-        this.age = requestDto.getAge();
-        this.mbti = requestDto.getMbti();
+    public void update(ProfileUpdateRequestDto requestDto) {
         this.introduction = requestDto.getIntroduction();
         this.idealType = requestDto.getIdealType();
         this.job = requestDto.getJob();

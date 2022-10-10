@@ -1,6 +1,7 @@
 package com.project.date.controller;
 
 import com.project.date.dto.request.ProfileRequestDto;
+import com.project.date.dto.request.ProfileUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.ProfileService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class ProfileController {
     }
 
     @PutMapping( "/mypage/userInfo/{profileId}")
-    public ResponseDto<?> updateProfile(@PathVariable Long profileId, @RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> updateProfile(@PathVariable Long profileId, @RequestBody ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
 
        return profileService.updateProfile(profileId, requestDto, request);
     }

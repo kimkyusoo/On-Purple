@@ -38,6 +38,10 @@ public class Report extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+    @JoinColumn(name = "profileId", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Profile profile;
+
     // 회원정보 검증
     public boolean validateUser(User user) {
 

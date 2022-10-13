@@ -17,6 +17,9 @@ public class ReportResponseDto {
     private Long reportId;
     private String title;
     private String nickname;
+    private String nickname2;
+    private String nickname3;
+    private String nickname4;
     private String content;
     private String imageUrl;
     private Integer view;

@@ -8,8 +8,10 @@ import com.project.date.dto.response.ReportResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.Img;
+import com.project.date.model.Profile;
 import com.project.date.model.Report;
 import com.project.date.model.User;
+import com.project.date.repository.ProfileRepository;
 import com.project.date.repository.ReportRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +30,11 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final TokenProvider tokenProvider;
     private final AwsS3UploadService awsS3UploadService;
+    private final ProfileRepository profileRepository;
 
     // 신고글 작성
     @Transactional
-    public ResponseDto<?> createReport(ReportRequestDto requestDto,
+    public ResponseDto<?> createReport(Long profileId, ReportRequestDto requestDto,
                                        HttpServletRequest request,
                                        List<String> imgPaths) {
 
@@ -50,8 +53,14 @@ public class ReportService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
+        Profile profile = isPresentProfile(profileId);
+        if(null == profile) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
+        }
+
         Report report = Report.builder()
                 .user(user)
+                .profile(profile)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .category(requestDto.getCategory())
@@ -71,6 +80,7 @@ public class ReportService {
         return ResponseDto.success(
                 ReportResponseDto.builder()
                         .reportId(report.getId())
+                        .nickname(report.getProfile().getUser().getNickname())
                         .title(report.getTitle())
                         .content(report.getContent())
                         .nickname(report.getUser().getNickname())
@@ -246,6 +256,12 @@ public class ReportService {
     public Report isPresentReport(Long reportId) {
         Optional<Report> optionalReport = reportRepository.findById(reportId);
         return optionalReport.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public Profile isPresentProfile(Long profileId) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+        return optionalProfile.orElse(null);
     }
 
 

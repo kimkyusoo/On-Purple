@@ -12,6 +12,9 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "Likes", indexes = {
+        @Index(name = "like_index", columnList = "userId, profileId")
+})
 public class Likes {
 
     @Id

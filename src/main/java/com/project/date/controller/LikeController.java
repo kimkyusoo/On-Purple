@@ -34,5 +34,20 @@ public class LikeController {
     public ResponseDto<?> createProfileUnLike(@PathVariable Long profileId, HttpServletRequest request) {
         return likeService.ProfileUnLike(profileId, request);
     }
+/*
+    @PostMapping("/user/check/{profileId}")
+    public ResponseDto<?> likeCheck(@PathVariable Long profileId, HttpServletRequest request ){
+        return likeService.likeCheck(request,profileId);
+    }
+
+    @PostMapping("/user/checks/{profileId}")
+    public ResponseDto<?> likeChecks(@PathVariable Long profileId, HttpServletRequest request ){
+        return likeService.likeCheck2(request,profileId);
+    }*/
+
+    @PostMapping("/user/checks/{userId}")
+    public ResponseDto<?> likeChecks(@PathVariable Long userId, HttpServletRequest request ){
+        return likeService.getAllLike(userId,request);
+    }
 
 }

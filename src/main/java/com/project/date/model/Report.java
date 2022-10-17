@@ -2,6 +2,8 @@ package com.project.date.model;
 
 import com.project.date.dto.request.ReportRequestDto;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 @Builder
@@ -38,9 +40,11 @@ public class Report extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
-    @JoinColumn(name = "profileId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Profile profile;
+    @JoinColumn(name = "targetUserId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User targetUser;
+
 
     // 회원정보 검증
     public boolean validateUser(User user) {

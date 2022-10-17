@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "Likes", indexes = {
-        @Index(name = "like_index", columnList = "userId, profileId")
+        @Index(name = "like_index", columnList = "userId, targetId")
 })
 public class Likes {
 
@@ -28,6 +28,11 @@ public class Likes {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "targetId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User target;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")
     private Post post;
 
@@ -35,9 +40,13 @@ public class Likes {
     @JoinColumn(name = "commentId")
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profileId")
-    private Profile profile;
+    @Transient
+    private boolean matching;
+
+    public boolean validateUser(User user) {
+        return !this.user.equals(user);
+    }
+
 
 
 

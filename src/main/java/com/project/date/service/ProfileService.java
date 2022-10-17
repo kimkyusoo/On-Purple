@@ -47,7 +47,7 @@ public class ProfileService {
         }
 
 
-       Profile profile = Profile.builder()
+        Profile profile = Profile.builder()
                 .user(user)
                 .age(requestDto.getAge())
                 .mbti(requestDto.getMbti())

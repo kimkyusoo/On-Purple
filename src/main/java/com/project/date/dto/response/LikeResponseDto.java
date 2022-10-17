@@ -17,6 +17,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LikeResponseDto {
 
+    private Long likeId;
     private String imageUrl;
     private Integer likes;
     private String nickname;

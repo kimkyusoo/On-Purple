@@ -284,8 +284,6 @@ public class PostService {
         for (String imgUrl : imgList) {
             awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
         }
-        String deleteImage = post.getImageUrl();
-        awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         return ResponseDto.success("delete success");
     }
 

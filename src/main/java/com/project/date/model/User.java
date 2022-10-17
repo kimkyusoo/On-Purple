@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.EnumType.STRING;
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -38,6 +40,12 @@ public class User extends Timestamped {
 
     @Column
     private String imageUrl;
+
+    @Enumerated(value = EnumType.STRING)
+    private Authority role;
+
+    @Enumerated(value = STRING)
+    private Gender gender;
 
     @Column (unique = true)
     private Long kakaoId;
@@ -122,9 +130,10 @@ public class User extends Timestamped {
 //        return !this.user.equals(user);
 //    }
 
-    public User(String username, String password){
+    public User(String username, String password, Authority role){
         this.username = username;
         this.password = password;
+        this.role = role;
     }
     public void update(UserUpdateRequestDto requestDto) {
         this.password = requestDto.getPassword();

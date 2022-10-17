@@ -17,21 +17,10 @@ public class MypageController {
 
 
 
-    @GetMapping("/mypage/{profileId}")
-    public ResponseDto<?> getMypage(HttpServletRequest request, @PathVariable Long profileId){
+    @GetMapping("/mypage")
+    public ResponseDto<?> getMypage(HttpServletRequest request){
 
-        return mypageService.getMyPage(request, profileId);
+        return mypageService.getMyPage(request);
     }
-
-    //나를 좋아요
-//    @GetMapping("/mypage/like/{profileId}")
-//    public ResponseDto<?> getAllLikeUser(@PathVariable Long profileId, HttpServletRequest request) {
-//        return mypageService.getAllLikeUser(profileId, request);
-//    }
-
-//    @GetMapping("/mypage/tolike/{profileId}")
-//    public ResponseDto<?>toLikeUser(@PathVariable Long profileId, HttpServletRequest request){
-//        return mypageService.toLikeUser(profileId,request);
-//    }
 
 }

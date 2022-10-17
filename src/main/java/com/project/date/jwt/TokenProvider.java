@@ -34,8 +34,8 @@ public class TokenProvider {
   private static final String AUTHORITIES_KEY = "auth";
   private static final String BEARER_PREFIX = "Bearer ";
 //  AccessToken의 유효기간을 30분으로, RefreshToken의 유효기간을 7일로 설정.
-  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;        //10분
-  private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24;     //30분
+  private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 60;        //1시간
+  private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24 * 2;    //2시간
 
   private final Key key;
 
@@ -64,7 +64,7 @@ public class TokenProvider {
             .setHeader((headers))
             .claim("userId", user.getId())
             .setSubject(user.getUsername())
-            .claim(AUTHORITIES_KEY, Authority.ROLE_USER.toString())
+            .claim(AUTHORITIES_KEY, Authority.USER.toString())
             .setExpiration(accessTokenExpiresIn)
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();

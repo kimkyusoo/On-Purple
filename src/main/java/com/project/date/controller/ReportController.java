@@ -19,15 +19,15 @@ public class ReportController {
     private final AwsS3UploadService s3Service;
 
     // 신고글 작성
-    @PostMapping( "/report/{profileId}")
-    public ResponseDto<?> createReport(@PathVariable Long profileId,@RequestPart(value = "data",required = false) ReportRequestDto requestDto,
+    @PostMapping( "/report/{targetId}")
+    public ResponseDto<?> createReport(@PathVariable Long targetId,@RequestPart(value = "data",required = false) ReportRequestDto requestDto,
                                      HttpServletRequest request, @RequestPart(value = "imageUrl",required = false) List<MultipartFile> multipartFiles) {
 
         if (multipartFiles == null) {
             throw new NullPointerException("사진을 업로드해주세요");
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
-        return reportService.createReport(profileId,requestDto,request, imgPaths);
+        return reportService.createReport(targetId,requestDto,request, imgPaths);
     }
 
     @GetMapping("/report")
@@ -42,19 +42,6 @@ public class ReportController {
     }
 
 
-    // 신고글 수정
-    @PutMapping( "/report/{reportId}")
-    public ResponseDto<?> updatePost(@PathVariable Long reportId,
-                                     @RequestPart(value = "data") ReportRequestDto requestDto,
-                                     @RequestPart("imageUrl") List<MultipartFile> multipartFiles,
-                                     HttpServletRequest request) {
-
-        if (multipartFiles == null) {
-            throw new NullPointerException("사진을 업로드해주세요");
-        }
-        List<String> imgPaths = s3Service.upload(multipartFiles);
-        return reportService.updateReport(reportId, requestDto, request, imgPaths);
-    }
 
     //신고글 삭제
     @DeleteMapping( "/report/{reportId}")

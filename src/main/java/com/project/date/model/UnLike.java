@@ -25,8 +25,9 @@ public class UnLike {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profileId")
-    private Profile profile;
+    @JoinColumn(name = "targetId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User target;
 
 
 

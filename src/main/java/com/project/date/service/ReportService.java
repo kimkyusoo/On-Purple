@@ -8,11 +8,10 @@ import com.project.date.dto.response.ReportResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.Img;
-import com.project.date.model.Profile;
 import com.project.date.model.Report;
 import com.project.date.model.User;
-import com.project.date.repository.ProfileRepository;
 import com.project.date.repository.ReportRepository;
+import com.project.date.repository.UserRepository;
 import com.project.date.util.AwsS3UploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,11 +29,11 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final TokenProvider tokenProvider;
     private final AwsS3UploadService awsS3UploadService;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     // 신고글 작성
     @Transactional
-    public ResponseDto<?> createReport(Long profileId, ReportRequestDto requestDto,
+    public ResponseDto<?> createReport(Long targetUserId, ReportRequestDto requestDto,
                                        HttpServletRequest request,
                                        List<String> imgPaths) {
 
@@ -53,14 +52,16 @@ public class ReportService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Profile profile = isPresentProfile(profileId);
-        if(null == profile) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
+        User targetUser = isPresentTargetUser(targetUserId);
+        if (null == targetUser) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
+
+        targetUser.reportCount();
 
         Report report = Report.builder()
                 .user(user)
-                .profile(profile)
+                .targetUser(targetUser)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .category(requestDto.getCategory())
@@ -80,10 +81,10 @@ public class ReportService {
         return ResponseDto.success(
                 ReportResponseDto.builder()
                         .reportId(report.getId())
-                        .nickname(report.getProfile().getUser().getNickname())
+                        .nickname(report.getTargetUser().getNickname())
                         .title(report.getTitle())
                         .content(report.getContent())
-                        .nickname(report.getUser().getNickname())
+                        .reportCount(targetUser.getReportCount())
                         .imageUrl(report.getImageUrl())
                         .category(report.getCategory())
                         .createdAt(report.getCreatedAt())
@@ -107,7 +108,7 @@ public class ReportService {
                         .reportId(report.getId())
                         .title(report.getTitle())
                         .content(report.getContent())
-                        .nickname(report.getUser().getNickname())
+                        .nickname(report.getTargetUser().getNickname())
                         .view(report.getView())
                         .category(report.getCategory())
                         .imageUrl(report.getImageUrl())
@@ -131,7 +132,7 @@ public class ReportService {
                             .content(report.getContent())
                             .view(report.getView())
                             .category(report.getCategory())
-                            .nickname(report.getUser().getNickname())
+                            .nickname(report.getTargetUser().getNickname())
                             .createdAt(report.getCreatedAt())
                             .modifiedAt(report.getModifiedAt())
                             .build()
@@ -140,64 +141,6 @@ public class ReportService {
 
         return ResponseDto.success(reportResponseDto);
 
-    }
-
-
-    //신고글 업데이트
-    @Transactional
-    public ResponseDto<ReportResponseDto> updateReport(Long reportId,
-                                                   ReportRequestDto requestDto,
-                                                   HttpServletRequest request,
-                                                   List<String> imgPaths) {
-        if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        User user = validateUser(request);
-        if (null == user) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
-        Report report = isPresentReport(reportId);
-        if (null == report) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
-        }
-
-        if (report.validateUser(user)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
-        }
-        //저장된 이미지 리스트 가져오기
-        if(imgPaths != null) {
-        String deleteImage = report.getImageUrl();
-        awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
-    }
-        List<String> newImgList = new ArrayList<>();
-        for (String imgUrl : imgPaths) {
-            Img img = new Img(imgUrl, report);
-            newImgList.add(img.getImageUrl());
-        }
-        report.imageSave(newImgList.get(0));
-
-        report.update(requestDto);
-        return ResponseDto.success(
-                ReportResponseDto.builder()
-                        .reportId(report.getId())
-                        .title(report.getTitle())
-                        .content(report.getContent())
-                        .nickname(report.getUser().getNickname())
-                        .imageUrl(report.getImageUrl())
-                        .view(report.getView())
-                        .category(report.getCategory())
-                        .createdAt(report.getCreatedAt())
-                        .modifiedAt(report.getModifiedAt())
-                        .build()
-        );
     }
 
     @Transactional
@@ -253,16 +196,17 @@ public class ReportService {
     }
 
     @Transactional(readOnly = true)
+    public User isPresentTargetUser(Long targetUserId) {
+        Optional<User> optionalTargetUser = userRepository.findById(targetUserId);
+        return optionalTargetUser.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     public Report isPresentReport(Long reportId) {
         Optional<Report> optionalReport = reportRepository.findById(reportId);
         return optionalReport.orElse(null);
     }
 
-    @Transactional(readOnly = true)
-    public Profile isPresentProfile(Long profileId) {
-        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
-        return optionalProfile.orElse(null);
-    }
 
 
 

@@ -24,15 +24,15 @@ public class LikeController {
     }
 
     // 회원 좋아요
-    @PostMapping( "/user/like/{targetUserId}")
-    public ResponseDto<?> createUserLike(@PathVariable Long targetUserId, HttpServletRequest request) {
-        return likeService.UserLike(targetUserId, request);
+    @PostMapping( "/user/like/{targetId}")
+    public ResponseDto<?> createUserLike(@PathVariable Long targetId, HttpServletRequest request) {
+        return likeService.UserLike(targetId, request);
     }
 
     // 회원 싫어요
-    @PostMapping( "/user/unlike/{targetUserId}")
-    public ResponseDto<?> createUserUnLike(@PathVariable Long targetUserId, HttpServletRequest request) {
-        return likeService.ProfileUnLike(targetUserId, request);
+    @PostMapping( "/user/unlike/{targetId}")
+    public ResponseDto<?> createUserUnLike(@PathVariable Long targetId, HttpServletRequest request) {
+        return likeService.ProfileUnLike(targetId, request);
     }
 
     @PostMapping("/user/checkJ/{userId}")

@@ -33,5 +33,33 @@ public class SignupRequestDto {
     @NotBlank
     private String passwordConfirm;
 
+    private String gender;
+
+    private boolean admin = false;
+
+    private String adminToken = "";
+
     private String imageUrl;
+
+    private Integer age;
+
+    private String mbti;
+
+    private String introduction;
+
+    private String idealType;
+
+    private String job;
+
+    private String hobby;
+
+    private String drink;
+
+    private String pet;
+
+    private String smoke;
+
+    private String likeMovieType;
+
+    private String area;
 }

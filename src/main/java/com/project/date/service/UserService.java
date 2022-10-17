@@ -4,6 +4,8 @@ import com.project.date.dto.request.*;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
+import com.project.date.model.Authority;
+import com.project.date.model.Gender;
 import com.project.date.model.Img;
 import com.project.date.model.User;
 import com.project.date.repository.ImgRepository;
@@ -31,6 +33,7 @@ public class UserService {
     private final ImgRepository imgRepository;
 
     private final AwsS3UploadService awsS3UploadService;
+    private static final String ADMIN_TOKEN = ("${ADMIN_TOKEN}");
 
     //  회원가입. 유저가 존재하는지, 비밀번호와 비밀번호확인이 일치하는지의 여부를 if문을 통해 확인하고 이를 통과하면 user에 대한 정보를 생성.
     @Transactional
@@ -42,7 +45,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto checkNickname(String nickname) {
+    public ResponseDto<?> checkNickname(String nickname) {
         Optional<User> user = userRepository.findByNickname(nickname);
         if (null != isPresentNickname(nickname))
             return ResponseDto.fail("DUPLICATED_NICKANAME", "중복된 닉네임 입니다.");
@@ -55,11 +58,40 @@ public class UserService {
             return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
                     "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
+        String gender = requestDto.getGender();
+        Gender genderSet = Gender.GENDER;
+
+        if (gender.equals("male")) {
+            genderSet = Gender.MALE;
+        } else if (gender.equals("female")) {
+            genderSet = Gender.FEMALE;
+        }
+        Authority role = Authority.USER;
+        if (requestDto.isAdmin()){
+            if(!requestDto.getAdminToken().equals(ADMIN_TOKEN)){
+                return ResponseDto.fail ("BAD_REQUEST", "관리자 암호가 틀려 등록이 불가합니다.");
+
+            }
+            role = Authority.ADMIN;
+        }
 
         User user = User.builder()
                 .username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
+                .gender(genderSet)
+                .role(role)
+                .age(requestDto.getAge())
+                .mbti(requestDto.getMbti())
+                .introduction(requestDto.getIntroduction())
+                .area(requestDto.getArea())
+                .idealType(requestDto.getIdealType())
+                .job(requestDto.getJob())
+                .hobby(requestDto.getHobby())
+                .smoke(requestDto.getSmoke())
+                .drink(requestDto.getDrink())
+                .likeMovieType(requestDto.getLikeMovieType())
+                .pet(requestDto.getPet())
                 .build();
         userRepository.save(user);
 
@@ -71,9 +103,6 @@ public class UserService {
             imgList.add(img.getImageUrl());
         }
         user.imageSave(imgList.get(0));
-
-        TokenDto tokenDto = tokenProvider.generateTokenDto(user);
-        tokenToHeaders(tokenDto, response);
 
         return ResponseDto.success(
                 UserResponseDto.builder()
@@ -121,32 +150,6 @@ public class UserService {
 
     }
 
-//    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllUser() {
-//        return ResponseDto.success(userRepository.findAllByOrderByModifiedAtDesc());
-//    }
-
-//    @Transactional
-//    public ResponseDto<?> getAllUsers() {
-//        List<User> userList = userRepository.findAllByOrderByModifiedAtDesc();
-//        List<UserResponseDto> userResponseDto = new ArrayList<>();
-//        for (User user : userList) {
-//            List<Img> findImgList = imgRepository.findByUser_id(user.getId());
-//            List<String> imgList = new ArrayList<>();
-//            for (Img img : findImgList) {
-//                imgList.add(img.getImageUrl());
-//            }
-//            userResponseDto.add(
-//                    UserResponseDto.builder()
-//                            .userId(user.getId())
-//                            .nickname(user.getNickname())
-//                            .imageUrl(imgList.get(0))
-//                            .build()
-//            );
-//        }
-//        return ResponseDto.success(userResponseDto);
-//    }
-
     @Transactional
     public ResponseDto<?> getUser(HttpServletRequest request) {
 
@@ -173,7 +176,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<?> updateUser(UserUpdateRequestDto requestDto,
+    public ResponseDto<?> updatePassword(UserUpdateRequestDto requestDto,
                                      HttpServletRequest request) {
 
 
@@ -203,18 +206,6 @@ public class UserService {
         userRepository.save(user);
 
         return ResponseDto.success("비밀번호 수정이 완료되었습니다!");
-
-//        if(imgPaths != null) {
-//            String deleteImage = user.getImageUrl();
-//            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
-//        }
-//
-//        List<String> imgList = new ArrayList<>();
-//        for (String imgUrl : imgPaths) {
-//            Img img = new Img(imgUrl, user);
-//            imgList.add(img.getImageUrl());
-//        }
-//        user.imageSave(imgList.get(0));
     }
 
 

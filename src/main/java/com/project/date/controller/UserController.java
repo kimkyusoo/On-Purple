@@ -57,11 +57,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "/mypage/password", method = RequestMethod.PUT)
-    public ResponseDto<?> userUpdate(@RequestBody UserUpdateRequestDto requestDto,
+    public ResponseDto<?> passwordUpdate(@RequestBody UserUpdateRequestDto requestDto,
                                      HttpServletRequest request) {
 
 
-        return userService.updateUser(requestDto, request);
+        return userService.updatePassword(requestDto, request);
     }
 
     @RequestMapping(value = "/mypage/image", method = RequestMethod.PUT)

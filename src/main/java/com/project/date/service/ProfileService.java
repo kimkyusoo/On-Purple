@@ -1,13 +1,11 @@
 package com.project.date.service;
 
-import com.project.date.dto.request.ProfileRequestDto;
 import com.project.date.dto.request.ProfileUpdateRequestDto;
 import com.project.date.dto.response.ProfileResponseDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;
-import com.project.date.repository.ProfileRepository;
 import com.project.date.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import java.util.Optional;
 @Service
 public class ProfileService {
 
-    private final ProfileRepository profileRepository;
 
     private final UserRepository userRepository;
 
@@ -29,77 +26,25 @@ public class ProfileService {
 
     private final TokenProvider tokenProvider;
 
-    @Transactional
-    public ResponseDto<?> createProfile(ProfileRequestDto requestDto, HttpServletRequest request) {
-        if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        User user = validateUser(request);
-        if (null == user) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
-
-        Profile profile = Profile.builder()
-                .user(user)
-                .age(requestDto.getAge())
-                .mbti(requestDto.getMbti())
-                .introduction(requestDto.getIntroduction())
-                .idealType(requestDto.getIdealType())
-                .job(requestDto.getJob())
-                .hobby(requestDto.getHobby())
-                .drink(requestDto.getDrink())
-                .pet(requestDto.getPet())
-                .smoke(requestDto.getSmoke())
-                .likeMovieType(requestDto.getLikeMovieType())
-                .area(requestDto.getArea())
-                .build();
-
-        profileRepository.save(profile);
-
-        return ResponseDto.success(
-                ProfileResponseDto.builder()
-                        .profileId(profile.getId())
-                        .age(profile.getAge())
-                        .mbti(profile.getMbti())
-                        .introduction(profile.getIntroduction())
-                        .idealType(profile.getIdealType())
-                        .job(profile.getJob())
-                        .hobby(profile.getHobby())
-                        .drink(profile.getDrink())
-                        .pet(profile.getPet())
-                        .smoke(profile.getSmoke())
-                        .likeMovieType(profile.getLikeMovieType())
-                        .area(profile.getArea())
-                        .build()
-        );
-    }
 
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllProfiles() {
-        List<Profile> profileList = profileRepository.findAllByOrderByModifiedAtDesc();
+        List<User> profileList = userRepository.findAllByOrderByModifiedAtDesc();
         List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
-        for (Profile profile : profileList) {
-            List<Img> findImgList = imgRepository.findByUser_id(profile.getUser().getId());
+        for (User user : profileList) {
+            List<Img> findImgList = imgRepository.findByUser_id(user.getId());
             List<String> imgList = new ArrayList<>();
             for (Img img : findImgList) {
                 imgList.add(img.getImageUrl());
             }
             profileResponseDto.add(
                     ProfileResponseDto.builder()
-                            .profileId(profile.getId())
-                            .nickname(profile.getUser().getNickname())
-                            .age(profile.getAge())
-                            .introduction(profile.getIntroduction())
-                            .imageUrl(profile.getUser().getImageUrl())
-                            .area(profile.getArea())
+                            .userId(user.getId())
+                            .nickname(user.getNickname())
+                            .age(user.getAge())
+                            .introduction(user.getIntroduction())
+                            .imageUrl(user.getImageUrl())
+                            .area(user.getArea())
                             .build()
             );
         }
@@ -107,13 +52,13 @@ public class ProfileService {
     }
 
     @Transactional
-    public ResponseDto<?> getProfile(Long profileId) {
-        Profile profile= isPresentProfile(profileId);
-        if (null == profile) {
+    public ResponseDto<?> getProfile(Long userId) {
+        User user= isPresentProfile(userId);
+        if (null == user) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
         }
 
-        List<Img> findImgList = imgRepository.findByUser_id(profile.getUser().getId());
+        List<Img> findImgList = imgRepository.findByUser_id(user.getId());
         List<String> imgList = new ArrayList<>();
         for (Img img : findImgList) {
             imgList.add(img.getImageUrl());
@@ -121,28 +66,27 @@ public class ProfileService {
 
         return ResponseDto.success(
                 ProfileResponseDto.builder()
-                        .profileId(profile.getId())
-                        .imageUrl(profile.getUser().getImageUrl())
-                        .nickname(profile.getUser().getNickname())
-                        .age(profile.getAge())
-                        .mbti(profile.getMbti())
-                        .introduction(profile.getIntroduction())
-                        .idealType(profile.getIdealType())
-                        .job(profile.getJob())
-                        .hobby(profile.getHobby())
-                        .drink(profile.getDrink())
-                        .pet(profile.getPet())
-                        .smoke(profile.getSmoke())
-                        .likeMovieType(profile.getLikeMovieType())
-                        .area(profile.getArea())
+                        .userId(user.getId())
+                        .imageUrl(user.getImageUrl())
+                        .nickname(user.getNickname())
+                        .age(user.getAge())
+                        .mbti(user.getMbti())
+                        .introduction(user.getIntroduction())
+                        .idealType(user.getIdealType())
+                        .job(user.getJob())
+                        .hobby(user.getHobby())
+                        .drink(user.getDrink())
+                        .pet(user.getPet())
+                        .smoke(user.getSmoke())
+                        .likeMovieType(user.getLikeMovieType())
+                        .area(user.getArea())
 
                         .build()
         );
     }
 
     @Transactional
-    public ResponseDto<ProfileResponseDto> updateProfile(Long profileId,
-                                                         ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> updateProfile(ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -158,31 +102,10 @@ public class ProfileService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Profile profile = isPresentProfile(profileId);
-        if (null == profile) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
-        }
-        if(profile.validateUser(user)){
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
-        }
 
-        profile.update(requestDto);
-        return ResponseDto.success(
-                ProfileResponseDto.builder()
-                        .profileId(profile.getId())
-                        .age(profile.getAge())
-                        .mbti(profile.getMbti())
-                        .introduction(profile.getIntroduction())
-                        .idealType(profile.getIdealType())
-                        .job(profile.getJob())
-                        .hobby(profile.getHobby())
-                        .drink(profile.getDrink())
-                        .pet(profile.getPet())
-                        .smoke(profile.getSmoke())
-                        .likeMovieType(profile.getLikeMovieType())
-                        .area(profile.getArea())
-                        .build()
-        );
+        user.update(requestDto);
+        userRepository.save(user);
+        return ResponseDto.success("프로필 정보 수정이 완료되었습니다!");
     }
 
     @Transactional
@@ -192,15 +115,10 @@ public class ProfileService {
         }
         return tokenProvider.getUserFromAuthentication();
     }
-    @Transactional(readOnly = true)
-    public User isPresentUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.orElse(null);
-    }
 
     @Transactional(readOnly = true)
-    public Profile isPresentProfile(Long profileId) {
-        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+    public User isPresentProfile(Long userId) {
+        Optional<User> optionalProfile = userRepository.findById(userId);
         return optionalProfile.orElse(null);
     }
 }

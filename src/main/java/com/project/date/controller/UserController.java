@@ -30,13 +30,14 @@ public class UserController {
 
     @RequestMapping(value = "/user/signup", method = RequestMethod.POST)
     public ResponseDto<?> signup(@RequestPart(value = "info",required = false) @Valid SignupRequestDto requestDto,
+                                 @RequestPart(value = "userInfo", required = false) UserInfoRequestDto userInfoRequestDto,
                                  @RequestPart(value = "imageUrl", required = false) List<MultipartFile> multipartFiles, HttpServletResponse response){
         if (multipartFiles == null) {
             throw new NullPointerException("사진을 업로드해주세요");
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
 
-        return userService.createUser(requestDto, imgPaths, response);
+        return userService.createUser(requestDto, userInfoRequestDto, imgPaths, response);
     }
 
     // POST방식 로그인 API SignupRequestDto에서 정보를 받아 권한인증을 거치고 이를 UserService에서 정의한 login메소드에 따라 아이디와 비밀번호 확인을 거치고 이를 만족시키면 토큰을 발행. 로그인에 성공한 후 작업처리를 진행한다.
@@ -90,6 +91,11 @@ public class UserController {
     public KakaoUserRequestDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         log.info(code);
         return kakaoService.kakaoLogin(code, response);
+    }
+
+    @DeleteMapping( "/user/{userId}")
+    public ResponseDto<?> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
+        return userService.deleteUser(request, userId);
     }
 }
 

@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication(exclude={SecurityAutoConfiguration.class})
 @EnableJpaAuditing
-
 public class DateApplication {
 
 

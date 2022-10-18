@@ -1,25 +1,49 @@
 package com.project.date.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@Entity
 public class ChatRoom implements Serializable {
 
-    private static final long serialVersionUID = 6494678977089006639L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    private String roomId;
-    private String name;
-    private long userCount; // 채팅방 인원수
+    @Column
+    private String chatRoomUuid = UUID.randomUUID().toString();
 
-    public static ChatRoom create(String name) {
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.roomId = UUID.randomUUID().toString();
-        chatRoom.name = name;
-        return chatRoom;
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
+    private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    private int roomHashCode;
+
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.REMOVE)
+    private List<ChatRoomUser> chatRoomUsers = new ArrayList<>();
+
+    public ChatRoom(int roomUsers) {
+        this.roomHashCode = roomUsers;
     }
+//    private static final long serialVersionUID = 6494678977089006639L;
+//
+//    private String roomId;
+//    private String name;
+//    private long userCount; // 채팅방 인원수
+//
+//    public static ChatRoom create(String name) {
+//        ChatRoom chatRoom = new ChatRoom();
+//        chatRoom.roomId = UUID.randomUUID().toString();
+//        chatRoom.name = name;
+//        return chatRoom;
+//    }
 }

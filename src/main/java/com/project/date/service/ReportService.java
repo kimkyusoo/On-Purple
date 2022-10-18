@@ -29,7 +29,6 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final TokenProvider tokenProvider;
     private final AwsS3UploadService awsS3UploadService;
-    private final UserRepository userRepository;
 
     // 신고글 작성
     @Transactional
@@ -94,8 +93,6 @@ public class ReportService {
         if (null == report) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
-        //단건 조회 조회수 증가
-        report.updateViewCount();
 
         return ResponseDto.success(
                 ReportResponseDto.builder()
@@ -103,7 +100,6 @@ public class ReportService {
                         .title(report.getTitle())
                         .content(report.getContent())
                         .reportNickname(report.getReportNickname())
-                        .view(report.getView())
                         .category(report.getCategory())
                         .imageUrl(report.getImageUrl())
                         .createdAt(report.getCreatedAt())
@@ -124,7 +120,6 @@ public class ReportService {
                             .title(report.getTitle())
                             .imageUrl(report.getImageUrl())
                             .content(report.getContent())
-                            .view(report.getView())
                             .category(report.getCategory())
                             .reportNickname(report.getReportNickname())
                             .createdAt(report.getCreatedAt())

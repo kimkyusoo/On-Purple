@@ -19,7 +19,6 @@ public class ReportResponseDto {
     private String reportNickname;
     private String content;
     private String imageUrl;
-    private Integer view;
     private String category;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

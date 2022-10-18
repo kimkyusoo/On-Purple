@@ -1,14 +1,11 @@
 package com.project.date.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.project.date.dto.request.ImageUpdateRequestDto;
+import com.project.date.dto.request.ProfileUpdateRequestDto;
 import com.project.date.dto.request.UserUpdateRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -16,21 +13,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.EnumType.STRING;
+
 @Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Setter
 public class User extends Timestamped {
 
     @Id
     @Column(name = "userId")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JoinColumn
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Profile profile;
+    
     @Column(unique = true)
     private String username;
 
@@ -44,6 +41,12 @@ public class User extends Timestamped {
     @Column
     private String imageUrl;
 
+    @Enumerated(value = EnumType.STRING)
+    private Authority role;
+
+    @Column
+    private String gender;
+
     @Column (unique = true)
     private Long kakaoId;
 
@@ -51,6 +54,53 @@ public class User extends Timestamped {
     @Transient
     @OneToMany(fetch = FetchType.LAZY)
     private final List<Img> imgList = new ArrayList<>();
+
+    //좋아요 count
+    @Column(nullable = false)
+    private int likes;
+
+    //싫어요 count
+    @Column(nullable = false)
+    private int unLike;
+
+    //Profile
+
+    @Column(nullable = false)
+    private int age;
+
+    @Column(nullable = false)
+    private String mbti;
+
+    @Column(nullable = false)
+    private String introduction;
+
+    @Column
+    private String idealType;
+
+    @Column
+    private String job;
+
+    @Column
+    private String hobby;
+
+    @Column
+    private String drink;
+
+    @Column
+    private String pet;
+
+    @Column
+    private String smoke;
+
+    @Column
+    private String likeMovieType;
+
+    @Column
+    private String area;
+
+    @Column
+    private int reportCount;
+
 
 
 
@@ -79,20 +129,60 @@ public class User extends Timestamped {
 //
 //        return !this.user.equals(user);
 //    }
-
-    public User(String username, String password){
-        this.username = username;
-        this.password = password;
+//
+//    public User(String username, String password, Authority role){
+//        this.username = username;
+//        this.password = password;
+//        this.role = role;
+//
+//    }
+    public void update(UserUpdateRequestDto requestDto) {
+        this.password = requestDto.getPassword();
     }
-    public void userUpdate(UserUpdateRequestDto userUpdateRequestDto) {
-        this.nickname = userUpdateRequestDto.getNickname();
-        this.password = userUpdateRequestDto.getPassword();
-        this.imageUrl = userUpdateRequestDto.getImageUrl();
+
+    public void update(ImageUpdateRequestDto requestDto) {
+        this.imageUrl = requestDto.getImageUrl();
     }
 
+    //프로필 업데이트
+    public void update(ProfileUpdateRequestDto requestDto) {
+        this.introduction = requestDto.getIntroduction();
+        this.idealType = requestDto.getIdealType();
+        this.job = requestDto.getJob();
+        this.hobby = requestDto.getHobby();
+        this.drink = requestDto.getDrink();
+        this.pet = requestDto.getPet();
+        this.smoke = requestDto.getSmoke();
+        this.likeMovieType = requestDto.getLikeMovieType();
+        this.area = requestDto.getArea();
+
+    }
     //리스트 첫번째 이미지 저장
     public void imageSave(String imageUrl){
         this.imageUrl = imageUrl;
     }
+
+    public void addLike(){
+
+        this.likes +=1;
+    }
+
+    public void minusLike(){
+
+        this.likes -=1;
+    }
+    public void addUnLike(){
+        this.likes +=1;
+    }
+
+    public void minusUnLike(){
+
+        this.unLike -=1;
+    }
+
+    public void reportCount(){
+        this.reportCount +=1;
+    }
+
 
 }

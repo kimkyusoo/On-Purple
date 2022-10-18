@@ -32,12 +32,13 @@ public class PostController {
     return postService.createPost(requestDto,request, imgPaths);
   }
 
-    // 카테고리별 전체 게시글 가져오기
+  // 카테고리별 전체 게시글 가져오기
   @GetMapping("/post") //기본 카테고리 meet 번개
   public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category) {
     return postService.getAllPost(category);
   }
 
+  
   // 상세 게시글 가져오기
   @GetMapping( "/post/{postId}")
   public ResponseDto<?> getPost(@PathVariable Long postId) {
@@ -66,7 +67,7 @@ public class PostController {
     return postService.deletePost(postId, request);
   }
 
-  //  // 카테고리별 전체 게시글 가져오기
+//    // 카테고리별 전체 게시글 가져오기
 //  @GetMapping("/post") //기본 카테고리 meet 번개
 //  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category,
 //                                    @RequestParam int page, @RequestParam int size) {
@@ -74,7 +75,7 @@ public class PostController {
 //  }
 //
 //  // 카테고리별 전체 게시글 검색
-//  @PostMapping("/post/search") //기본 카테고리 meet 번개
+//  @GetMapping("/post/search") //기본 카테고리 meet 번개
 //  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category,
 //                                    @RequestParam String keyword, @RequestParam int page, @RequestParam int size) {
 //    return postService.getAllPostSearch(category, keyword,page,size);

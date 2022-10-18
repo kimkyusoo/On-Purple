@@ -75,6 +75,7 @@ public class PostService {
             imgRepository.save(img);
             imgList.add(img.getImageUrl());
         }
+
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
@@ -96,6 +97,40 @@ public class PostService {
             throw new NullPointerException("이미지를 등록해주세요(Blank Check)");
         }
     }
+
+
+    // 전체 게시글 조회
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPost(String category) {
+        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
+        List<PostResponseDto> postResponseDto = new ArrayList<>();
+        for (Post post : postList) {
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
+            postResponseDto.add(
+                    PostResponseDto.builder()
+                            .postId(post.getId())
+                            .title(post.getTitle())
+                            .imageUrl(imgList.get(0))
+                            .content(post.getContent())
+                            .likes(post.getLikes())
+                            .view(post.getView())
+                            .category(post.getCategory())
+                            .nickname(post.getUser().getNickname())
+                            .createdAt(post.getCreatedAt())
+                            .modifiedAt(post.getModifiedAt())
+                            .build()
+            );
+        }
+
+        return ResponseDto.success(postResponseDto);
+
+    }
+
+
 
     // 게시글 단건 조회
     @Transactional// readOnly설정시 데이터가 Mapping되지 않는문제로 해제
@@ -144,43 +179,7 @@ public class PostService {
                         .build()
         );
     }
-
-
-
-
-    // 전체 게시글 조회
-    @Transactional(readOnly = true)
-    public ResponseDto<?> getAllPost(String category) {
-        List<Post> postList = postRepository.findAllByCategoryOrderByCreatedAtDesc(category);
-        List<PostResponseDto> postResponseDto = new ArrayList<>();
-        for (Post post : postList) {
-            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
-            List<String> imgList = new ArrayList<>();
-            for (Img img : findImgList) {
-                imgList.add(img.getImageUrl());
-            }
-            postResponseDto.add(
-                    PostResponseDto.builder()
-                            .postId(post.getId())
-                            .title(post.getTitle())
-                            .imageUrl(imgList.get(0))
-                            .content(post.getContent())
-                            .likes(post.getLikes())
-                            .view(post.getView())
-                            .category(post.getCategory())
-                            .nickname(post.getUser().getNickname())
-                            .createdAt(post.getCreatedAt())
-                            .modifiedAt(post.getModifiedAt())
-                            .build()
-            );
-        }
-
-        return ResponseDto.success(postResponseDto);
-
-    }
-
-
-
+    //게시글 업데이트
     @Transactional
     public ResponseDto<PostResponseDto> updatePost(Long postId,
                                                    PostRequestDto requestDto,
@@ -221,6 +220,8 @@ public class PostService {
                 awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
             }
             imgRepository.deleteByPost_Id(post.getId());
+//            String deleteImage = post.getImageUrl();
+//            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(deleteImage));
         }
 
         List<String> newImgList = new ArrayList<>();
@@ -246,7 +247,7 @@ public class PostService {
                         .build()
         );
     }
-
+    //게시글 삭제
     @Transactional
     public ResponseDto<?> deletePost(Long postId, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {
@@ -300,10 +301,9 @@ public class PostService {
         return tokenProvider.getUserFromAuthentication();
     }
 
-
-    //    // 카테고리 조회, 검색
+//    // 카테고리 전체 게시글 조회
 //    @Transactional(readOnly = true)
-//    public ResponseDto<?> getAllPostSearch(String category, String keyword, int page, int size) {
+//    public ResponseDto<?> getAllPost(String category, String keyword, int page, int size) {
 //        Pageable pageable = PageRequest.of(page, size);
 //
 //        Slice<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword, pageable);
@@ -314,7 +314,7 @@ public class PostService {
 //        return ResponseDto.success(postList);
 //
 //    }
-//
+
 //    // 카테고리 전체 게시글 조회
 //    @Transactional(readOnly = true)
 //    public ResponseDto<?> getAllPost(String category, int page, int size) {
@@ -328,4 +328,7 @@ public class PostService {
 //        return ResponseDto.success(postList);
 //
 //    }
+
+
+
 }

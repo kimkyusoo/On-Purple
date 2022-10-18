@@ -23,24 +23,36 @@ public class LikeController {
         return likeService.CommentLike(commentId, request);
     }
 
-    // 댓글 좋아요
-    @PostMapping( "/user/like/{profileId}")
-    public ResponseDto<?> createProfileLike(@PathVariable Long profileId, HttpServletRequest request) {
-        return likeService.ProfileLike(profileId, request);
+    // 회원 좋아요
+    @PostMapping( "/user/like/{targetId}")
+    public ResponseDto<?> createUserLike(@PathVariable Long targetId, HttpServletRequest request) {
+        return likeService.UserLike(targetId, request);
     }
 
-    // 댓글 좋아요
-    @PostMapping( "/user/unlike/{profileId}")
-    public ResponseDto<?> createProfileUnLike(@PathVariable Long profileId, HttpServletRequest request) {
-        return likeService.ProfileUnLike(profileId, request);
+    // 회원 싫어요
+    @PostMapping( "/user/unlike/{targetId}")
+    public ResponseDto<?> createUserUnLike(@PathVariable Long targetId, HttpServletRequest request) {
+        return likeService.ProfileUnLike(targetId, request);
     }
 
-    //나를 좋아요
-   @PostMapping("/user/likes/{profileId}")
-    public ResponseDto<?> getAllLikeUser(@PathVariable Long profileId, HttpServletRequest request) {
-        return likeService.getAllLikeUser(profileId, request);
+    @PostMapping("/user/checkJ/{userId}")
+    public ResponseDto<?> likeCheckJ(@PathVariable Long userId, HttpServletRequest request ){
+        return likeService.likeCheckJ(userId,request);
     }
 
 
+    @PostMapping("/user/checks/{userId}")
+    public ResponseDto<?> likeChecks(@PathVariable Long userId, HttpServletRequest request ){
+        return likeService.getAllLike(userId,request);
+    }
 
+    @PostMapping("/user/matching/{userId}")
+    public ResponseDto<?> likeChecksFinal(@PathVariable Long userId, HttpServletRequest request ){
+        return likeService.likeCheckFinal(userId,request);
+    }
+
+    @PostMapping("/user/match/{userId}")
+    public ResponseDto<?> likeCheckFinalReal(@PathVariable Long userId, HttpServletRequest request ){
+        return likeService.likessCheck(request,userId);
+    }
 }

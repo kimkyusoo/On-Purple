@@ -1,10 +1,11 @@
 package com.project.date.controller;
 
-import com.project.date.dto.request.ProfileRequestDto;
+import com.project.date.dto.request.ProfileUpdateRequestDto;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 
 
@@ -14,18 +15,20 @@ public class ProfileController {
 
     private final ProfileService profileService;
 
-   @PostMapping("/profile")
-   public ResponseDto<?> createProfile(@RequestBody ProfileRequestDto requestDto, HttpServletRequest request) {
-       return profileService.createProfile(requestDto, request);
-   }
-
     @GetMapping("/main")
-    public ResponseDto<?> getAllProfiles() {
+    public ResponseDto<?> getAllProfiles(HttpServletRequest request) {
         return profileService.getAllProfiles();
     }
 
-    @GetMapping( "/profile/{profileId}")
-    public ResponseDto<?> getProfile(@PathVariable Long profileId) {
-        return profileService.getProfile(profileId);
+    @GetMapping( "/profile/{userId}")
+    public ResponseDto<?> getProfile(@PathVariable Long userId) {
+        return profileService.getProfile(userId);
     }
+
+    @PutMapping( "/mypage/userInfo")
+    public ResponseDto<?> updateProfile(@RequestBody ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
+
+       return profileService.updateProfile(requestDto, request);
+    }
+
 }

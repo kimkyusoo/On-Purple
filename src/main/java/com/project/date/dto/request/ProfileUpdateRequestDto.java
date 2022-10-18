@@ -1,23 +1,14 @@
-package com.project.date.dto.response;
+package com.project.date.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
-@Builder
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDto{
-    private Long userId;
-    private String nickname;
-    private String imageUrl;
-    private List<String> imgList;
-    private Integer age;
-    private String mbti;
+@Getter
+public class ProfileUpdateRequestDto {
+
     private String introduction;
     private String idealType;
     private String job;
@@ -27,8 +18,5 @@ public class ProfileResponseDto{
     private String smoke;
     private String likeMovieType;
     private String area;
-    private Integer likes;
-    private Integer unLike;
-
 
 }

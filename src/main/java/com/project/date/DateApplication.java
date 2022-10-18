@@ -12,10 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableJpaAuditing
 public class DateApplication {
 
+
     public static void main(String[] args) {
 
         SpringApplication.run(DateApplication.class, args
         );
     }
-
 }

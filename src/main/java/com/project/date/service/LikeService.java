@@ -1,20 +1,22 @@
 package com.project.date.service;
 
-import com.project.date.dto.response.LikeResponseDto;
-import com.project.date.dto.response.ResponseDto;
+import com.project.date.dto.response.*;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class LikeService {
@@ -23,14 +25,13 @@ public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
-    private final ProfileRepository profileRepository;
     private final UnLikeRepository unLikeRepository;
     private final UserRepository userRepository;
 
     // 게시글 좋아요
     @Transactional
     public ResponseDto<?> PostLike(Long postId,
-                                         HttpServletRequest request) {
+                                   HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -65,11 +66,16 @@ public class LikeService {
                     .build();
             likeRepository.save(postLike);
             post.addLike();
-            return ResponseDto.success("좋아요 성공");
+            return ResponseDto.success(
+                    LikeResponseDto.builder()
+                            .likes(postLike.getPost().getLikes())
+                            .build()
+            );
         } else {
             likeRepository.delete(liked);
             post.minusLike();
-            return ResponseDto.success("좋아요가 취소되었습니다.");
+            return ResponseDto.success(false);
+
         }
     }
 
@@ -102,7 +108,7 @@ public class LikeService {
         }
 
         //좋아요 한 적 있는지 체크
-        Likes liked = likeRepository.findByUserAndCommentId(user,commentId).orElse(null);
+        Likes liked = likeRepository.findByUserAndCommentId(user, commentId).orElse(null);
 
         if (liked == null) {
             Likes commentLike = Likes.builder()
@@ -111,17 +117,20 @@ public class LikeService {
                     .build();
             likeRepository.save(commentLike);
             comment.addLike();
-            return ResponseDto.success("좋아요 성공");
+            return ResponseDto.success(
+                    LikeResponseDto.builder()
+                            .likes(commentLike.getComment().getLikes()).build()
+            );
         } else {
             likeRepository.delete(liked);
             comment.minusLike();
-            return ResponseDto.success("좋아요가 취소되었습니다.");
+            return ResponseDto.success(false);
         }
     }
 
     //회원 좋아요
     @Transactional
-    public ResponseDto<?> ProfileLike(Long profileId,
+    public ResponseDto<?> UserLike(Long targetId,
                                       HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
@@ -139,33 +148,31 @@ public class LikeService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Profile profile = isPresentProfile(profileId);
-        if (null == profile)
-            return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
+        User target = isPresentTarget(targetId);
+        if (null == target)
+            return ResponseDto.fail("PROFILE_NOT_FOUND", "타겟 유저를 찾을 수 없습니다.");
 
-        if (!profile.validateUser(user)) {
-            return ResponseDto.fail("BAD_REQUEST", "본인에게 좋아요 할 수 없습니다.");
-        }
 
         //좋아요 한 적 있는지 체크
-        Likes liked = likeRepository.findByUserAndProfileId(user,profileId).orElse(null);
+        Likes liked = likeRepository.findByUserAndTargetId(user, targetId).orElse(null);
 
         if (liked == null) {
-            Likes profileLike = Likes.builder()
+            Likes userLike = Likes.builder()
                     .user(user)
-                    .profile(profile)
+                    .target(target)
                     .build();
-            likeRepository.save(profileLike);
-            profile.addLike();
+            likeRepository.save(userLike);
+            user.addLike();
             return ResponseDto.success("좋아요 성공");
         } else {
             likeRepository.delete(liked);
-            profile.minusLike();
+            user.minusLike();
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
+
     //회원 싫어요
-    public ResponseDto<?> ProfileUnLike(Long profileId,
+    public ResponseDto<?> ProfileUnLike(Long targetId,
                                         HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
@@ -183,36 +190,33 @@ public class LikeService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Profile profile = isPresentProfile(profileId);
-        if (null == profile)
-            return ResponseDto.fail("PROFILE_NOT_FOUND", "프로필을 찾을 수 없습니다.");
-
-        if (!profile.validateUser(user)) {
-            return ResponseDto.fail("BAD_REQUEST", "본인에게 싫어요 할 수 없습니다.");
-        }
+        User target = isPresentTarget(targetId);
+        if (null == target)
+            return ResponseDto.fail("PROFILE_NOT_FOUND", "타겟 유저를 찾을 수 없습니다.");
 
 
         //좋아요 한 적 있는지 체크
-        UnLike unLiked = unLikeRepository.findByUserAndProfileId(user,profileId).orElse(null);
+        UnLike unLiked = unLikeRepository.findByUserAndTargetId(user, targetId).orElse(null);
 
         if (unLiked == null) {
-            UnLike profileUnLike = UnLike.builder()
+            UnLike userUnLike = UnLike.builder()
                     .user(user)
-                    .profile(profile)
+                    .target(target)
                     .build();
-            unLikeRepository.save(profileUnLike);
-            profile.addUnLike();
+            unLikeRepository.save(userUnLike);
+            user.addUnLike();
             return ResponseDto.success("싫어요 성공");
         } else {
             unLikeRepository.delete(unLiked);
-            profile.minusUnLike();
+            user.minusUnLike();
             return ResponseDto.success("싫어요가 취소되었습니다.");
         }
     }
 
-    // 날 좋아요 리스트
+    //----------------------------------------------------------------------------test area
+    //1.이중 for문 돌리기
     @Transactional
-    public ResponseDto<?> getAllLikeUser(Long profileId, HttpServletRequest request) {
+    public ResponseDto<?> likessCheck(HttpServletRequest request, Long targetId) {
 
 
         if (null == request.getHeader("RefreshToken")) {
@@ -229,47 +233,154 @@ public class LikeService {
         if (null == user) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
-
-        Profile profile = isPresentProfile(profileId);
-        if (null == profile) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
-        }
-
-        if (profile.validateUser(user)) {
-            return ResponseDto.fail("BAD_REQUEST", "본인 정보만 조회 할 수 있습니다.");
-        }
-
-        List<Likes> likeList = likeRepository.findByProfileId(profileId);
         List<LikeResponseDto> likeResponseDto = new ArrayList<>();
+        List<Likes> follower = likeRepository.findByTargetId(targetId);
+        List<Likes> follow = likeRepository.findByUser(user);
+
+        for (Likes like1 : follower) {
+            for (Likes like2 : follow) {
+                if ((like1.getUser().getId() == like2.getUser().getId())) {
+                        return ResponseDto.fail("NOT_FOUND", "못찾겠당");
+
+                    }
+                log.info("되고 있나요?");
+                    likeResponseDto.add(
+                            LikeResponseDto.builder()
+                                    .nickname(like1.getUser().getNickname())
+                                    .build()
+                    );
+
+
+                    likeResponseDto.add(
+                            LikeResponseDto.builder()
+                                    .nickname(like2.getUser().getNickname())
+                                    .build()
+                    );
+                }
+            }
+        return ResponseDto.success(likeResponseDto);
+    }
+
+    // 2. querydsl방식 = 중복값
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllLike(Long userId,HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+
+
+
+//        List<Likes> likeList = likeRepository.findAllUserAndOtherProfile(userId);
+        List<Likes> likeList = likeRepository.findLikeToLike(userId);
+        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
+
         for (Likes likes : likeList) {
             if(likes == null) {
-                return ResponseDto.fail("LIKE NOT FOUND", "좋아요가 없습니다");
+                return ResponseDto.fail("PROFILE_NOT_FOUND", "매칭에 실패했습니다.");
             }
-
             likeResponseDto.add(
                     LikeResponseDto.builder()
                             .nickname(likes.getUser().getNickname())
+                            .imageUrl(likes.getUser().getImageUrl())
                             .build()
             );
         }
 
+
+            return ResponseDto.success(likeResponseDto);
+}
+
+    // 3. 매칭테스트 JPQL QUERY방식
+    @Transactional(readOnly = true)
+    public ResponseDto<?> likeCheckJ(Long userId,HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+
+
+//        List<Likes> likeList = likeRepository.findAllUserAndOtherProfile(userId);
+        List<Likes> likeList = likeRepository.findByTargetId(userId);
+        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
+
+        for (Likes likes : likeList) {
+            if(likes == null) {
+                return ResponseDto.fail("PROFILE_NOT_FOUND", "매칭에 실패했습니다.");
+            }
+            likeResponseDto.add(
+                    LikeResponseDto.builder()
+                            .nickname(likes.getUser().getNickname())
+                            .imageUrl(likes.getUser().getImageUrl())
+                            .build()
+            );
+        }
+
+
         return ResponseDto.success(likeResponseDto);
-
     }
+
+    //4. querydsl querydsl에서 for문까지 돌려서 뽑아오기
+    @Transactional(readOnly = true)
+    public ResponseDto<?> likeCheckFinal(Long userId,HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+        List<LikeResponseDto> likeResponseDtoList = likeRepository.findUserLikeToLike(userId);
+        if(likeResponseDtoList.isEmpty()) {
+            return ResponseDto.fail("TARGET_USER_NOT_FOUND","매칭된 회원을 찾을 수 없습니다.");
+
+        }
+
+
+        return ResponseDto.success(likeResponseDtoList);
+    }
+
+
+
 
     @Transactional(readOnly = true)
-    public User isPresentUser(Long userId) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        return optionalUser.orElse(null);
+    public User isPresentTarget(Long targetId) {
+        Optional<User> optionalTarget = userRepository.findById(targetId);
+        return optionalTarget.orElse(null);
     }
 
-
-
-    @Transactional(readOnly = true)
-    public Profile isPresentProfile(Long profileId) {
-        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
-        return optionalProfile.orElse(null);
-    }
 
 
 
@@ -291,5 +402,6 @@ public class LikeService {
             return null;
         }return tokenProvider.getUserFromAuthentication();
     }
+
 
 }

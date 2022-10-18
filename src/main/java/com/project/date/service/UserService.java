@@ -4,10 +4,7 @@ import com.project.date.dto.request.*;
 import com.project.date.dto.response.ResponseDto;
 import com.project.date.dto.response.UserResponseDto;
 import com.project.date.jwt.TokenProvider;
-import com.project.date.model.Authority;
-import com.project.date.model.Gender;
-import com.project.date.model.Img;
-import com.project.date.model.User;
+import com.project.date.model.*;
 import com.project.date.repository.ImgRepository;
 import com.project.date.repository.UserRepository;
 import com.project.date.util.AwsS3UploadService;
@@ -53,45 +50,47 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, List<String> imgPaths, HttpServletResponse response) {
+    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, UserInfoRequestDto userInfoRequestDto, List<String> imgPaths,HttpServletResponse response) {
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
                     "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
-        String gender = requestDto.getGender();
-        Gender genderSet = Gender.GENDER;
-
-        if (gender.equals("male")) {
-            genderSet = Gender.MALE;
-        } else if (gender.equals("female")) {
-            genderSet = Gender.FEMALE;
-        }
+//        String gender = requestDto.getGender();
+//        Gender genderSet = Gender.GENDER;
+//
+//        if (gender.equals("male")) {
+//            genderSet = Gender.MALE;
+//        } else if (gender.equals("female")) {
+//            genderSet = Gender.FEMALE;
+//        }
         Authority role = Authority.USER;
-        if (requestDto.isAdmin()){
-            if(!requestDto.getAdminToken().equals(ADMIN_TOKEN)){
-                return ResponseDto.fail ("BAD_REQUEST", "관리자 암호가 틀려 등록이 불가합니다.");
+        if (requestDto.isAdmin()) {
+            if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                return ResponseDto.fail("BAD_REQUEST", "관리자 암호가 틀려 등록이 불가합니다.");
 
             }
             role = Authority.ADMIN;
         }
 
+
         User user = User.builder()
                 .username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                 .nickname(requestDto.getNickname())
-                .gender(genderSet)
+                .gender(requestDto.getGender())
+                .imageUrl(requestDto.getImageUrl())
                 .role(role)
-                .age(requestDto.getAge())
-                .mbti(requestDto.getMbti())
-                .introduction(requestDto.getIntroduction())
-                .area(requestDto.getArea())
-                .idealType(requestDto.getIdealType())
-                .job(requestDto.getJob())
-                .hobby(requestDto.getHobby())
-                .smoke(requestDto.getSmoke())
-                .drink(requestDto.getDrink())
-                .likeMovieType(requestDto.getLikeMovieType())
-                .pet(requestDto.getPet())
+                .age(userInfoRequestDto.getAge())
+                .mbti(userInfoRequestDto.getMbti())
+                .introduction(userInfoRequestDto.getIntroduction())
+                .area(userInfoRequestDto.getArea())
+                .idealType(userInfoRequestDto.getIdealType())
+                .job(userInfoRequestDto.getJob())
+                .hobby(userInfoRequestDto.getHobby())
+                .smoke(userInfoRequestDto.getSmoke())
+                .drink(userInfoRequestDto.getDrink())
+                .likeMovieType(userInfoRequestDto.getLikeMovieType())
+                .pet(userInfoRequestDto.getPet())
                 .build();
         userRepository.save(user);
 
@@ -103,6 +102,9 @@ public class UserService {
             imgList.add(img.getImageUrl());
         }
         user.imageSave(imgList.get(0));
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(user);
+        tokenToHeaders(tokenDto, response);
 
         return ResponseDto.success(
                 UserResponseDto.builder()
@@ -177,7 +179,7 @@ public class UserService {
 
     @Transactional
     public ResponseDto<?> updatePassword(UserUpdateRequestDto requestDto,
-                                     HttpServletRequest request) {
+                                         HttpServletRequest request) {
 
 
         if (null == request.getHeader("RefreshToken")) {
@@ -242,26 +244,60 @@ public class UserService {
 
         return ResponseDto.success("프로필 사진 수정이 완료되었습니다!");
 
-}
+    }
 
 
-        //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없
-        public ResponseDto<?> logout (HttpServletRequest request){
-            if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-                return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-            }
-            User user = tokenProvider.getUserFromAuthentication();
-            if (null == user) {
-                return ResponseDto.fail("USER_NOT_FOUND",
-                        "사용자를 찾을 수 없습니다.");
-            }
-
-            return tokenProvider.deleteRefreshToken(user);
+    //  로그아웃. HttpServletRequest에 있는 권한을 보내 토큰을 확인하여 일치하지 않거나 유저 정보가 없
+    public ResponseDto<?> logout(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
+        User user = tokenProvider.getUserFromAuthentication();
+        if (null == user) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "사용자를 찾을 수 없습니다.");
+        }
+        List<Img> findImgList = imgRepository.findByUser_Id(user.getId());
+        List<String> imgList = new ArrayList<>();
+        for (Img img : findImgList) {
+            imgList.add(img.getImageUrl());
+        }
+
+        for (String imgUrl : imgList) {
+            awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
+        }
+
+        return tokenProvider.deleteRefreshToken(user);
+    }
+
+    @Transactional
+    public ResponseDto<?> deleteUser(HttpServletRequest request, Long userId) {
+
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+        User user = isPresentId(userId);
+        if (null == user) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 사용자입니다.");
+        }
+
+        userRepository.delete(user);
+        tokenProvider.deleteRefreshToken(user);
+        return ResponseDto.success("delete success");
+        }
+
+
+
 
     @Transactional(readOnly = true)
     public User isPresentUser(String username) {
         Optional<User> optionalUser = userRepository.findByUsername(username);
+        return optionalUser.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
+    public User isPresentId(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
         return optionalUser.orElse(null);
     }
 

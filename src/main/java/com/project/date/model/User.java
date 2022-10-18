@@ -44,8 +44,8 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private Authority role;
 
-    @Enumerated(value = STRING)
-    private Gender gender;
+    @Column
+    private String gender;
 
     @Column (unique = true)
     private Long kakaoId;
@@ -68,10 +68,10 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private int age;
 
-    @Column
+    @Column(nullable = false)
     private String mbti;
 
-    @Column
+    @Column(nullable = false)
     private String introduction;
 
     @Column
@@ -129,12 +129,13 @@ public class User extends Timestamped {
 //
 //        return !this.user.equals(user);
 //    }
-
-    public User(String username, String password, Authority role){
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
+//
+//    public User(String username, String password, Authority role){
+//        this.username = username;
+//        this.password = password;
+//        this.role = role;
+//
+//    }
     public void update(UserUpdateRequestDto requestDto) {
         this.password = requestDto.getPassword();
     }

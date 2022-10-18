@@ -1,34 +1,38 @@
-package com.project.date.dto.response;
+package com.project.date.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-
-@Builder
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileResponseDto{
-    private Long userId;
-    private String nickname;
-    private String imageUrl;
-    private List<String> imgList;
+@Component
+public class UserInfoRequestDto {
+
+
     private Integer age;
+
+
     private String mbti;
+
+
     private String introduction;
+
     private String idealType;
+
     private String job;
+
     private String hobby;
+
     private String drink;
+
     private String pet;
+
     private String smoke;
+
     private String likeMovieType;
+
     private String area;
-    private Integer likes;
-    private Integer unLike;
-
-
 }

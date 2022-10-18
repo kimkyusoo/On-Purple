@@ -26,24 +26,21 @@ public class Report extends Timestamped{
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String reportNickname;
+
     @Column
     private String category;
+
 
     @Column
     private String imageUrl;
 
-    @Column(nullable = false)
-    private int view;
 
 
     @JoinColumn(name = "userId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "targetUserId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User targetUser;
 
 
     // 회원정보 검증
@@ -57,10 +54,6 @@ public class Report extends Timestamped{
         this.imageUrl = imageUrl;
     }
 
-    //조회수 증가
-    public void updateViewCount(){
-        this.view +=1;
-    }
 
     public void update(ReportRequestDto requestDto) {
         this.title = requestDto.getTitle();

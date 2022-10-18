@@ -16,11 +16,9 @@ import java.util.List;
 public class ReportResponseDto {
     private Long reportId;
     private String title;
-    private String nickname;
-    private int reportCount;
+    private String reportNickname;
     private String content;
     private String imageUrl;
-    private Integer view;
     private String category;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;

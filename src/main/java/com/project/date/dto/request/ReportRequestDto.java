@@ -15,7 +15,7 @@ public class ReportRequestDto {
     private String content;
     private String imageUrl;
     private String category;
-    private int reportCount;
+    private String reportNickname;
 
 
 

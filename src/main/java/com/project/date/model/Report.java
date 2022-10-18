@@ -30,6 +30,9 @@ public class Report extends Timestamped{
     private String category;
 
     @Column
+    private String reportNickname;
+
+    @Column
     private String imageUrl;
 
     @Column(nullable = false)
@@ -39,11 +42,6 @@ public class Report extends Timestamped{
     @JoinColumn(name = "userId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "targetUserId", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User targetUser;
 
 
     // 회원정보 검증

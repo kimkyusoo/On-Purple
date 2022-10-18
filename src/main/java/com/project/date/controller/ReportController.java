@@ -19,15 +19,15 @@ public class ReportController {
     private final AwsS3UploadService s3Service;
 
     // 신고글 작성
-    @PostMapping( "/report/{targetId}")
-    public ResponseDto<?> createReport(@PathVariable Long targetId,@RequestPart(value = "data",required = false) ReportRequestDto requestDto,
+    @PostMapping( "/report")
+    public ResponseDto<?> createReport(@RequestPart(value = "data",required = false) ReportRequestDto requestDto,
                                      HttpServletRequest request, @RequestPart(value = "imageUrl",required = false) List<MultipartFile> multipartFiles) {
 
         if (multipartFiles == null) {
             throw new NullPointerException("사진을 업로드해주세요");
         }
         List<String> imgPaths = s3Service.upload(multipartFiles);
-        return reportService.createReport(targetId,requestDto,request, imgPaths);
+        return reportService.createReport(requestDto,request, imgPaths);
     }
 
     @GetMapping("/report")

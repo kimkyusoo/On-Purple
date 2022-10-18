@@ -33,7 +33,7 @@ public class ReportService {
 
     // 신고글 작성
     @Transactional
-    public ResponseDto<?> createReport(Long targetUserId, ReportRequestDto requestDto,
+    public ResponseDto<?> createReport(ReportRequestDto requestDto,
                                        HttpServletRequest request,
                                        List<String> imgPaths) {
 
@@ -52,16 +52,11 @@ public class ReportService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        User targetUser = isPresentTargetUser(targetUserId);
-        if (null == targetUser) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
-        }
 
-        targetUser.reportCount();
 
         Report report = Report.builder()
                 .user(user)
-                .targetUser(targetUser)
+                .reportNickname(requestDto.getReportNickname())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .category(requestDto.getCategory())
@@ -81,10 +76,9 @@ public class ReportService {
         return ResponseDto.success(
                 ReportResponseDto.builder()
                         .reportId(report.getId())
-                        .nickname(report.getTargetUser().getNickname())
+                        .reportNickname(report.getReportNickname())
                         .title(report.getTitle())
                         .content(report.getContent())
-                        .reportCount(targetUser.getReportCount())
                         .imageUrl(report.getImageUrl())
                         .category(report.getCategory())
                         .createdAt(report.getCreatedAt())
@@ -108,7 +102,7 @@ public class ReportService {
                         .reportId(report.getId())
                         .title(report.getTitle())
                         .content(report.getContent())
-                        .nickname(report.getTargetUser().getNickname())
+                        .reportNickname(report.getReportNickname())
                         .view(report.getView())
                         .category(report.getCategory())
                         .imageUrl(report.getImageUrl())
@@ -132,7 +126,7 @@ public class ReportService {
                             .content(report.getContent())
                             .view(report.getView())
                             .category(report.getCategory())
-                            .nickname(report.getTargetUser().getNickname())
+                            .reportNickname(report.getReportNickname())
                             .createdAt(report.getCreatedAt())
                             .modifiedAt(report.getModifiedAt())
                             .build()
@@ -193,12 +187,6 @@ public class ReportService {
             return null;
         }
         return tokenProvider.getUserFromAuthentication();
-    }
-
-    @Transactional(readOnly = true)
-    public User isPresentTargetUser(Long targetUserId) {
-        Optional<User> optionalTargetUser = userRepository.findById(targetUserId);
-        return optionalTargetUser.orElse(null);
     }
 
     @Transactional(readOnly = true)

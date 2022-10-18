@@ -9,11 +9,15 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 import java.util.stream.Collectors;
 
+
 @RequiredArgsConstructor
-public class LikeCustomRepositoryImpl implements LikeCustomRepository{
+public class LikeCustomRepositoryImpl implements LikeCustomRepository {
+
+    private final EntityManager em;
 
     QLikes likes = QLikes.likes;
     QUser user = QUser.user;
@@ -51,7 +55,7 @@ public class LikeCustomRepositoryImpl implements LikeCustomRepository{
 
         List<LikeResponseDto> responseDtoList = new ArrayList<>();
 
-        for(Likes likes : likesResult) {
+        for (Likes likes : likesResult) {
             responseDtoList.add(LikeResponseDto.builder()
                     .likeId(likes.getId())
                     .nickname(likes.getUser().getNickname())
@@ -62,6 +66,9 @@ public class LikeCustomRepositoryImpl implements LikeCustomRepository{
         return responseDtoList;
         //.stream().distinct().collect(Collectors.toList())
     }
+//
+//    List<Likes> result = em.createQuery
+//            ("select distinct l.user.id from Likes l where l.user.id in (select l.target.id from Likes l where l.user.id=:userId)")
 
     private BooleanExpression userIdEq(Long userId) {
         if (userId == null) {

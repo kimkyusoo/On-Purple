@@ -325,7 +325,7 @@ public class LikeService {
 
 
 //        List<Likes> likeList = likeRepository.findAllUserAndOtherProfile(userId);
-        List<Likes> likeList = likeRepository.findUserJPQLToLike(user, userId);
+        List<Likes> likeList = likeRepository.findByTargetId(userId);
         List<LikeResponseDto> likeResponseDto = new ArrayList<>();
 
         for (Likes likes : likeList) {

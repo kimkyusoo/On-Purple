@@ -33,11 +33,16 @@ public class TokenProvider {
 
   private static final String AUTHORITIES_KEY = "auth";
   private static final String BEARER_PREFIX = "Bearer ";
+
 //  AccessToken의 유효기간을 30분으로, RefreshToken의 유효기간을 7일로 설정.
   private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;        //10분
   private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24;     //30분
 
   private final Key key;
+
+//
+  @Value("${jwt.secret}")
+  private String secretKey;
 
   private final RefreshTokenRepository refreshTokenRepository;
 //  private final UserDetailsServiceImpl userDetailsService;
@@ -132,4 +137,46 @@ public class TokenProvider {
     refreshTokenRepository.delete(refreshToken);
     return ResponseDto.success("success");
   }
+
+//
+  /**
+   //     * 이름으로 Jwt Token을 생성한다.
+   //     */
+//    public String generateToken(String name) {
+//        Date now = new Date();
+//        return Jwts.builder()
+//                .setId(name)
+//                .setIssuedAt(now) // 토큰 발행일자
+//                .setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME)) // 유효시간 설정
+//                .signWith(SignatureAlgorithm.HS256, secretKey) // 암호화 알고리즘, secret값 세팅
+//                .compact();
+//    }
+  /**
+   //     * Jwt Token을 복호화 하여 이름을 얻는다.
+   //     */
+//    public String getUserNameFromJwt(String jwt) {
+//        return getClaims(jwt).getBody().getId();
+//    }
+
+
+//  private Jws<Claims> getClaims(String jwt) {
+//        try {
+//            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwt);
+//        } catch (SignatureException ex) {
+//            log.error("Invalid JWT signature");
+//            throw ex;
+//        } catch (MalformedJwtException ex) {
+//            log.error("Invalid JWT token");
+//            throw ex;
+//        } catch (ExpiredJwtException ex) {
+//            log.error("Expired JWT token");
+//            throw ex;
+//        } catch (UnsupportedJwtException ex) {
+//            log.error("Unsupported JWT token");
+//            throw ex;
+//        } catch (IllegalArgumentException ex) {
+//            log.error("JWT claims string is empty.");
+//            throw ex;
+//        }
+//    }
 }

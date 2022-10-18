@@ -41,3 +41,4 @@ awsS3.yml
 
 ### setting ###
 application.properties
+application-embedded.yml

@@ -29,9 +29,4 @@ public interface LikeRepository extends JpaRepository<Likes, Long>, LikeCustomRe
 
     Optional<Likes> findAllByUserAndTargetId(User user, Long targetId);
 
-    @Query(value = "SELECT DISTINCT l.user.id FROM Likes l WHERE l.user.id IN(SELECT l.target.id FROM Likes l where l.user.id = :userId)")
-    List<Likes> findUserJPQLToLike(User user, @Param(value = "userId") Long userId);
-
-
-
 }

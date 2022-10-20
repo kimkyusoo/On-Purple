@@ -40,8 +40,6 @@ public class Likes {
     @JoinColumn(name = "commentId")
     private Comment comment;
 
-    @Transient
-    private boolean matching;
 
     public boolean validateUser(User user) {
         return !this.user.equals(user);

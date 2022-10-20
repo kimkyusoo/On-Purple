@@ -290,6 +290,9 @@ public class PostService {
     //    // 카테고리 조회, 검색
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllPostSearch(String category, String keyword) {
+        if((keyword).isEmpty()){
+            return ResponseDto.fail("KEYWORD_NOT_FOUND","검색어가 존재하지 않습니다");
+        }
 
         List<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword);
         if (postList.isEmpty()) {

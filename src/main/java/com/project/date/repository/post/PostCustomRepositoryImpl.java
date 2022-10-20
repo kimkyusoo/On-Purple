@@ -2,8 +2,11 @@ package com.project.date.repository.post;
 
 
 import com.project.date.dto.response.PostResponseDto;
+import com.project.date.dto.response.ResponseDto;
+import com.project.date.model.Img;
 import com.project.date.model.Post;
 import com.project.date.model.QPost;
+import com.project.date.repository.ImgRepository;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,6 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostCustomRepositoryImpl implements PostCustomRepository {
 
+    private final ImgRepository imgRepository;
     private final JPAQueryFactory jpaQueryFactory;
     QPost post = QPost.post;
 
@@ -34,6 +38,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
         List<PostResponseDto> responseDtoList = new ArrayList<>();
 
         for(Post post : postResult){
+            List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
+            List<String> imgList = new ArrayList<>();
+            for (Img img : findImgList) {
+                imgList.add(img.getImageUrl());
+            }
             responseDtoList.add(PostResponseDto.builder()
                     .postId(post.getId())
                     .title(post.getTitle())
@@ -42,7 +51,7 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
                     .likes(post.getLikes())
                     .category(post.getCategory())
                     .nickname(post.getUser().getNickname())
-                    .imageUrl(post.getImageUrl())
+                    .imageUrl(imgList.get(0))
                     .createdAt(post.getCreatedAt())
                     .modifiedAt(post.getModifiedAt())
                     .build());

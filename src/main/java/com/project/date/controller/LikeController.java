@@ -35,4 +35,9 @@ public class LikeController {
         return likeService.ProfileUnLike(targetId, request);
     }
 
+    @PostMapping( "/user/match/{userId}")
+    public ResponseDto<?> createCheckUser(@PathVariable Long userId, HttpServletRequest request) {
+        return likeService.likeCheck(userId, request);
+    }
+
 }

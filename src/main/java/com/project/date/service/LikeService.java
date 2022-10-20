@@ -213,6 +213,50 @@ public class LikeService {
         }
     }
 
+    // 3.매칭테스트 JPQL QUERY방식
+    @Transactional(readOnly = true)
+    public ResponseDto<?> likeCheck(Long userId,HttpServletRequest request) {
+
+        if (null ==request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null ==request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        List<Integer> likeList = likeRepository.likeToLikeUserId(userId)
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+//매칭되는 아이디 찾아서 가져오기
+        //stream 으로 중복제거
+
+        List<User> getLikeUser = userRepository.matchingUser(likeList);
+        List<UserResponseDto> userResponseDtos = new ArrayList<>();
+
+        for (User list : getLikeUser) {
+            userResponseDtos.add(
+                    UserResponseDto.builder()
+                            .userId(list.getId())
+                            .nickname(list.getNickname())
+                            .imageUrl(list.getImageUrl())
+                            .build()
+            );
+
+
+        }
+        return ResponseDto.success(userResponseDtos);
+    }
+
+
 
 
     @Transactional(readOnly = true)

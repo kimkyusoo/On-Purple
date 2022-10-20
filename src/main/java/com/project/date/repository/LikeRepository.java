@@ -3,6 +3,7 @@ package com.project.date.repository;
 import com.project.date.model.Likes;
 import com.project.date.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findAllByUserAndTargetId(User user, Long targetId);
 
+    @Query(value ="select l.user.id from Likes l where l.user.id in(select l.target.id from Likes l where l.user.id =:userId)")
+    List<Integer> likeToLikeUserId(Long userId);
 }

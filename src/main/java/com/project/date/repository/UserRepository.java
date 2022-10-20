@@ -16,6 +16,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findAllByOrderByModifiedAtDesc();
     @Query(value = "SELECT * FROM user_table WHERE user_id IN (:likeList)", nativeQuery = true)
-    List<User> MatchingUser(List<Integer>likeList);
+    List<User> matchingUser(List<Integer>likeList);
 
 }

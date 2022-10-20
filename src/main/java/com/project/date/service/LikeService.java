@@ -236,10 +236,10 @@ public class LikeService {
                 .stream()
                 .distinct()
                 .collect(Collectors.toList());
-
 //매칭되는 아이디 찾아서 가져오기
+        //stream 으로 중복제거
 
-        List<User> getLikeUser = userRepository.MatchingUser(likeList);
+        List<User> getLikeUser = userRepository.matchingUser(likeList);
         List<UserResponseDto> userResponseDtos = new ArrayList<>();
 
         for (User list : getLikeUser) {

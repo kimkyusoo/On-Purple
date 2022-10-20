@@ -15,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(Long kakaoId);
 
     List<User> findAllByOrderByModifiedAtDesc();
+
+    //매칭된 회원 정보 가져오기
     @Query(value = "SELECT * FROM user_table WHERE user_id IN (:likeList)", nativeQuery = true)
     List<User> matchingUser(List<Integer>likeList);
 

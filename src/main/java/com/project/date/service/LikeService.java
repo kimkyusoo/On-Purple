@@ -213,7 +213,7 @@ public class LikeService {
         }
     }
 
-    // 3.매칭테스트 JPQL QUERY방식
+    // 매칭 JPQL QUERY방식
     @Transactional(readOnly = true)
     public ResponseDto<?> likeCheck(Long userId,HttpServletRequest request) {
 
@@ -236,8 +236,11 @@ public class LikeService {
                 .stream()
                 .distinct()
                 .collect(Collectors.toList());
-//매칭되는 아이디 찾아서 가져오기
+        //매칭되는 아이디 찾아서 가져오기
         //stream 으로 중복제거
+        if((likeList.isEmpty())){
+            return ResponseDto.fail("MATCHING_USER_NOT_FOUND","매칭된 회원을 찾을 수 없습니다.");
+        }
 
         List<User> getLikeUser = userRepository.matchingUser(likeList);
         List<UserResponseDto> userResponseDtos = new ArrayList<>();

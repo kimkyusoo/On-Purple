@@ -287,6 +287,19 @@ public class PostService {
         return ResponseDto.success("delete success");
     }
 
+    //    // 카테고리 조회, 검색
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getAllPostSearch(String category, String keyword) {
+
+        List<PostResponseDto> postList = postRepository.findAllByCategorySearch(category, keyword);
+        if (postList.isEmpty()) {
+            return ResponseDto.fail("POST_NOT_FOUND", "존재하지 않는 게시글입니다.");
+
+        }
+        return ResponseDto.success(postList);
+
+    }
+
     @Transactional(readOnly = true)
     public Post isPresentPost(Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);

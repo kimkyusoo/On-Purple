@@ -1,19 +1,14 @@
 package com.project.date.repository;
 
-import com.project.date.dto.response.LikeResponseDto;
 import com.project.date.model.Likes;
 import com.project.date.model.User;
-import com.project.date.repository.like.LikeCustomRepository;
-import io.lettuce.core.dynamic.annotation.Param;
-import org.hibernate.annotations.Where;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.security.core.parameters.P;
+
 
 import java.util.List;
 import java.util.Optional;
 
-public interface LikeRepository extends JpaRepository<Likes, Long>, LikeCustomRepository {
+public interface LikeRepository extends JpaRepository<Likes, Long> {
 
     Optional<Likes> findByUserAndPostId(User user, Long postId);
 

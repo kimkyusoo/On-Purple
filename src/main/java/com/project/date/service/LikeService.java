@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -131,7 +132,7 @@ public class LikeService {
     //회원 좋아요
     @Transactional
     public ResponseDto<?> UserLike(Long targetId,
-                                      HttpServletRequest request) {
+                                   HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -170,6 +171,7 @@ public class LikeService {
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
+
 
     //회원 싫어요
     public ResponseDto<?> ProfileUnLike(Long targetId,
@@ -215,14 +217,14 @@ public class LikeService {
 
     // 매칭 JPQL QUERY방식
     @Transactional(readOnly = true)
-    public ResponseDto<?> likeCheck(Long userId,HttpServletRequest request) {
+    public ResponseDto<?> likeCheck(Long userId, HttpServletRequest request) {
 
-        if (null ==request.getHeader("RefreshToken")) {
+        if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
 
-        if (null ==request.getHeader("Authorization")) {
+        if (null == request.getHeader("Authorization")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
         }
@@ -238,8 +240,8 @@ public class LikeService {
                 .collect(Collectors.toList());
         //매칭되는 아이디 찾아서 가져오기
         //stream 으로 중복제거
-        if((likeList.isEmpty())){
-            return ResponseDto.fail("MATCHING_USER_NOT_FOUND","매칭된 회원을 찾을 수 없습니다.");
+        if ((likeList.isEmpty())) {
+            return ResponseDto.fail("MATCHING_USER_NOT_FOUND", "매칭된 회원을 찾을 수 없습니다.");
         }
 
         List<User> getLikeUser = userRepository.matchingUser(likeList);
@@ -259,6 +261,39 @@ public class LikeService {
         return ResponseDto.success(userResponseDtos);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getLike(HttpServletRequest request) {
+
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        List<Likes> likesList = likeRepository.findByUser(user);
+        List<LikesResponseDto> likesResponseDtoList = new ArrayList<>();
+
+        for (Likes likes : likesList) {
+            likesResponseDtoList.add(
+
+                            LikesResponseDto.builder()
+                                    .userId(likes.getTarget().getId())
+                                    .imageUrl(likes.getTarget().getImageUrl())
+                                    .build()
+            );
+        }
+        return ResponseDto.success(likesResponseDtoList);
+    }
+
 
 
 
@@ -267,8 +302,6 @@ public class LikeService {
         Optional<User> optionalTarget = userRepository.findById(targetId);
         return optionalTarget.orElse(null);
     }
-
-
 
 
     @Transactional(readOnly = true)
@@ -284,10 +317,11 @@ public class LikeService {
     }
 
 
-    public User validateUser(HttpServletRequest request){
-        if(!tokenProvider.validateToken(request.getHeader("RefreshToken"))){
+    public User validateUser(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
-        }return tokenProvider.getUserFromAuthentication();
+        }
+        return tokenProvider.getUserFromAuthentication();
     }
 
 

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikedResponseDto {
+public class LikesResponseDto {
     private Long userId;
     private String imageUrl;
 }

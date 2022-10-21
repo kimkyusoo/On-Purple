@@ -39,5 +39,9 @@ public class LikeController {
     public ResponseDto<?> createCheckUser(@PathVariable Long userId, HttpServletRequest request) {
         return likeService.likeCheck(userId, request);
     }
+    @GetMapping("/user/like")
+    public ResponseDto<?> getLikeList(HttpServletRequest request){
+        return likeService.getLike(request);
+    }
 
 }

@@ -92,10 +92,5 @@ public class UserController {
         log.info(code);
         return kakaoService.kakaoLogin(code, response);
     }
-
-    @DeleteMapping( "/user/{userId}")
-    public ResponseDto<?> deleteUser(@PathVariable Long userId, HttpServletRequest request) {
-        return userService.deleteUser(request, userId);
-    }
 }
 

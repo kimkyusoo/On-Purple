@@ -25,7 +25,7 @@ public class ProfileController {
         return profileService.getProfile(userId);
     }
 
-    @PutMapping( "/mypage/userInfo")
+    @PatchMapping( "/mypage/userInfo")
     public ResponseDto<?> updateProfile(@RequestBody ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
 
        return profileService.updateProfile(requestDto, request);

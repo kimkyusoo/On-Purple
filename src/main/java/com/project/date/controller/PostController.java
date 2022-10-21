@@ -47,7 +47,7 @@ public class PostController {
 
 
   // 게시글 수정
-  @PutMapping( "/post/{postId}")
+  @PatchMapping ( "/post/{postId}")
   public ResponseDto<?> updatePost(@PathVariable Long postId,
                                    @RequestPart(value = "data") PostRequestDto requestDto,
                                    @RequestPart("imageUrl") List<MultipartFile> multipartFiles,

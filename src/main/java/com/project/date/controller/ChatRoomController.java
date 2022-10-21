@@ -46,7 +46,6 @@ public class ChatRoomController {
         redisRepository.initChatRoomMessageInfo(chatRoomUuid, chatPartnerUserId);
 
         return chatRoomUuid;
-        // 01e15268-2dc6-472b-b598-46e0dd1f46ce
     }
 
     //내가 가진 채팅방 조회

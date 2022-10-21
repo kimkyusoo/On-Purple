@@ -4,13 +4,20 @@ import com.project.date.dto.request.ChatMessageDto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * String roomId
+ * String message
+ * String createdAt
+ * Long ohterMemberId
+ * Long userId
+ */
 @Getter
 @Setter
 public class MessageResponseDto {
     private String roomId;
     private String message;
     private String createdAt;
-    private Long otherMemberId;
+    private Long otherUserId;
     private Long userId;
 
     public MessageResponseDto(ChatMessageDto roomMessage) {
@@ -18,7 +25,7 @@ public class MessageResponseDto {
         this.roomId = roomMessage.getRoomId();
         this.message = roomMessage.getMessage();
         this.createdAt = roomMessage.getCreatedAt();
-        this.otherMemberId = roomMessage.getOtherMemberId();
+        this.otherUserId = roomMessage.getOtherUserId();
         this.userId = roomMessage.getUserId();
     }
 }

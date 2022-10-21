@@ -19,20 +19,23 @@ public class ChatRoomUser extends Timestamped {
     @ManyToOne
     private User user;
 
+    private String nickname;
     private String name;
-    private String otherUserImage;
-    @ManyToOne
-    private User otherUser;
+    private String otherImageUrl;
+//    @ManyToOne
+    private String myNickname;
+    private String otherNickname;
 
     @ManyToOne
     @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
-    public ChatRoomUser(User user, User anotherUser, ChatRoom room) {
+    public ChatRoomUser(User user, User otherUser, ChatRoom room) {
         this.user = user;
-        this.name = anotherUser.getUsername();
+        this.otherNickname = otherUser.getNickname();
+        this.name = otherUser.getUsername();
         this.chatRoom = room;
-        this.otherUser = anotherUser;
-        this.otherUserImage = anotherUser.getImageUrl();
+        this.myNickname = user.getNickname();
+        this.otherImageUrl = otherUser.getImageUrl();
     }
 }

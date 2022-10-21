@@ -13,8 +13,10 @@ public class RedisRepository {
     public static final String USER_INFO = "USER_INFO";
     public static final String ENTER_INTO = "ENTER_INFO";
 
-    // 유저가 입장한 채팅방 정보 저장
-    // "ENTER_INFO", "user id", "room id"
+    /**
+     * 유저가 입장한 채팅방 정보 저장
+     * "ENTER_INFO", "user id", "room id"
+     */
     @Resource(name = "redisTemplate")
     private HashOperations<String, Long, String> chatRoomUserEnteredRoomInfo;
 
@@ -67,10 +69,10 @@ public class RedisRepository {
     // step2
     // 채팅방에서 사용자가 읽지 않은 메세지의 갯수 초기화
     public void initChatRoomMessageInfo(String roomUuid, Long userId) {
-        System.out.println("roomId>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+roomUuid);
-        System.out.println("userId>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+userId);
+        System.out.println("roomId >>>>>> "+roomUuid);
+        System.out.println("userId >>>>>> "+userId);
         chatRoomUnReadMessageInfo.put(roomUuid, userId, 0);
-        System.out.println("안읽은 메시지 업데이트했음 "+getChatRoomMessageCount(roomUuid, userId));
+        System.out.println("안읽은 메시지 업데이트 "+getChatRoomMessageCount(roomUuid, userId));
     }
 
     // 채팅방에서 사용자가 읽지 않은 메세지의 갯수 추가

@@ -23,13 +23,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue");            // 메시지를 받을 때 속성, 1 TO 1 :: queue, 1 TO N :: topic
-        config.setApplicationDestinationPrefixes("/app");               // 메시지를 발송할 떄 속성
+        config.enableSimpleBroker("/sub");            // 메시지를 받을 때 속성, 1 TO 1 :: queue, 1 TO N :: topic
+        config.setApplicationDestinationPrefixes("/pub");               // 메시지를 발송할 떄 속성
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/chat")                         //  Hand-Shake를 맺을 때 사용
+        registry.addEndpoint("/stomp/chat")                         //  Hand-Shake를 맺을 때 사용
                 .setAllowedOrigins("https://homecomingdaycare.com", "http://localhost:3000", "http://localhost:4040")
                 .withSockJS(); // sock.js를 통하여 낮은 버전의 브라우저에서도 websocket이 동작할수 있게 합니다.
     }

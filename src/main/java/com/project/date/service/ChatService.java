@@ -48,7 +48,7 @@ public class ChatService {
         String createdAt = getCurrentTime();
         chatMessageDto.setCreatedAt(createdAt);
         chatMessageDto.setMessageId(chatMessage.getId());
-        chatMessageDto.setOtherMemberId(chatRoomUser.get(0).getUser().getId());
+        chatMessageDto.setOtherUserId(chatRoomUser.get(0).getUser().getId());
         chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
         // front에서 요청해서 진행한 작업 나의 userId 넣어주기
         chatMessageDto.setUserId(user.getId());
@@ -67,7 +67,7 @@ public class ChatService {
 
     //안읽은 메세지 업데이트
     public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto) {
-        Long otherUserId = requestChatMessageDto.getOtherMemberId();
+        Long otherUserId = requestChatMessageDto.getOtherUserId();
         String roomId = requestChatMessageDto.getRoomId();
         // 상대방이 채팅방에 들어가 있지 않거나 들어가 있어도 나와 같은 대화방이 아닌 경우 안 읽은 메세지 처리를 할 것이다.
         if (!redisRepository.existChatRoomUserInfo(otherUserId) || !redisRepository.getUserEnterRoomId(otherUserId).equals(roomId)) {

@@ -136,8 +136,12 @@ public class ChatRoomService {
     }
 
     public ChatRoomResponseDto createChatRoomDto(ChatRoomUser chatRoomUser, int totalCnt) {
-        String roomName = chatRoomUser.getName();
+        String otherId = chatRoomUser.getName();
+        String otherNickname = chatRoomUser.getOtherNickname();
+//        String otherNickname = chatRoomUser.getName();
         String roomUuid = chatRoomUser.getChatRoom().getChatRoomUuid();
+        String otherImageUrl = chatRoomUser.getOtherImageUrl();
+        String nickname = chatRoomUser.getMyNickname();
         String lastMessage;
         LocalDateTime lastTime;
 
@@ -153,9 +157,8 @@ public class ChatRoomService {
         }
 
         int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomUuid, chatRoomUser.getUser().getId());
-//        String dayBefore = Time.convertLocaldatetimeToTime(lastTime);
 
-        return new ChatRoomResponseDto(roomName, roomUuid, lastMessage, lastTime, unReadMessageCount, totalCnt);
+        return new ChatRoomResponseDto(roomUuid, otherId, nickname, otherNickname, otherImageUrl, lastMessage, lastTime, unReadMessageCount ,totalCnt);
 
     }
 
@@ -176,16 +179,16 @@ public class ChatRoomService {
                 () -> new NotFoundException("채팅방을 찾을 수 없습니다.")
         );
 
-        List<ChatRoomUser> members = chatRoom.getChatRoomUsers();
+        List<ChatRoomUser> users = chatRoom.getChatRoomUsers();
 
-        for(ChatRoomUser member : members){
-            if(!member.getUser().getId().equals(myUser.getId())) {
-                User otherUser = member.getUser();
+        for(ChatRoomUser user : users){
+            if(!user.getUser().getId().equals(myUser.getId())) {
+                User otherUser = user.getUser();
                 return new ChatRoomOtherUserInfoResponseDto(otherUser);
             }
         }
 
-        User anotherUser = memberRepository.findByUsername(members.get(0).getName()).orElseThrow(
+        User anotherUser = memberRepository.findByUsername(users.get(0).getName()).orElseThrow(
                 ()-> new NotFoundException("채팅상대가 존재하지 않습니다.")
         );
         ChatRoomUser anotherChatRoomUser = new ChatRoomUser(anotherUser, myUser, chatRoom);

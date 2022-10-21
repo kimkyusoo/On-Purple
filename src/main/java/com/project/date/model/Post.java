@@ -2,8 +2,11 @@ package com.project.date.model;
 
 import com.project.date.dto.request.PostRequestDto;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Post extends Timestamped {
+public class Post{
 
     @Id
     @Column(name = "postId")
@@ -56,12 +59,21 @@ public class Post extends Timestamped {
     @Column
     private String imageUrl;
 
+    @Column // 생성일자임을 나타냅니다.
+    private String createdAt;
+
+    @Column // 마지막 수정일자임을 나타냅니다.
+    private String modifiedAt;
+
 
 
     public void update(PostRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.category= requestDto.getCategory();
+    }
+    public void updateModified(String getTime){
+        this.modifiedAt = getTime;
     }
 
     // 회원정보 검증

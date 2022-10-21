@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -131,7 +132,7 @@ public class LikeService {
     //회원 좋아요
     @Transactional
     public ResponseDto<?> UserLike(Long targetId,
-                                      HttpServletRequest request) {
+                                   HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -170,6 +171,7 @@ public class LikeService {
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
+
 
     //회원 싫어요
     public ResponseDto<?> ProfileUnLike(Long targetId,
@@ -213,57 +215,9 @@ public class LikeService {
         }
     }
 
-    //----------------------------------------------------------------------------test area
-    //1.이중 for문 돌리기
-    @Transactional
-    public ResponseDto<?> likessCheck(HttpServletRequest request, Long targetId) {
-
-
-        if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        User user = validateUser(request);
-        if (null == user) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
-        List<Likes> follower = likeRepository.findByTargetId(targetId);
-        List<Likes> follow = likeRepository.findByUser(user);
-
-        for (Likes like1 : follower) {
-            for (Likes like2 : follow) {
-                if ((like1.getUser().getId() == like2.getUser().getId())) {
-                        return ResponseDto.fail("NOT_FOUND", "못찾겠당");
-
-                    }
-                log.info("되고 있나요?");
-                    likeResponseDto.add(
-                            LikeResponseDto.builder()
-                                    .nickname(like1.getUser().getNickname())
-                                    .build()
-                    );
-
-
-                    likeResponseDto.add(
-                            LikeResponseDto.builder()
-                                    .nickname(like2.getUser().getNickname())
-                                    .build()
-                    );
-                }
-            }
-        return ResponseDto.success(likeResponseDto);
-    }
-
-    // 2. querydsl방식 = 중복값
+    // 매칭 JPQL QUERY방식
     @Transactional(readOnly = true)
-    public ResponseDto<?> getAllLike(Long userId,HttpServletRequest request) {
+    public ResponseDto<?> likeCheck(Long userId, HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -280,73 +234,35 @@ public class LikeService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
+        List<Integer> likeList = likeRepository.likeToLikeUserId(userId)
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+        //매칭되는 아이디 찾아서 가져오기
+        //stream 으로 중복제거
+        if ((likeList.isEmpty())) {
+            return ResponseDto.fail("MATCHING_USER_NOT_FOUND", "매칭된 회원을 찾을 수 없습니다.");
+        }
 
+        List<User> getLikeUser = userRepository.matchingUser(likeList);
+        List<UserResponseDto> userResponseDtos = new ArrayList<>();
 
-
-//        List<Likes> likeList = likeRepository.findAllUserAndOtherProfile(userId);
-        List<Likes> likeList = likeRepository.findLikeToLike(userId);
-        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
-
-        for (Likes likes : likeList) {
-            if(likes == null) {
-                return ResponseDto.fail("PROFILE_NOT_FOUND", "매칭에 실패했습니다.");
-            }
-            likeResponseDto.add(
-                    LikeResponseDto.builder()
-                            .nickname(likes.getUser().getNickname())
-                            .imageUrl(likes.getUser().getImageUrl())
+        for (User list : getLikeUser) {
+            userResponseDtos.add(
+                    UserResponseDto.builder()
+                            .userId(list.getId())
+                            .nickname(list.getNickname())
+                            .imageUrl(list.getImageUrl())
                             .build()
             );
+
+
         }
-
-
-            return ResponseDto.success(likeResponseDto);
-}
-
-    // 3. 매칭테스트 JPQL QUERY방식
-    @Transactional(readOnly = true)
-    public ResponseDto<?> likeCheckJ(Long userId,HttpServletRequest request) {
-
-        if (null == request.getHeader("RefreshToken")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("USER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        User user = validateUser(request);
-        if (null == user) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-
-
-
-//        List<Likes> likeList = likeRepository.findAllUserAndOtherProfile(userId);
-        List<Likes> likeList = likeRepository.findByTargetId(userId);
-        List<LikeResponseDto> likeResponseDto = new ArrayList<>();
-
-        for (Likes likes : likeList) {
-            if(likes == null) {
-                return ResponseDto.fail("PROFILE_NOT_FOUND", "매칭에 실패했습니다.");
-            }
-            likeResponseDto.add(
-                    LikeResponseDto.builder()
-                            .nickname(likes.getUser().getNickname())
-                            .imageUrl(likes.getUser().getImageUrl())
-                            .build()
-            );
-        }
-
-
-        return ResponseDto.success(likeResponseDto);
+        return ResponseDto.success(userResponseDtos);
     }
 
-    //4. querydsl querydsl에서 for문까지 돌려서 뽑아오기
     @Transactional(readOnly = true)
-    public ResponseDto<?> likeCheckFinal(Long userId,HttpServletRequest request) {
+    public ResponseDto<?> getLike(HttpServletRequest request) {
 
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
@@ -362,14 +278,20 @@ public class LikeService {
         if (null == user) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
-        List<LikeResponseDto> likeResponseDtoList = likeRepository.findUserLikeToLike(userId);
-        if(likeResponseDtoList.isEmpty()) {
-            return ResponseDto.fail("TARGET_USER_NOT_FOUND","매칭된 회원을 찾을 수 없습니다.");
 
+        List<Likes> likesList = likeRepository.findByUser(user);
+        List<LikesResponseDto> likesResponseDtoList = new ArrayList<>();
+
+        for (Likes likes : likesList) {
+            likesResponseDtoList.add(
+
+                            LikesResponseDto.builder()
+                                    .userId(likes.getTarget().getId())
+                                    .imageUrl(likes.getTarget().getImageUrl())
+                                    .build()
+            );
         }
-
-
-        return ResponseDto.success(likeResponseDtoList);
+        return ResponseDto.success(likesResponseDtoList);
     }
 
 
@@ -380,8 +302,6 @@ public class LikeService {
         Optional<User> optionalTarget = userRepository.findById(targetId);
         return optionalTarget.orElse(null);
     }
-
-
 
 
     @Transactional(readOnly = true)
@@ -397,10 +317,11 @@ public class LikeService {
     }
 
 
-    public User validateUser(HttpServletRequest request){
-        if(!tokenProvider.validateToken(request.getHeader("RefreshToken"))){
+    public User validateUser(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
-        }return tokenProvider.getUserFromAuthentication();
+        }
+        return tokenProvider.getUserFromAuthentication();
     }
 
 

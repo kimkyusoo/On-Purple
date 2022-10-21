@@ -21,6 +21,7 @@ import static javax.persistence.EnumType.STRING;
 @AllArgsConstructor
 @Entity
 @Setter
+@Table(name = "USER_TABLE")
 public class User extends Timestamped {
 
     @Id

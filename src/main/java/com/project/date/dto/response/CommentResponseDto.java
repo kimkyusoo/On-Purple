@@ -18,6 +18,6 @@ public class CommentResponseDto {
   private String comment;
   private Integer likes;
   private List<ReCommentResponseDto> reCommentResponseDtoList;
-  private LocalDateTime createdAt;
-  private LocalDateTime modifiedAt;
+  private String createdAt;
+  private String modifiedAt;
 }

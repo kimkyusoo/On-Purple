@@ -12,4 +12,6 @@ public class PostRequestDto {
   private String content;
   private String imageUrl;
   private String category;
+  private String createdAt;
+  private String modifiedAt;
 }

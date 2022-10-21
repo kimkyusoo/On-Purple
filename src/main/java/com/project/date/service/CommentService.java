@@ -1,8 +1,7 @@
 package com.project.date.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 
 import com.project.date.dto.request.CommentRequestDto;
@@ -46,11 +45,15 @@ public class CommentService {
     if (null == post) {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
+    String createdAt = getCurrentTime();
+
 
     Comment comment = Comment.builder()
-        .user(user)
-        .post(post)
-        .comment(requestDto.getComment())
+            .user(user)
+            .post(post)
+            .comment(requestDto.getComment())
+            .createdAt(createdAt)
+            .modifiedAt(createdAt)
         .build();
     commentRepository.save(comment);
     return ResponseDto.success(
@@ -121,7 +124,10 @@ public class CommentService {
       return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
     }
 
+    String modifiedAt = getCurrentTime();
+
     comment.update(requestDto);
+    comment.updateModified(modifiedAt);
     return ResponseDto.success(
         CommentResponseDto.builder()
                 .commentId(comment.getId())
@@ -162,6 +168,16 @@ public class CommentService {
 
     commentRepository.delete(comment);
     return ResponseDto.success("success");
+  }
+
+
+  //현재시간 추출 메소드
+  private String getCurrentTime() {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    Calendar cal = Calendar.getInstance();
+    Date date = cal.getTime();
+    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+    return sdf.format(date);
   }
 
   @Transactional(readOnly = true)

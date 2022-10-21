@@ -47,7 +47,7 @@ public class PostController {
 
 
   // 게시글 수정
-  @PutMapping( "/post/{postId}")
+  @PatchMapping ( "/post/{postId}")
   public ResponseDto<?> updatePost(@PathVariable Long postId,
                                    @RequestPart(value = "data") PostRequestDto requestDto,
                                    @RequestPart("imageUrl") List<MultipartFile> multipartFiles,
@@ -65,6 +65,12 @@ public class PostController {
   public ResponseDto<?> deletePost(@PathVariable Long postId,
                                    HttpServletRequest request) {
     return postService.deletePost(postId, request);
+  }
+
+  // 카테고리별 전체 게시글 검색
+  @GetMapping("/post/search") //기본 카테고리 meet 번개
+  public ResponseDto<?> getAllPostSearch(@RequestParam String keyword) {
+    return postService.getAllPostSearch(keyword);
   }
 
 //    // 카테고리별 전체 게시글 가져오기

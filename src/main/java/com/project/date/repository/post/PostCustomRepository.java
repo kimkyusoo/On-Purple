@@ -5,7 +5,11 @@ import com.project.date.model.Post;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
+
 public interface PostCustomRepository {
-    Slice<PostResponseDto> findAllByCategorySearch(String category, String keyword, Pageable pageable);
-    Slice<PostResponseDto> findAllByCategory(String category, Pageable pageable);
+
+    List<PostResponseDto> findAllByCategorySearch(String keyword);
+//    Slice<PostResponseDto> findAllByCategory(String category, Pageable pageable);
+//    Slice<PostResponseDto> findAllByCategorySearchScroll(String category, String keyword, Pageable pageable);
 }

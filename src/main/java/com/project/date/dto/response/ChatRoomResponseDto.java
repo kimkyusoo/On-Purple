@@ -7,31 +7,40 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * String roomName
+ * String chatRoomUuid
+ * String lastMessage
+ * LocalDateTime createAt
+ * int unreadCount
+ * String otherUserImage
+ * int totalCnt
+ */
 @NoArgsConstructor
 @Getter
 @Setter
 public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto>{
-    private String roomName;
+    private String otherId;
+    private String nickname;
+    private String otherNickname;
     private String chatRoomUuid;
     private String lastMessage;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
-    private String dayBefore;
     private int unreadCount;
-    private String admission;
-    private String departmentName;
 
-    private String otherUserImage;
+    private String otherImageUrl;
     private int totalCnt;
 
-    public ChatRoomResponseDto(String roomName, String roomId, String lastMessage, LocalDateTime lastTime, int unReadMessageCount, int totalCnt) {
-        this.roomName = roomName;
+    public ChatRoomResponseDto(String roomId, String otherId, String myNickname, String otherNickname , String otherImageUrl, String lastMessage, LocalDateTime lastTime, int unReadMessageCount, int totalCnt) {
+        this.otherId = otherId;
         this.chatRoomUuid = roomId;
+        this.otherNickname = otherNickname;
+        this.nickname = myNickname;
+        this.otherImageUrl = otherImageUrl;
         this.lastMessage = lastMessage;
         this.createAt = lastTime;
-//        this.dayBefore = dayBefore;
         this.unreadCount = unReadMessageCount;
-//        this.otherUserImage = otherUserImage;
         this.totalCnt = totalCnt;
     }
 

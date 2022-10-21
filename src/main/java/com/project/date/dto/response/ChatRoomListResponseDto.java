@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * List<ChatRoomResponseDto> ChatRoomResponseDto
+ * int totalCnt
+ */
 @NoArgsConstructor
 @Setter
 @Getter

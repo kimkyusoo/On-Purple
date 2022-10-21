@@ -7,6 +7,12 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * Long userId
+ * String username
+ * String message
+ * LocalDateTime createdAt
+ */
 @Getter
 @Setter
 public class ChatMessageTestDto {

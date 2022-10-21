@@ -4,6 +4,12 @@ import com.project.date.dto.request.ChatMessageDto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Long otherMemberId
+ * int unreadCount
+ * String roomId
+ * String type
+ */
 @Getter
 @Setter
 public class UnreadMessageCount {
@@ -15,7 +21,7 @@ public class UnreadMessageCount {
 
     public UnreadMessageCount(ChatMessageDto roomMessage) {
         this.type = "UNREAD";
-        this.otherMemberId = roomMessage.getOtherMemberId();
+        this.otherMemberId = roomMessage.getOtherUserId();
         this.unreadCount = roomMessage.getCount();
         this.roomId = roomMessage.getRoomId();
     }

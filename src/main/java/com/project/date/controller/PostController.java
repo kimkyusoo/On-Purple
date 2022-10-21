@@ -69,9 +69,8 @@ public class PostController {
 
   // 카테고리별 전체 게시글 검색
   @GetMapping("/post/search") //기본 카테고리 meet 번개
-  public ResponseDto<?> getAllPosts(@RequestParam(defaultValue = "meet", value="category")  String category,
-                                    @RequestParam String keyword) {
-    return postService.getAllPostSearch(category, keyword);
+  public ResponseDto<?> getAllPostSearch(@RequestParam String keyword) {
+    return postService.getAllPostSearch(keyword);
   }
 
 //    // 카테고리별 전체 게시글 가져오기

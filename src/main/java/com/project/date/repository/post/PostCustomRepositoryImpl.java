@@ -28,11 +28,11 @@ public class PostCustomRepositoryImpl implements PostCustomRepository {
 
     // 카테고리 검색
     @Override
-    public List<PostResponseDto> findAllByCategorySearch(String category,String keyword) {
+    public List<PostResponseDto> findAllByCategorySearch(String keyword) {
         List<Post> postResult = jpaQueryFactory
                 .selectFrom(post)
                 .orderBy(post.createdAt.desc())
-                .where(categoryEq(category),keywordEq(keyword))
+                .where(keywordEq(keyword))
                 .fetch();
 
         List<PostResponseDto> responseDtoList = new ArrayList<>();

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PostCustomRepository {
 
-    List<PostResponseDto> findAllByCategorySearch(String category, String keyword);
+    List<PostResponseDto> findAllByCategorySearch(String keyword);
 //    Slice<PostResponseDto> findAllByCategory(String category, Pageable pageable);
 //    Slice<PostResponseDto> findAllByCategorySearchScroll(String category, String keyword, Pageable pageable);
 }

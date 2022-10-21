@@ -172,6 +172,7 @@ public class UserService {
                 UserResponseDto.builder()
                         .userId(user.getId())
                         .nickname(user.getNickname())
+                        .gender(user.getGender())
                         .imageUrl(user.getImageUrl())
                         .build()
         );
@@ -270,21 +271,6 @@ public class UserService {
         return tokenProvider.deleteRefreshToken(user);
     }
 
-    @Transactional
-    public ResponseDto<?> deleteUser(HttpServletRequest request, Long userId) {
-
-        if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
-        User user = isPresentId(userId);
-        if (null == user) {
-            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 사용자입니다.");
-        }
-
-        userRepository.delete(user);
-        tokenProvider.deleteRefreshToken(user);
-        return ResponseDto.success("delete success");
-        }
 
 
 

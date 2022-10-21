@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ProfileResponseDto{
     private Long userId;
+    private String gender;
     private String nickname;
     private String imageUrl;
     private List<String> imgList;

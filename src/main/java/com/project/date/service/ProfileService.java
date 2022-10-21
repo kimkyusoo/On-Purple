@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,10 @@ public class ProfileService {
 
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllProfiles() {
-        List<User> profileList = userRepository.findAllByOrderByModifiedAtDesc();
+        List<User> profileList = userRepository.findAll();
         List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
+//        랜덤 추출 코드
+        Collections.shuffle(profileList);
         for (User user : profileList) {
             List<Img> findImgList = imgRepository.findByUser_id(user.getId());
             List<String> imgList = new ArrayList<>();
@@ -40,6 +43,7 @@ public class ProfileService {
             profileResponseDto.add(
                     ProfileResponseDto.builder()
                             .userId(user.getId())
+                            .gender(user.getGender())
                             .nickname(user.getNickname())
                             .age(user.getAge())
                             .introduction(user.getIntroduction())

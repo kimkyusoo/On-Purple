@@ -22,9 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -57,12 +56,15 @@ public class PostService {
         if (null == user) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
+        String createdAt = getCurrentTime();
 
         Post post = Post.builder()
                 .user(user)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .category(requestDto.getCategory())
+                .createdAt(createdAt)
+                .modifiedAt(createdAt)
                 .build();
 
         postRepository.save(post);
@@ -208,6 +210,8 @@ public class PostService {
         if (post.validateUser(user)) {
             return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
+
+
         //저장된 이미지 리스트 가져오기
         List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
         List<String> imgList = new ArrayList<>();
@@ -231,7 +235,10 @@ public class PostService {
             newImgList.add(img.getImageUrl());
         }
 
+        String modifiedAt = getCurrentTime();
+
         post.update(requestDto);
+        post.updateModified(modifiedAt);
         return ResponseDto.success(
                 PostResponseDto.builder()
                         .postId(post.getId())
@@ -301,6 +308,15 @@ public class PostService {
         }
         return ResponseDto.success(postList);
 
+    }
+
+    //현재시간 추출 메소드
+    private String getCurrentTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+        return sdf.format(date);
     }
 
     @Transactional(readOnly = true)

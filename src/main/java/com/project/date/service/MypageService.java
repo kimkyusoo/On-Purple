@@ -8,10 +8,12 @@ import com.project.date.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class MypageService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public ResponseDto<?> getMyPage (HttpServletRequest request) {
+    public ResponseDto<?> getMyPage(HttpServletRequest request, Long userId) {
         if (null == request.getHeader("RefreshToken")) {
             return ResponseDto.fail("USER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -38,54 +40,44 @@ public class MypageService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-//        List<Likes> likedList = likeRepository.findByTargetId(targetUserId);
-//        List<LikedResponseDto> likedResponseDtoList = new ArrayList<>();
-//        for (Likes likes : likedList) {
-//            if(likes == null) {
-//                return ResponseDto.fail("LIKE NOT FOUND", "좋아요가 없습니다");
-//            }
-//
-//
-//            User targetUser = isPresentTargetUser(targetUserId);
-//            if (null == targetUser) {
-//                return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
-//            }
-//
-//
-//
-//            likedResponseDtoList.add(
-//                    LikedResponseDto.builder()
-//                            .imageUrl(likes.getUser().getImageUrl())
-//                            .build()
-//            );
-//        }
+        List<Integer> likeList = likeRepository.likeToLikeUserId(userId)
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+        List<User> getLikeUser = userRepository.matchingUser(likeList);
+        List<OtherLikeResponseDto> otherLikeResponseDtoList = new ArrayList<>();
 
-//        List<Likes> likeList = likeRepository.findByUser(user);
-//        List<LikeResponseDto> likeResponseDtoList = new ArrayList<>();
-//        for (Likes likes : likeList) {
-//
-//            likeResponseDtoList.add(
-//                    LikeResponseDto.builder()
-//                            .imageUrl(likes.getUser().getImageUrl())
-//                            .build()
-//            );
-//        }
-        return ResponseDto.success(
-                    MypageResponseDto.builder()
-                            .userId(user.getId())
-                            .imageUrl(user.getImageUrl())
-                            .age(user.getAge())
-                            .mbti(user.getMbti())
-                            .introduction(user.getIntroduction())
-                            .area(user.getArea())
-                            .build());
+        for (User list : getLikeUser) {
+            otherLikeResponseDtoList.add(
+                    OtherLikeResponseDto.builder()
+                            .userId(list.getId())
+                            .imageUrl(list.getImageUrl())
+                            .build()
+            );
         }
 
+        List<Likes> likeMeList = likeRepository.findByTargetId(userId);
+        List<LikedResponseDto> likedResponseDtoList = new ArrayList<>();
+        for (Likes list : likeMeList) {
+            likedResponseDtoList.add(
+                    LikedResponseDto.builder()
+                            .userId(list.getUser().getId())
+                            .imageUrl(list.getUser().getImageUrl())
+                            .build()
+            );
+        }
 
-    @Transactional(readOnly = true)
-    public User isPresentTargetUser(Long targetUserId) {
-        Optional<User> optionalTargetUser = userRepository.findById(targetUserId);
-        return optionalTargetUser.orElse(null);
+        return ResponseDto.success(
+                MypageResponseDto.builder()
+                        .userId(user.getId())
+                        .imageUrl(user.getImageUrl())
+                        .age(user.getAge())
+                        .mbti(user.getMbti())
+                        .introduction(user.getIntroduction())
+                        .area(user.getArea())
+                        .likedResponseDtoList(likedResponseDtoList)
+                        .otherLikeResponseDtoList(otherLikeResponseDtoList)
+                        .build());
     }
 
 

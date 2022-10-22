@@ -22,6 +22,7 @@ public class ChatMessageTestDto {
     private Long otherUserId;
     private String otherNickname;
     private String message;
+    private String otherImageUrl;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private LocalDateTime createdAt;
 
@@ -30,6 +31,7 @@ public class ChatMessageTestDto {
         this.nickname = chatMessage.getUser().getUsername();
         this.otherUserId = chatMessage.getOtherUserId();
         this.otherNickname = chatMessage.getOtherNickname();
+        this.otherImageUrl = chatMessage.getOtherImageUrl();
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
     }

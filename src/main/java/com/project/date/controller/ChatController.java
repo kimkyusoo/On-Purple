@@ -3,11 +3,14 @@ package com.project.date.controller;
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
 import com.project.date.jwt.JwtDecoder;
+import com.project.date.jwt.TokenProvider;
 import com.project.date.model.User;
+import com.project.date.repository.RefreshTokenRepository;
 import com.project.date.repository.UserRepository;
 import com.project.date.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChatController {
     private final ChatService chatService;
     private final JwtDecoder jwtDecoder;
+//    private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
+
 
     /**
      * websocket "/pub/chat/enter"로 들어오는 메시징을 처리한다.
@@ -29,6 +34,7 @@ public class ChatController {
     @MessageMapping("/enter")
     public void enter(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
         String nickname = jwtDecoder.decodeUsername(token);
+//        String nickname = tokenProvider.validateToken(token);
         User user = userRepository.findByNickname(nickname).orElseThrow(
                 () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
         );
@@ -36,7 +42,7 @@ public class ChatController {
     }
 
     /**
-     * websocket "/SUB/chat/message"로 들어오는 메시징을 처리한다.
+     * websocket "/sub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/message")
     public void message(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {

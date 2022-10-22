@@ -26,8 +26,6 @@ public class JwtDecoder {
         try {
             username = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
 
-            //Date expiration = claims.get("exp", Date.class);
-            //String data = claims.get("data", String.class);
         } catch (ExpiredJwtException e) { // 토큰이 만료되었을 경우
             System.out.println(e);
         } catch (Exception e) { // 그외 에러났을 경우

@@ -47,6 +47,7 @@ public class TokenProvider {
     this.refreshTokenRepository = refreshTokenRepository;
     byte[] keyBytes = Decoders.BASE64.decode(secretKey);
     this.key = Keys.hmacShaKeyFor(keyBytes);
+
   }
 
   public TokenDto generateTokenDto(User user) {

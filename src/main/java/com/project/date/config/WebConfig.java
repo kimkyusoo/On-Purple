@@ -14,11 +14,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://homecomingdaycare.com")
                 .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("http://localhost:4040")
                 .allowedMethods("*");
     }
+
     /* swagger-ui 페이지 연결 핸들러 설정 */
 //    @Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -39,9 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true) ;
         configuration.addAllowedOriginPattern("*");
-        configuration.addAllowedOrigin("https://homecomingdaycare.com"); // 배포 시
         configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("http://localhost:4040");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.addExposedHeader("*");

@@ -18,6 +18,6 @@ public class ChatRoomOtherUserInfoResponseDto {
 
     public ChatRoomOtherUserInfoResponseDto(User otherUser){
         this.otherUserId = otherUser.getId();
-        this.otherUsername = otherUser.getUsername();
+        this.otherUsername = otherUser.getNickname();
     }
 }

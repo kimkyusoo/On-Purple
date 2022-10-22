@@ -21,6 +21,8 @@ public class ChatMessage extends Timestamped {
     // 메세지 작성자
     @ManyToOne
     private User user;
+    private Long otherUserId;
+    private String otherNickname;
 
     // 채팅 메세지 내용
     @Size(max = 1000)

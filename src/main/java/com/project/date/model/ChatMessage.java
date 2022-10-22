@@ -23,6 +23,7 @@ public class ChatMessage extends Timestamped {
     private User user;
     private Long otherUserId;
     private String otherNickname;
+    private String otherImageUrl;
 
     // 채팅 메세지 내용
     @Size(max = 1000)

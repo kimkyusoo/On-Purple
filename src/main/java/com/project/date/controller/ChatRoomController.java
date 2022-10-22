@@ -75,13 +75,12 @@ public class ChatRoomController {
     //이전 채팅 메시지 불러오기
     @GetMapping("/rooms/{roomId}/messages")
     public List<ChatMessageTestDto> getPreviousChatMessage(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-
         System.out.println(userDetails.getUser().getUsername()+ "채팅방 이전채팅불러오기 요청");
         return chatRoomService.getPreviousChatMessage(roomId, userDetails);
     }
 
-    //채팅방 입장시 상대정보 조회
-    @GetMapping("/rooms/otherUserInfo/{roomId}")
+    //채팅방 입장
+    @GetMapping("/rooms/enter/{roomId}")
     public ChatRoomOtherUserInfoResponseDto getOtherUserInfo(
             @PathVariable String roomId,
             @AuthenticationPrincipal UserDetailsImpl userDetails){

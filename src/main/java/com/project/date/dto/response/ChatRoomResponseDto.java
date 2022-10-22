@@ -20,10 +20,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto>{
-    private String otherId;
+    private String otherUserId;
     private String nickname;
     private String otherNickname;
-    private String chatRoomUuid;
+    private String roomId;
     private String lastMessage;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createAt;
@@ -32,9 +32,9 @@ public class ChatRoomResponseDto implements Comparable<ChatRoomResponseDto>{
     private String otherImageUrl;
     private int totalCnt;
 
-    public ChatRoomResponseDto(String roomId, String otherId, String myNickname, String otherNickname , String otherImageUrl, String lastMessage, LocalDateTime lastTime, int unReadMessageCount, int totalCnt) {
-        this.otherId = otherId;
-        this.chatRoomUuid = roomId;
+    public ChatRoomResponseDto(String roomId, String otherUserId, String myNickname, String otherNickname , String otherImageUrl, String lastMessage, LocalDateTime lastTime, int unReadMessageCount, int totalCnt) {
+        this.otherUserId = otherUserId;
+        this.roomId = roomId;
         this.otherNickname = otherNickname;
         this.nickname = myNickname;
         this.otherImageUrl = otherImageUrl;

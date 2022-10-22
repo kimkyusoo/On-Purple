@@ -18,14 +18,18 @@ import java.time.LocalDateTime;
 public class ChatMessageTestDto {
 
     private Long userId;
-    private String username;
+    private String nickname;
+    private Long otherUserId;
+    private String otherNickname;
     private String message;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private LocalDateTime createdAt;
 
     public ChatMessageTestDto(ChatMessage chatMessage) {
         this.userId = chatMessage.getUser().getId();
-        this.username = chatMessage.getUser().getUsername();
+        this.nickname = chatMessage.getUser().getUsername();
+        this.otherUserId = chatMessage.getOtherUserId();
+        this.otherNickname = chatMessage.getOtherNickname();
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
     }

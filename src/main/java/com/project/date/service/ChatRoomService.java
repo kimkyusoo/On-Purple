@@ -172,7 +172,7 @@ public class ChatRoomService {
         }
     }
 
-    //채팅방 입장시 상대 유저 정보 조회
+    //채팅방 입장
     public ChatRoomOtherUserInfoResponseDto getOtherUserInfo(String roomId, UserDetailsImpl userDetails) {
         User myUser = userDetails.getUser();
         ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(roomId).orElseThrow(

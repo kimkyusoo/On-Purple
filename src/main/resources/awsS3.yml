@@ -1,14 +1,14 @@
 cloud:
   aws:
     s3:
-      bucket: springbootminiproject
+      bucket: 
     region:
       static: ap-northeast-2
     stack:
       auto: false
     credentials:
       instanceProfile: true
-      access-key: AKIATJQSUF6U7KM75ZAU
-      secret-key: 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
+      access-key: 
+      secret-key: 
 
 

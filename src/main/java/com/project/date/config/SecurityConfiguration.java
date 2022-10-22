@@ -76,11 +76,12 @@ public class SecurityConfiguration {
                 .antMatchers("/reComment/**").permitAll()
                 .antMatchers("/main").permitAll()
                 .antMatchers("/profile/**").permitAll()
-                .antMatchers("/chat").permitAll()
+                .antMatchers("/chat/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll() // h2-console 사용을 위해 추가
                 .antMatchers("/report/**").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight 허용을 위해 추가
                 .anyRequest().authenticated()
+//                .anyRequest().permitAll()
 
                 .and()
                 .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));

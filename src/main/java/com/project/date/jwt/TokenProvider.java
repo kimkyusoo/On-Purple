@@ -117,7 +117,7 @@ public class TokenProvider {
     return false;
   }
 
-  public String decodeUsrname(String token) {
+  public String decodeUsername(String token) {
     String username = "";
     try {
       username = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();

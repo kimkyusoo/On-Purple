@@ -28,7 +28,7 @@ public class Likes {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "targetId", nullable = false)
+    @JoinColumn(name = "targetId")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User target;
 

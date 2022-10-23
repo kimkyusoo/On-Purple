@@ -2,15 +2,12 @@ package com.project.date.controller;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
-import com.project.date.jwt.JwtDecoder;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.User;
-import com.project.date.repository.RefreshTokenRepository;
 import com.project.date.repository.UserRepository;
 import com.project.date.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chat")
 public class ChatController {
     private final ChatService chatService;
-    private final JwtDecoder jwtDecoder;
-//    private final TokenProvider tokenProvider;
+//    private final JwtDecoder jwtDecoder;
+    private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
 
@@ -33,8 +30,8 @@ public class ChatController {
      */
     @MessageMapping("/enter")
     public void enter(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
-        String nickname = jwtDecoder.decodeUsername(token);
-//        String nickname = tokenProvider.validateToken(token);
+//        String nickname = jwtDecoder.decodeUsername(token);
+        String nickname = tokenProvider.decodeUsrname(token);
         User user = userRepository.findByNickname(nickname).orElseThrow(
                 () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
         );
@@ -46,7 +43,8 @@ public class ChatController {
      */
     @MessageMapping("/message")
     public void message(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
-        String username = jwtDecoder.decodeUsername(token);
+//        String username = jwtDecoder.decodeUsername(token);
+        String username = tokenProvider.decodeUsrname(token);
         User user = userRepository.findByNickname(username).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
         );

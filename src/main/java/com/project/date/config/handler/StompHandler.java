@@ -1,6 +1,6 @@
 package com.project.date.config.handler;
 
-import com.project.date.jwt.JwtDecoder;
+import com.project.date.jwt.TokenProvider;
 import com.project.date.model.User;
 import com.project.date.repository.RedisRepository;
 import com.project.date.repository.UserRepository;
@@ -22,7 +22,8 @@ import java.util.Objects;
 public class StompHandler implements ChannelInterceptor {
 
     private final RedisRepository redisRepository;
-    private final JwtDecoder jwtDecoder;
+//    private final JwtDecoder jwtDecoder;
+    private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
 
     // websocket을 통해 들어온 요청이 처리 되기전 실행된다.
@@ -41,7 +42,7 @@ public class StompHandler implements ChannelInterceptor {
                 // 사용자 확인
                 jwtToken = Objects.requireNonNull(accessor.getFirstNativeHeader("token"));
 
-                String username = jwtDecoder.decodeUsername(jwtToken) ;
+                String username = tokenProvider.decodeUsrname(jwtToken) ;
 
                 User user = userRepository.findByUsername(username).orElseThrow(
                         () -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
@@ -69,6 +70,11 @@ public class StompHandler implements ChannelInterceptor {
         }
         return message;
     }
+
+
+
+
+////////////////////////////////////////////////////
 //    private final TokenProvider TokenProvider;
 //    private final ChatRoomRepository chatRoomRepository;
 //    private final ChatService chatService;

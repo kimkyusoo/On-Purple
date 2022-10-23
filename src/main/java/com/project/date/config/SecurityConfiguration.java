@@ -79,6 +79,7 @@ public class SecurityConfiguration {
                 .antMatchers("/chat/**").permitAll()
                 .antMatchers("/h2-console/**").permitAll() // h2-console 사용을 위해 추가
                 .antMatchers("/report/**").permitAll()
+                .antMatchers("/stomp/chat").permitAll()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // preflight 허용을 위해 추가
                 .anyRequest().authenticated()
 //                .anyRequest().permitAll()

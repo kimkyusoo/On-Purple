@@ -29,27 +29,41 @@ public class ChatController {
      * 채팅방에 입장했을 경우
      */
     @MessageMapping("/enter")
-    public void enter(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
-//        String nickname = jwtDecoder.decodeUsername(token);
-        String nickname = tokenProvider.decodeUsrname(token);
-        User user = userRepository.findByNickname(nickname).orElseThrow(
+    public void enter(ChatMessageDto chatMessageDto, User user) {
+
+        String nickname = user.getNickname();
+        user = userRepository.findByNickname(nickname).orElseThrow(
                 () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
         );
         chatService.enter(user.getId(), chatMessageDto.getRoomId());
+//        String nickname = jwtDecoder.decodeUsername(token);
+//        String nickname = tokenProvider.decodeUsername(token);
+//        User user = userRepository.findByNickname(nickname).orElseThrow(
+//                () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
+//        );
+//        chatService.enter(user.getId(), chatMessageDto.getRoomId());
     }
 
     /**
      * websocket "/sub/chat/message"로 들어오는 메시징을 처리한다.
      */
+    //, @Header("Authorization") String token
     @MessageMapping("/message")
-    public void message(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
-//        String username = jwtDecoder.decodeUsername(token);
-        String username = tokenProvider.decodeUsrname(token);
-        User user = userRepository.findByNickname(username).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
+    public void message(ChatMessageDto chatMessageDto, User user) {
+        String nickname = user.getNickname();
+        user = userRepository.findByNickname(nickname).orElseThrow(
+                () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
         );
         chatService.sendMessage(chatMessageDto, user);
         chatService.updateUnReadMessageCount(chatMessageDto);
+
+//        String username = jwtDecoder.decodeUsername(token);
+//        String username = tokenProvider.decodeUsername(token);
+//        User user = userRepository.findByNickname(username).orElseThrow(
+//                () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
+//        );
+//        chatService.sendMessage(chatMessageDto, user);
+//        chatService.updateUnReadMessageCount(chatMessageDto);
     }
 
 //    private final TokenProvider TokenProvider;

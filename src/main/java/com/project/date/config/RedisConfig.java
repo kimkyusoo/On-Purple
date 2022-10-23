@@ -113,7 +113,6 @@ public class RedisConfig {
 
     /**
      * 단일 Topic 사용을 위한 Bean 설정
-     * 사실 중요한 부분인지 모르겠음
      * 계속해서 생성할 필요가 없어 보여 빈으로 등록함
      */
     @Bean

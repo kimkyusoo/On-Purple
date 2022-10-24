@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 /**
  * String roomName
- * String chatRoomUuid
+ * String roomId
  * String lastMessage
  * LocalDateTime createAt
  * int unreadCount

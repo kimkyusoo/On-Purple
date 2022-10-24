@@ -8,7 +8,7 @@ import lombok.Setter;
  * String roomId
  * String message
  * String createdAt
- * Long ohterMemberId
+ * Long otherNickname
  * Long userId
  */
 @Getter
@@ -17,7 +17,7 @@ public class MessageResponseDto {
     private String roomId;
     private String message;
     private String createdAt;
-    private Long otherUserId;
+    private Long otherNickname;
     private Long userId;
 
     public MessageResponseDto(ChatMessageDto roomMessage) {
@@ -25,7 +25,7 @@ public class MessageResponseDto {
         this.roomId = roomMessage.getRoomId();
         this.message = roomMessage.getMessage();
         this.createdAt = roomMessage.getCreatedAt();
-        this.otherUserId = roomMessage.getOtherUserId();
+        this.otherNickname = roomMessage.getOtherNickname();
         this.userId = roomMessage.getUserId();
     }
 }

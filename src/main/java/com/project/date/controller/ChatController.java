@@ -37,7 +37,7 @@ public class ChatController {
      */
     //, @Header("Authorization") String token
     @MessageMapping(value = "/chat/enter")
-    public void enter(ChatMessageTestDto chatMessageDto) {
+    public void enter(ChatMessageDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
         chatMessageDto.setMessage(chatMessageDto.getNickname() + "님이 채팅방에 참여하였습니다.");

@@ -15,9 +15,11 @@ public class ChatRoomOtherUserInfoResponseDto {
 
     private Long otherUserId;
     private String otherUsername;
+    private String otherImageUrl;
 
     public ChatRoomOtherUserInfoResponseDto(User otherUser){
         this.otherUserId = otherUser.getId();
         this.otherUsername = otherUser.getNickname();
+        this.otherImageUrl = otherUser.getImageUrl();
     }
 }

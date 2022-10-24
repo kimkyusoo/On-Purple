@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.*;
 
 @RequiredArgsConstructor
@@ -22,16 +23,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // stomp에서 prefix URL 적용하는 부분
         registry.addEndpoint("/stomp/chat") //  Hand-Shake를 맺을 때 사용
                 .setAllowedOriginPatterns("*")
 //                .setAllowedOrigins("http://localhost:3000","http://localhost:4040")
 //                .setAllowedOrigins("*")
-                .withSockJS(); // sock.js를 통하여 낮은 버전의 브라우저에서도 websocket이 동작할수 있게 합니다.
+                .withSockJS(); // sock.js를 통해서 낮은 버전의 브라우저에서도 websocket이 동작할 수 있게 한다. websocket형태로 연결이 불가능한 경우 http를 사용해서 연결 지속.
     }
 
-    @Override
-    public void configureClientInboundChannel(ChannelRegistration registration) {
-        registration.interceptors(stompHandler);
-    }
+//    @Override
+//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//        registration.interceptors(stompHandler);
+//    }
 
 }

@@ -11,7 +11,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -33,13 +32,14 @@ public class StompHandler implements ChannelInterceptor {
         log.info("Stomp Handler Pre Send ----- ");
 
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+
         String jwtToken = "";
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             // toDo : 모든 화면에서 socket이 뚫려 있기 때문에 대화방에서 온 connect라는 것을 알 수 있는 것이 있어야 한다.
 
             String type = accessor.getFirstNativeHeader("type");
-            if (type !=null && type.equals("CHAT")) {
+            if (type !=null && type.equals("TALK")) {
                 // 사용자 확인
                 jwtToken = Objects.requireNonNull(accessor.getFirstNativeHeader("token"));
 

@@ -77,7 +77,7 @@ public class ChatService {
                     .getChatRoomMessageCount(roomId, otherUserId);
             String topic = channelTopic.getTopic();
 
-//            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
+            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
 
             //  redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }
@@ -135,10 +135,10 @@ public class ChatService {
 //        redisTemplate.convertAndSend(channelTopic.getTopic(), chatMessage);
 //    }
 
-    /**
-     * 채팅방 입장 정보 저장
-     * 채팅방의 안읽은 메시지 수 초기화
-     */
+//    /**
+//     * 채팅방 입장 정보 저장
+//     * 채팅방의 안읽은 메시지 수 초기화
+//     */
 //    public void enter(Long userId, String roomId) {
 //        redisRepository.userEnterRoomInfo(userId, roomId);
 //        redisRepository.initChatRoomMessageInfo(roomId, userId);

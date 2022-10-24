@@ -1,7 +1,5 @@
 package com.project.date.dto.request;
 
-import com.project.date.dto.response.ChatMessageTestDto;
-import com.project.date.model.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +14,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDto implements Serializable {
-
 
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
@@ -39,12 +36,14 @@ public class ChatMessageDto implements Serializable {
     private Long userId;
     private int count;
 
-    public ChatMessageDto(ChatMessage chatMessageDto, int count) {
+    public ChatMessageDto(ChatMessageDto chatMessageDto, int count) {
         this.type = MessageType.UNREAD_MESSAGE_COUNT_ALARM; // 메시지 타입
-        this.roomId = chatMessageDto.getRoomId(); // 방 이름
-        this.otherUserId = chatMessageDto.getOtherUserId(); // 상대방 privateKey
-        this.nickname = chatMessageDto.getUser().getNickname();
+        this.roomId = chatMessageDto.roomId; // 방 이름
+        this.otherUserId = chatMessageDto.getOtherUserId();
+        this.nickname = chatMessageDto.getNickname();
         this.otherImageUrl = chatMessageDto.getOtherImageUrl();
+        this.createdAt = chatMessageDto.getCreatedAt();
+        this.message = chatMessageDto.getMessage();
         this.count = count; //안읽은 메세지 개수
     }
 }

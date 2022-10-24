@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -26,7 +27,7 @@ public class ChatController {
      * Client가 send할 수 있는 경로 /pub/chat/enter
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value = "/chat/enter")
+    @MessageMapping(value ="chat/enter")
     public void enter(ChatMessageDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
@@ -46,7 +47,7 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value = "/chat/message") //메시지 보내는거야
+    @MessageMapping(value ="chat/message") //메시지 보내는거야
     public void message(ChatMessageDto chatMessageDto) {
 
 //        String username = jwtDecoder.decodeUsername(token);

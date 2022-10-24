@@ -39,9 +39,11 @@ public class ChatMessageDto implements Serializable {
     public ChatMessageDto(ChatMessageDto chatMessageDto, int count) {
         this.type = MessageType.UNREAD_MESSAGE_COUNT_ALARM; // 메시지 타입
         this.roomId = chatMessageDto.roomId; // 방 이름
-        this.otherUserId = chatMessageDto.otherUserId; // 상대방 privateKey
-        this.nickname = chatMessageDto.nickname;
-        this.otherImageUrl = chatMessageDto.otherImageUrl;
+        this.otherUserId = chatMessageDto.getOtherUserId();
+        this.nickname = chatMessageDto.getNickname();
+        this.otherImageUrl = chatMessageDto.getOtherImageUrl();
+        this.createdAt = chatMessageDto.getCreatedAt();
+        this.message = chatMessageDto.getMessage();
         this.count = count; //안읽은 메세지 개수
     }
 }

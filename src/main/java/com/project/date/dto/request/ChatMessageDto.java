@@ -17,6 +17,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ChatMessageDto implements Serializable {
 
+
     // 메시지 타입 : 입장, 채팅
     public enum MessageType {
         TALK, UNREAD_MESSAGE_COUNT_ALARM, COMMENT_ALARM

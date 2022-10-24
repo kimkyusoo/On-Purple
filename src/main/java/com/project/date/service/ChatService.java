@@ -77,7 +77,7 @@ public class ChatService {
                     .getChatRoomMessageCount(roomId, otherUserId);
             String topic = channelTopic.getTopic();
 
-            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
+//            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
 
             //  redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }

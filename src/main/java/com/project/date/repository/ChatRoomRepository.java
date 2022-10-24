@@ -22,6 +22,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     Optional<ChatRoom> findByRoomHashCode(int roomUsers);
     Optional<ChatRoom> findByChatRoomUuid(String chatRoomUuid);
 
+
+
     // Redis CacheKeys
 //    private static final String CHAT_ROOMS = "CHAT_ROOM"; // 채팅룸 저장
 //    public static final String USER_COUNT = "USER_COUNT"; // 채팅룸에 입장한 클라이언트수 저장

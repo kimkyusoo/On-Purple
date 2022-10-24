@@ -6,21 +6,16 @@ import com.project.date.dto.response.ChatMessageTestDto;
 import com.project.date.dto.response.ChatRoomOtherUserInfoResponseDto;
 import com.project.date.dto.response.ChatRoomResponseDto;
 import com.project.date.impl.UserDetailsImpl;
-import com.project.date.jwt.TokenProvider;
 import com.project.date.model.ChatRoom;
-import com.project.date.model.LoginInfo;
 import com.project.date.repository.ChatRoomRepository;
 import com.project.date.repository.RedisRepository;
 import com.project.date.service.ChatRoomService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -57,6 +52,15 @@ public class ChatRoomController {
         System.out.println(userDetails.getUser().getUsername()+ "채팅방 조회 요청");
         return chatRoomService.getChatRoom(userDetails, page);
     }
+
+    //특정 채팅방 조회
+//    @GetMapping("/room/{roomId}")
+//    @ResponseBody
+//    public ChatRoom roomInfo(@PathVariable String roomId) {
+//        ChatRoom chatroom = chatRoomRepository.findByChatRoomUuid(roomId).;
+//        chatRoomService.existRoom()
+//    }
+
 
     //채팅방 삭제
     @DeleteMapping("/rooms/{roomId}")

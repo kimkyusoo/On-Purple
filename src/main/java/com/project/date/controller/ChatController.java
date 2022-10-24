@@ -30,7 +30,7 @@ public class ChatController {
     public void enter(ChatMessageDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
-        chatMessageDto.setMessage(chatMessageDto.getNickname() + "님이 채팅방에 참여하였습니다.");
+        chatMessageDto.setMessage(chatMessageDto.getUserId() + "님이 채팅방에 참여하였습니다.");
         template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);    // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
 
 //        String nickname = tokenProvider.decodeUsername(token);

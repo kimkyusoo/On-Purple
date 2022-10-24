@@ -72,7 +72,7 @@ public class StompHandler implements ChannelInterceptor {
         return message;
     }
 //
-//
+/////////////////////////////////////////////////////////////////////
 // StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 //        System.out.println("message:" + message);
 //        System.out.println("헤더 : " + message.getHeaders());
@@ -81,14 +81,14 @@ public class StompHandler implements ChannelInterceptor {
 //            tokenProvider.validateToken(Objects.requireNonNull(accessor.getFirstNativeHeader("Authorization")).substring(7));
 //        }
 //
-//        ////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 //        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 //        if(accessor.getCommand() == StompCommand.CONNECT) {
 //            if(!tokenProvider.validateToken(accessor.getFirstNativeHeader("Authorization")))
 //                throw new AccessDeniedException("");
 //        }
 //
-//////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 //    private final TokenProvider TokenProvider;
 //    private final ChatRoomRepository chatRoomRepository;
 //    private final ChatService chatService;

@@ -23,6 +23,8 @@ public class ChatMessageTestDto {
     private String otherNickname;
     private String message;
     private String otherImageUrl;
+
+    private String roomId;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm")
     private LocalDateTime createdAt;
 
@@ -34,5 +36,6 @@ public class ChatMessageTestDto {
         this.otherImageUrl = chatMessage.getOtherImageUrl();
         this.message = chatMessage.getMessage();
         this.createdAt = chatMessage.getCreatedAt();
+        this.roomId = chatMessage.getRoomId();
     }
 }

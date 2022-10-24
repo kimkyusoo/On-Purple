@@ -2,7 +2,9 @@ package com.project.date.controller;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
+import com.project.date.dto.response.ChatMessageTestDto;
 import com.project.date.dto.response.ChatRoomOtherUserInfoResponseDto;
+import com.project.date.dto.response.ChatRoomResponseDto;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.User;
 import com.project.date.repository.ChatRoomRepository;
@@ -20,14 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/chat")
+//@RequestMapping("/chat")
 public class ChatController {
     private final ChatService chatService;
     //    private final JwtDecoder jwtDecoder;
     private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
     private final SimpMessagingTemplate template;
-    private final ChatRoomRepository chatRoomRepository;
 
 
     /**
@@ -37,10 +37,10 @@ public class ChatController {
      */
     //, @Header("Authorization") String token
     @MessageMapping(value = "/chat/enter")
-    public void enter(ChatMessageDto chatMessageDto) {
+    public void enter(ChatMessageTestDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
-        chatMessageDto.setMessage(chatMessageDto.getOtherNickname() + "님이 채팅방에 참여하였습니다.");
+        chatMessageDto.setMessage(chatMessageDto.getNickname() + "님이 채팅방에 참여하였습니다.");
         template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);    // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
 
 //        String nickname = tokenProvider.decodeUsername(token);
@@ -49,12 +49,6 @@ public class ChatController {
 //        );
 //        chatService.enter(user.getId(), chatMessageDto.getRoomId());
 //        chatMessageDto.getRoomId();
-
-
-//        if(ChatMessageDto.MessageType.TALK.equals(chatMessageDto.getType())) {
-//            chatService.enter(user.getId(), chatMessageDto.getRoomId());
-//            chatMessageDto.setMessage(chatRoomRepository.get)
-//        }
     }
 
 

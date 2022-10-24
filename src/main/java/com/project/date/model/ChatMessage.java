@@ -24,6 +24,7 @@ public class ChatMessage extends Timestamped {
     private Long otherUserId;
     private String otherNickname;
     private String otherImageUrl;
+    private String roomId;
 
     // 채팅 메세지 내용
     @Size(max = 1000)
@@ -37,6 +38,7 @@ public class ChatMessage extends Timestamped {
         this.user = user;
         this.message = chatMessageDto.getMessage();
         this.chatRoom = chatRoom;
+        this.roomId = chatRoom.getChatRoomUuid();
     }
 
 //    public ChatMessage() {

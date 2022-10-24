@@ -1,23 +1,12 @@
 package com.project.date.controller;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
-import com.project.date.dto.response.ChatMessageResponseDto;
-import com.project.date.dto.response.ChatMessageTestDto;
-import com.project.date.dto.response.ChatRoomOtherUserInfoResponseDto;
-import com.project.date.dto.response.ChatRoomResponseDto;
 import com.project.date.jwt.TokenProvider;
-import com.project.date.model.User;
-import com.project.date.repository.ChatRoomRepository;
-import com.project.date.repository.UserRepository;
 import com.project.date.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -38,7 +27,7 @@ public class ChatController {
      */
     //, @Header("Authorization") String token
     @MessageMapping(value = "/chat/enter")
-    public void enter(ChatMessageResponseDto chatMessageDto) {
+    public void enter(ChatMessageDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
         chatMessageDto.setMessage(chatMessageDto.getNickname() + "님이 채팅방에 참여하였습니다.");
@@ -58,7 +47,7 @@ public class ChatController {
      */
     //, @Header("Authorization") String token
     @MessageMapping(value = "/chat/message") //메시지 보내는거야
-    public void message(ChatMessageResponseDto chatMessageDto) {
+    public void message(ChatMessageDto chatMessageDto) {
 
 //        String username = jwtDecoder.decodeUsername(token);
 //        String nickname = tokenProvider.decodeUsername(token);

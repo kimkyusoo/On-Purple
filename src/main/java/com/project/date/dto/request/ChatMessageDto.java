@@ -1,7 +1,5 @@
 package com.project.date.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.project.date.model.ChatMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +8,6 @@ import lombok.Setter;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -23,24 +20,25 @@ public class ChatMessageDto implements Serializable {
         TALK, UNREAD_MESSAGE_COUNT_ALARM, COMMENT_ALARM
     }
 
-    private Long messageId;
+    private Long userId;
     private MessageType type; // 메시지 타입
     private String roomId; // 공통으로 만들어진 방 번호
-    private Long otherMemberId; // 상대방
+    private Long otherNickname; // 상대방
+
+    private String otherImageUrl;
 
     @NotBlank
     @Size(max=2000)
     private String message; // 메시지
 
     private String createdAt;
-
-    private Long userId;
     private int count;
 
     public ChatMessageDto(ChatMessageDto chatMessageDto, int count) {
         this.type = MessageType.UNREAD_MESSAGE_COUNT_ALARM; // 메시지 타입
         this.roomId = chatMessageDto.roomId; // 방 이름
-        this.otherMemberId = chatMessageDto.otherMemberId; // 상대방 prvateKey
+        this.otherNickname = chatMessageDto.otherNickname; // 상대방 prvateKey
+        this.otherImageUrl = chatMessageDto.otherImageUrl;
         this.count = count; //안읽은 메세지 개수
     }
 }

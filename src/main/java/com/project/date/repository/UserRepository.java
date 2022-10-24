@@ -1,5 +1,6 @@
 package com.project.date.repository;
 
+import com.project.date.model.Authority;
 import com.project.date.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(Long kakaoId);
 
     List<User> findAllByOrderByModifiedAtDesc();
+
+    Optional<User> findByRole(Authority role);
 
     //매칭된 회원 정보 가져오기
     @Query(value = "SELECT * FROM user_table WHERE user_id IN (:likeList)", nativeQuery = true)

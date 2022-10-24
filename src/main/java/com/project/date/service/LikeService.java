@@ -279,22 +279,47 @@ public class LikeService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        List<Likes> likesList = likeRepository.findByUser(user);
+        List<Likes> likesList = likeRepository.findAllByUser(user);
         List<LikesResponseDto> likesResponseDtoList = new ArrayList<>();
-
         for (Likes likes : likesList) {
             likesResponseDtoList.add(
-
-                            LikesResponseDto.builder()
-                                    .userId(likes.getTarget().getId())
-                                    .imageUrl(likes.getTarget().getImageUrl())
-                                    .build()
-            );
+                    LikesResponseDto.builder()
+                            .userId(likes.getTarget().getId())
+                            .imageUrl(likes.getTarget().getImageUrl())
+                            .build());
         }
         return ResponseDto.success(likesResponseDtoList);
     }
 
+    @Transactional(readOnly = true)
+    public ResponseDto<?> getUnLike(HttpServletRequest request) {
 
+        if (null == request.getHeader("RefreshToken")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        if (null == request.getHeader("Authorization")) {
+            return ResponseDto.fail("USER_NOT_FOUND",
+                    "로그인이 필요합니다.");
+        }
+
+        User user = validateUser(request);
+        if (null == user) {
+            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+        }
+
+        List<UnLike> unLikesList = unLikeRepository.findAllByUser(user);
+        List<UnLikesResponseDto> unLikesResponseDtoList = new ArrayList<>();
+        for (UnLike unLike : unLikesList) {
+            unLikesResponseDtoList.add(
+                    UnLikesResponseDto.builder()
+                            .userId(unLike.getTarget().getId())
+                            .imageUrl(unLike.getTarget().getImageUrl())
+                            .build());
+        }
+        return ResponseDto.success(unLikesResponseDtoList);
+    }
 
 
     @Transactional(readOnly = true)

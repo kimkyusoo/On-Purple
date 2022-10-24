@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LikesResponseDto{
+public class UnLikesResponseDto{
     private Long userId;
     private String imageUrl;
 }

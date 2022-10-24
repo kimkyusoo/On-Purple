@@ -75,6 +75,13 @@ public class MypageService {
                         .mbti(user.getMbti())
                         .introduction(user.getIntroduction())
                         .area(user.getArea())
+                        .job(user.getJob())
+                        .hobby(user.getHobby())
+                        .drink(user.getDrink())
+                        .idealType(user.getIdealType())
+                        .likeMovieType(user.getLikeMovieType())
+                        .pet(user.getPet())
+                        .smoke(user.getSmoke())
                         .likedResponseDtoList(likedResponseDtoList)
                         .otherLikeResponseDtoList(otherLikeResponseDtoList)
                         .build());

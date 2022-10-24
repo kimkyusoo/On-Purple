@@ -28,9 +28,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final ImgRepository imgRepository;
-
     private final AwsS3UploadService awsS3UploadService;
-    private static final String ADMIN_TOKEN = ("${ADMIN_TOKEN}");
+    private static final String ADMIN_TOKEN = ("AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC");
 
     //  회원가입. 유저가 존재하는지, 비밀번호와 비밀번호확인이 일치하는지의 여부를 if문을 통해 확인하고 이를 통과하면 user에 대한 정보를 생성.
     @Transactional
@@ -72,7 +71,6 @@ public class UserService {
             role = Authority.ADMIN;
         }
 
-
         User user = User.builder()
                 .username(requestDto.getUsername())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
@@ -111,12 +109,11 @@ public class UserService {
                         .userId(user.getId())
                         .nickname(user.getNickname())
                         .imageUrl(user.getImageUrl())
+                        .gender(user.getGender())
                         .build()
-
         );
 
     }
-
     private void postBlankCheck(List<String> imgPaths) {
         if (imgPaths == null || imgPaths.isEmpty()) { //.isEmpty()도 되는지 확인해보기
             throw new NullPointerException("이미지를 등록해주세요(Blank Check)");
@@ -138,7 +135,6 @@ public class UserService {
             return ResponseDto.fail("INVALID_USER", "비밀번호가 틀렸습니다..");
         }
 
-
         TokenDto tokenDto = tokenProvider.generateTokenDto(user);
         tokenToHeaders(tokenDto, response);
 
@@ -146,6 +142,7 @@ public class UserService {
                 UserResponseDto.builder()
                         .userId(user.getId())
                         .nickname(user.getNickname())
+                        .gender(user.getGender())
                         .imageUrl(user.getImageUrl())
                         .build()
         );
@@ -172,7 +169,7 @@ public class UserService {
                 UserResponseDto.builder()
                         .userId(user.getId())
                         .nickname(user.getNickname())
-                        .gender(user.getGender())
+                        .gender(String.valueOf(user.getGender()))
                         .imageUrl(user.getImageUrl())
                         .build()
         );
@@ -271,9 +268,21 @@ public class UserService {
         return tokenProvider.deleteRefreshToken(user);
     }
 
+    @Transactional
+    public ResponseDto<?> deleteUser(String ADMIN_TOKEN, Long userId) {
 
+        User user = isPresentId(userId);
+        if (null == user) {
+            return ResponseDto.fail("NOT_FOUND", "존재하지 않는 사용자입니다.");
+        }
 
+        if (ADMIN_TOKEN == null) {
+            return ResponseDto.fail("BAD_REQUEST", "관리자 코드가 입력되지 않았습니다.");
+        }
+        userRepository.delete(user);
 
+        return ResponseDto.success("회원삭제가 완료되었습니다");
+    }
 
     @Transactional(readOnly = true)
     public User isPresentUser(String username) {

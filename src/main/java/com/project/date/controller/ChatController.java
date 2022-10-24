@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ public class ChatController {
     //    private final JwtDecoder jwtDecoder;
     private final TokenProvider tokenProvider;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate template;
 
 
     /**
@@ -32,24 +34,19 @@ public class ChatController {
     public void enter(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
+        chatMessageDto.setMessage(chatMessageDto.getOtherNickname() + "님이 채팅방에 참여하였습니다.");
+        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);
+
         String nickname = tokenProvider.decodeUsername(token);
         User user = userRepository.findByNickname(nickname).orElseThrow(
                 () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
         );
         chatService.enter(user.getId(), chatMessageDto.getRoomId());
-
-
-//        String nickname = user.getNickname();
-//        user = userRepository.findByNickname(nickname).orElseThrow(
-//                () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
-//        );
-//        chatService.enter(user.getId(), chatMessageDto.getRoomId());
     }
 
     /**
      * websocket "/sub/chat/message"로 들어오는 메시징을 처리한다.
      */
-    //
     @MessageMapping("/message")
     public void message(ChatMessageDto chatMessageDto, @Header("Authorization") String token) {
 
@@ -61,19 +58,7 @@ public class ChatController {
         chatService.sendMessage(chatMessageDto, user);
         chatService.updateUnReadMessageCount(chatMessageDto);
     }
-
-
-//        String nickname = user.getNickname();
-//        user = userRepository.findByNickname(nickname).orElseThrow(
-//                () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
-//        );
-//        chatService.sendMessage(chatMessageDto, user);
-//        chatService.updateUnReadMessageCount(chatMessageDto);
-
 }
-
-
-
 
 
 //    private final TokenProvider TokenProvider;

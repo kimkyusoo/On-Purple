@@ -44,4 +44,8 @@ public class LikeController {
         return likeService.getLike(request);
     }
 
+    @GetMapping("/user/unLike")
+    public ResponseDto<?> getUnLikeList(HttpServletRequest request){
+        return likeService.getUnLike(request);
+    }
 }

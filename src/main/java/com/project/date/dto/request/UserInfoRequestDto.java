@@ -14,9 +14,7 @@ public class UserInfoRequestDto {
 
     private Integer age;
 
-
     private String mbti;
-
 
     private String introduction;
 

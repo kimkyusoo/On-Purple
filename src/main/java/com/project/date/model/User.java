@@ -45,7 +45,9 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private Authority role;
 
-    @Column
+//    @Enumerated(value = EnumType.STRING)
+//    private Gender gender;
+    @Column(nullable = false)
     private String gender;
 
     @Column (unique = true)

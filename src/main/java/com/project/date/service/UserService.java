@@ -169,7 +169,7 @@ public class UserService {
                 UserResponseDto.builder()
                         .userId(user.getId())
                         .nickname(user.getNickname())
-                        .gender(String.valueOf(user.getGender()))
+                        .gender((user.getGender()))
                         .imageUrl(user.getImageUrl())
                         .build()
         );

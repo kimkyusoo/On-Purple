@@ -4,6 +4,7 @@ import com.project.date.dto.request.ChatMessageDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.redis.listener.ChannelTopic;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -21,8 +22,8 @@ public class ChatMessage extends Timestamped {
     // 메세지 작성자
     @ManyToOne
     private User user;
-    private Long otherUserId;
     private String otherNickname;
+    private String otherUserId;
     private String otherImageUrl;
     private String roomId;
 
@@ -35,11 +36,19 @@ public class ChatMessage extends Timestamped {
     private ChatRoom chatRoom;
 
     public ChatMessage(User user, ChatMessageDto chatMessageDto, ChatRoom chatRoom) {
+
         this.user = user;
         this.message = chatMessageDto.getMessage();
         this.chatRoom = chatRoom;
         this.roomId = chatRoom.getChatRoomUuid();
     }
+
+//    public static ChatMessage createMessage(User user, String message){
+//        ChatMessage chatMessage = new ChatMessage();
+//        chatMessage.user = user.getId();
+//        chatMessage.message = message;
+//        return chatMessage;
+//    }
 
 //    public ChatMessage() {
 //    }

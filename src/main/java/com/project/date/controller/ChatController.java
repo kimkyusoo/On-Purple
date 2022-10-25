@@ -1,10 +1,15 @@
 package com.project.date.controller;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
+import com.project.date.impl.UserDetailsImpl;
 import com.project.date.jwt.TokenProvider;
+import com.project.date.model.User;
+import com.project.date.repository.UserRepository;
 import com.project.date.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,9 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 //@RequestMapping("/chat")
 public class ChatController {
-    private final ChatService chatService;
     //    private final JwtDecoder jwtDecoder;
+    private final ChatService chatService;
     private final TokenProvider tokenProvider;
+    private final UserRepository userRepository;
     private final SimpMessagingTemplate template;
 
 
@@ -27,19 +33,18 @@ public class ChatController {
      * Client가 send할 수 있는 경로 /pub/chat/enter
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value ="chat/enter")
+    @MessageMapping(value = "chat/enter")
     public void enter(ChatMessageDto chatMessageDto) {
 
 //        String nickname = jwtDecoder.decodeUsername(token);
-        chatMessageDto.setMessage(chatMessageDto.getUserId() + "님이 채팅방에 참여하였습니다.");
-        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);    // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
+        chatMessageDto.setMessage(chatMessageDto.getNickname()+"채팅방에 참여하였습니다.");
+        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);   // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
 
 //        String nickname = tokenProvider.decodeUsername(token);
 //        User user = userRepository.findByNickname(nickname).orElseThrow(
 //                () -> new NotFoundException("해당 유저를 찾을 수 없습니다.")
 //        );
 //        chatService.enter(user.getId(), chatMessageDto.getRoomId());
-//        chatMessageDto.getRoomId();
     }
 
 
@@ -47,7 +52,7 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value ="chat/message") //메시지 보내는거야
+    @MessageMapping(value = "chat/message") //메시지 보내는거야
     public void message(ChatMessageDto chatMessageDto) {
 
 //        String username = jwtDecoder.decodeUsername(token);

@@ -14,14 +14,14 @@ import lombok.Setter;
 @Setter
 public class UnreadMessageCount {
 
-    private Long otherNickname;
+    private Long otherUserId;
     private int unreadCount;
     private String roomId;
     private String type;
 
     public UnreadMessageCount(ChatMessageDto roomMessage) {
         this.type = "UNREAD";
-        this.otherNickname = roomMessage.getOtherNickname();
+        this.otherUserId = roomMessage.getOtherUserId();
         this.unreadCount = roomMessage.getCount();
         this.roomId = roomMessage.getRoomId();
     }

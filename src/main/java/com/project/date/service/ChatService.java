@@ -34,27 +34,27 @@ public class ChatService {
     }
 
     //채팅
-    @Transactional
-    public void sendMessage(ChatMessageDto chatMessageDto, User user) {
-        ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
-                () -> new IllegalArgumentException("채팅방이 존재하지 않습니다.")
-        );
-        ChatMessage chatMessage = new ChatMessage(user, chatMessageDto, chatRoom);
-        chatMessageRepository.save(chatMessage);
-
-
-        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByUserNotAndChatRoom(user, chatRoom);
-        String topic = channelTopic.getTopic();
-        String createdAt = getCurrentTime();
-        chatMessageDto.setCreatedAt(createdAt);
-        chatMessageDto.setMessageId(chatMessage.getId());
-        chatMessageDto.setUserId(chatRoomUser.get(0).getUser().getId());
-        chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
-        // front에서 요청해서 진행한 작업 나의 userId 넣어주기
-        chatMessageDto.setUserId(user.getId());
-
-        redisTemplate.convertAndSend(topic, chatMessageDto);
-    }
+//    @Transactional
+//    public void sendMessage(ChatMessageDto chatMessageDto, User user) {
+//        ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
+//                () -> new IllegalArgumentException("채팅방이 존재하지 않습니다.")
+//        );
+//        ChatMessage chatMessage = new ChatMessage(user, chatMessageDto, chatRoom);
+//        chatMessageRepository.save(chatMessage);
+//
+//
+//        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByUserNotAndChatRoom(user, chatRoom);
+//        String topic = channelTopic.getTopic();
+//        String createdAt = getCurrentTime();
+//        chatMessageDto.setCreatedAt(createdAt);
+//        chatMessageDto.setOtherUserId(chatMessage.getId());
+//        chatMessageDto.setUserId(chatRoomUser.get(0).);
+//        chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
+//        // front에서 요청해서 진행한 작업 나의 userId 넣어주기
+//        chatMessageDto.setUserId(user.getId());
+//
+//        redisTemplate.convertAndSend(topic, chatMessageDto);
+//    }
 
     //현재시간 추출 메소드
     private String getCurrentTime() {
@@ -67,7 +67,7 @@ public class ChatService {
 
     //안읽은 메세지 업데이트
     public void updateUnReadMessageCount(ChatMessageDto requestChatMessageDto) {
-        Long otherUserId = requestChatMessageDto.getOtherNickname();
+        Long otherUserId = requestChatMessageDto.getOtherUserId();
         String roomId = requestChatMessageDto.getRoomId();
         // 상대방이 채팅방에 들어가 있지 않거나 들어가 있어도 나와 같은 대화방이 아닌 경우 안 읽은 메세지 처리를 할 것이다.
         if (!redisRepository.existChatRoomUserInfo(otherUserId) || !redisRepository.getUserEnterRoomId(otherUserId).equals(roomId)) {
@@ -77,7 +77,7 @@ public class ChatService {
                     .getChatRoomMessageCount(roomId, otherUserId);
             String topic = channelTopic.getTopic();
 
-            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
+//            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
 
             //  redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }

@@ -19,7 +19,7 @@ public class ChatMessageTestDto {
 
     private Long userId;
     private String nickname;
-    private Long otherUserId;
+    private String otherUserId;
     private String otherNickname;
     private String message;
     private String otherImageUrl;

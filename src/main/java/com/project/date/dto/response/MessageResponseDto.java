@@ -17,8 +17,8 @@ public class MessageResponseDto {
     private String roomId;
     private String message;
     private String createdAt;
-    private Long otherNickname;
-    private Long userId;
+    private String otherNickname;
+    private String userId;
 
     public MessageResponseDto(ChatMessageDto roomMessage) {
 

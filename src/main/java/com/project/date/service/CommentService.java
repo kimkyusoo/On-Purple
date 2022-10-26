@@ -45,7 +45,7 @@ public class CommentService {
     if (null == post) {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
     }
-    String createdAt = getCurrentTime();
+    String createdAt = formatTime();
 
 
     Comment comment = Comment.builder()
@@ -124,7 +124,7 @@ public class CommentService {
       return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
     }
 
-    String modifiedAt = getCurrentTime();
+    String modifiedAt = formatTime();
 
     comment.update(requestDto);
     comment.updateModified(modifiedAt);
@@ -172,13 +172,14 @@ public class CommentService {
 
 
   //현재시간 추출 메소드
-  private String getCurrentTime() {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    Calendar cal = Calendar.getInstance();
-    Date date = cal.getTime();
-    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-    return sdf.format(date);
+  private String formatTime(){
+    Date now = new Date();         // 현재 날짜/시간 출력
+    // System.out.println(now); // Thu Jun 17 06:57:32 KST 2021
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    return formatter.format(now);
+
   }
+
 
   @Transactional(readOnly = true)
   public Comment isPresentComment(Long commentId) {

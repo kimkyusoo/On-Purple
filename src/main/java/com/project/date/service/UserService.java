@@ -49,7 +49,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseDto<UserResponseDto> createUser(SignupRequestDto requestDto, UserInfoRequestDto userInfoRequestDto, List<String> imgPaths,HttpServletResponse response) {
+    public ResponseDto<?> createUser(SignupRequestDto requestDto, UserInfoRequestDto userInfoRequestDto, List<String> imgPaths,HttpServletResponse response) {
         if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
             return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
                     "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
@@ -104,6 +104,10 @@ public class UserService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(user);
         tokenToHeaders(tokenDto, response);
 
+        if(user.getRole().equals(Authority.ADMIN)) {
+            return ResponseDto.success("관리자 회원가입이 완료되었습니다");
+        }
+
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .userId(user.getId())
@@ -138,6 +142,10 @@ public class UserService {
         TokenDto tokenDto = tokenProvider.generateTokenDto(user);
         tokenToHeaders(tokenDto, response);
 
+        if(user.getRole().equals(Authority.ADMIN)) {
+            return ResponseDto.success("관리자 로그인에 성공하였습니다");
+        }
+
         return ResponseDto.success(
                 UserResponseDto.builder()
                         .userId(user.getId())
@@ -171,6 +179,7 @@ public class UserService {
                         .nickname(user.getNickname())
                         .gender((user.getGender()))
                         .imageUrl(user.getImageUrl())
+                        .role(String.valueOf(user.getRole()))
                         .build()
         );
     }

@@ -53,7 +53,9 @@ public class AdminService {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글입니다.");
         }
 
-        if(user.getRole().equals(Authority.ADMIN)){
+        if(!user.getRole().equals(Authority.ADMIN)){
+            return ResponseDto.fail("INVALID_ADMIN", "관리자가 아닙니다");
+        }
             postRepository.delete(post);
             List<Img> findImgList = imgRepository.findByPost_Id(post.getId());
             List<String> imgList = new ArrayList<>();
@@ -64,7 +66,6 @@ public class AdminService {
             for (String imgUrl : imgList) {
                 awsS3UploadService.deleteFile(AwsS3UploadService.getFileNameFromURL(imgUrl));
             }
-        }
 
         return ResponseDto.success(("관리자에 의해 성공적으로 삭제되었습니다."));
     }
@@ -89,9 +90,10 @@ public class AdminService {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 댓글입니다.");
         }
 
-        if(user.getRole().equals(Authority.ADMIN)){
-            commentRepository.delete(comment);
+        if(!user.getRole().equals(Authority.ADMIN)){
+            return ResponseDto.fail("INVALID_ADMIN", "관리자가 아닙니다");
             }
+        commentRepository.delete(comment);
 
         return ResponseDto.success(("관리자에 의해 성공적으로 삭제되었습니다."));
     }

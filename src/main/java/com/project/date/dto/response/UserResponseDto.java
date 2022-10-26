@@ -17,4 +17,6 @@ public class UserResponseDto {
     private String gender;
     private String imageUrl;
     private List<String> imgList;
+    private String role;
+
 }

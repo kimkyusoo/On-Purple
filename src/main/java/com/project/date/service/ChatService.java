@@ -1,5 +1,6 @@
 package com.project.date.service;
 
+
 import com.project.date.dto.request.ChatMessageDto;
 import com.project.date.model.ChatMessage;
 import com.project.date.model.ChatRoom;
@@ -15,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class ChatService {
 
     private final RedisRepository redisRepository;
@@ -34,27 +35,27 @@ public class ChatService {
     }
 
     //채팅
-//    @Transactional
-//    public void sendMessage(ChatMessageDto chatMessageDto, User user) {
-//        ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
-//                () -> new IllegalArgumentException("채팅방이 존재하지 않습니다.")
-//        );
-//        ChatMessage chatMessage = new ChatMessage(user, chatMessageDto, chatRoom);
-//        chatMessageRepository.save(chatMessage);
-//
-//
-//        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByUserNotAndChatRoom(user, chatRoom);
-//        String topic = channelTopic.getTopic();
-//        String createdAt = getCurrentTime();
-//        chatMessageDto.setCreatedAt(createdAt);
-//        chatMessageDto.setOtherUserId(chatMessage.getId());
-//        chatMessageDto.setUserId(chatRoomUser.get(0).);
-//        chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
-//        // front에서 요청해서 진행한 작업 나의 userId 넣어주기
-//        chatMessageDto.setUserId(user.getId());
-//
-//        redisTemplate.convertAndSend(topic, chatMessageDto);
-//    }
+    @Transactional
+    public void sendMessage(ChatMessageDto chatMessageDto, User user) {
+        ChatRoom chatRoom = chatRoomRepository.findByChatRoomUuid(chatMessageDto.getRoomId()).orElseThrow(
+                () -> new IllegalArgumentException("채팅방이 존재하지 않습니다.")
+        );
+        ChatMessage chatMessage = new ChatMessage(user, chatMessageDto, chatRoom);
+        chatMessageRepository.save(chatMessage);
+
+
+        List<ChatRoomUser> chatRoomUser = chatRoomUserRepository.findAllByUserNotAndChatRoom(user, chatRoom);
+        String topic = channelTopic.getTopic();
+        String createdAt = getCurrentTime();
+        chatMessageDto.setCreatedAt(createdAt);
+        chatMessageDto.setMessageId(chatMessage.getId());
+        chatMessageDto.setOtherUserId(chatRoomUser.get(0).getUser().getId());
+        chatMessageDto.setType(ChatMessageDto.MessageType.TALK);
+        // front에서 요청해서 진행한 작업 나의 userId 넣어주기
+        chatMessageDto.setUserId(user.getId());
+
+        redisTemplate.convertAndSend(topic, chatMessageDto);
+    }
 
     //현재시간 추출 메소드
     private String getCurrentTime() {
@@ -77,11 +78,12 @@ public class ChatService {
                     .getChatRoomMessageCount(roomId, otherUserId);
             String topic = channelTopic.getTopic();
 
-//            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
+            ChatMessageDto responseChatMessageDto = new ChatMessageDto(requestChatMessageDto, unReadMessageCount);
 
             //  redisTemplate.convertAndSend(topic, responseChatMessageDto);
         }
     }
+}
 
 //    private final ChatMessageRepository chatMessageRepository;
 //    private final ChatRoomRepository chatRoomRepository;
@@ -144,4 +146,3 @@ public class ChatService {
 //        redisRepository.initChatRoomMessageInfo(roomId, userId);
 //    }
 
-}

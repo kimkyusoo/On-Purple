@@ -55,7 +55,6 @@ public class ChatRoomService {
             return existChatRoom.getChatRoomUuid();
         }
 
-
         //방 먼저 생성
         ChatRoom room = new ChatRoom(roomHashCode);
         chatRoomRepository.save(room);

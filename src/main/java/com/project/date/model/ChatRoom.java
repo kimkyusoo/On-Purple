@@ -34,6 +34,7 @@ public class ChatRoom implements Serializable {
     public ChatRoom(int roomUsers) {
         this.roomHashCode = roomUsers;
     }
+
 //    private static final long serialVersionUID = 6494678977089006639L;
 //
 //    private String roomId;

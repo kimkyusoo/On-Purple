@@ -21,7 +21,6 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -120,7 +119,7 @@ public class RedisConfig {
         return new ChannelTopic("chatroom");
     }
 
-
+////////////////////////////////////////////////////////////
 //    /**
 //     * 단일 Topic 사용을 위한 Bean 설정
 //     */

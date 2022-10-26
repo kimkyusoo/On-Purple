@@ -17,15 +17,15 @@ public class MessageResponseDto {
     private String roomId;
     private String message;
     private String createdAt;
-    private String otherNickname;
-    private String userId;
+    private Long otherUserId;
+    private Long userId;
 
     public MessageResponseDto(ChatMessageDto roomMessage) {
 
         this.roomId = roomMessage.getRoomId();
         this.message = roomMessage.getMessage();
         this.createdAt = roomMessage.getCreatedAt();
-        this.otherNickname = roomMessage.getOtherNickname();
+        this.otherUserId = roomMessage.getOtherUserId();
         this.userId = roomMessage.getUserId();
     }
 }

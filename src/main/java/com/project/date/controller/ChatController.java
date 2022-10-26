@@ -1,18 +1,13 @@
 package com.project.date.controller;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.date.dto.request.ChatMessageDto;
-import com.project.date.impl.UserDetailsImpl;
-import com.project.date.jwt.TokenProvider;
-import com.project.date.model.User;
-import com.project.date.repository.UserRepository;
-import com.project.date.service.ChatService;
+import com.project.date.dto.request.Message;
+import com.project.date.model.ChatMessage;
+import com.project.date.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -20,12 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 //@RequestMapping("/chat")
 public class ChatController {
-    //    private final JwtDecoder jwtDecoder;
-    private final ChatService chatService;
-    private final TokenProvider tokenProvider;
-    private final UserRepository userRepository;
-    private final SimpMessagingTemplate template;
 
+    private final SimpMessagingTemplate template;
+    private final ChatMessageRepository chatMessageRepository;
 
     /**
      * websocket "/pub/chat/enter"로 들어오는 메시징을 처리한다.
@@ -33,12 +25,15 @@ public class ChatController {
      * Client가 send할 수 있는 경로 /pub/chat/enter
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value = "chat/enter")
-    public void enter(ChatMessageDto chatMessageDto) {
+    @MessageMapping(value = "/chat/enter")
+    public void enter(Message message) {
 
-//        String nickname = jwtDecoder.decodeUsername(token);
-        chatMessageDto.setMessage(chatMessageDto.getNickname()+"채팅방에 참여하였습니다.");
-        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);   // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
+        if(ChatMessageDto.MessageType.JOIN.equals(message.getType())) {
+            message.setMessage(message.getSender()+"님이 입장하셨습니다.");
+        }
+//
+//        chatMessageRepository.save(chatMessageDto);
+        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);   // roomId를 topic으로 생성-> roomId로 구분, 메시지 전달
 
 //        String nickname = tokenProvider.decodeUsername(token);
 //        User user = userRepository.findByNickname(nickname).orElseThrow(
@@ -52,19 +47,20 @@ public class ChatController {
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     //, @Header("Authorization") String token
-    @MessageMapping(value = "chat/message") //메시지 보내는거야
-    public void message(ChatMessageDto chatMessageDto) {
+    @MessageMapping(value = "/chat/message") //메시지 보내는거야
+    public void message(Message message) {
+
+        template.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
 
 //        String username = jwtDecoder.decodeUsername(token);
 //        String nickname = tokenProvider.decodeUsername(token);
-//
 //
 //        User user = userRepository.findByNickname(nickname).orElseThrow(
 //                () -> new IllegalArgumentException("존재하지 않는 사용자입니다.")
 //        );
 //        chatService.sendMessage(chatMessageDto, user);
 //        chatService.updateUnReadMessageCount(chatMessageDto);
-        template.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);
+
     }
 }
 

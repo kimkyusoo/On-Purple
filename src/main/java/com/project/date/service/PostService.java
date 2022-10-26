@@ -56,7 +56,7 @@ public class PostService {
         if (null == user) {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
-        String createdAt = getCurrentTime();
+        String createdAt = formatTime();
 
         Post post = Post.builder()
                 .user(user)
@@ -235,7 +235,7 @@ public class PostService {
             newImgList.add(img.getImageUrl());
         }
 
-        String modifiedAt = getCurrentTime();
+        String modifiedAt = formatTime();
 
         post.update(requestDto);
         post.updateModified(modifiedAt);
@@ -310,13 +310,12 @@ public class PostService {
 
     }
 
-    //현재시간 추출 메소드
-    private String getCurrentTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-        return sdf.format(date);
+    private String formatTime(){
+        Date now = new Date();         // 현재 날짜/시간 출력
+        // System.out.println(now); // Thu Jun 17 06:57:32 KST 2021
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return formatter.format(now);
+
     }
 
     @Transactional(readOnly = true)

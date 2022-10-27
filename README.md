@@ -117,6 +117,7 @@ https://bright-may-715.notion.site/25c7750c1b8e48eb863f06b5c8dbfda1?v=8ea7250943
 
 
 
+젠킨스 설정 오류.
 jenkins.plugins.publish_over.BapPublisherException: Failed to connect and initialize SSH connection. Message: [Failed to connect session for config [onperpleServer]. Message [Auth fail]]
 
 👨‍👦 **Front-End** 

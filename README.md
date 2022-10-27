@@ -111,6 +111,16 @@ https://bright-may-715.notion.site/25c7750c1b8e48eb863f06b5c8dbfda1?v=8ea7250943
 
 게시판페이지, 채팅 (강민택)
 
+# 💡Trouble Shooting
+
+👨‍👩‍👧 **Back-End** 
+
+
+
+👨‍👦 **Front-End** 
+
+
+
 
 
 # ⚔️ 기술 스택

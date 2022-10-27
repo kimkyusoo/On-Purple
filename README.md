@@ -25,13 +25,13 @@ https://bright-may-715.notion.site/25c7750c1b8e48eb863f06b5c8dbfda1?v=8ea7250943
 # 메인 페이지
 ![main](https://user-images.githubusercontent.com/109732299/198250056-8c37948f-83cb-42f0-84c7-9227a72b6849.png)
 
-<h3>💜 상대 프로필을 확인하고 좋아요를 보낼 수 있음 💜</h3>
+<h3>💜 상대 프로필을 확인하고 좋아요/싫어요를 보낼 수 있음 💜</h3>
 
 
 # 마이 페이지
 ![mypage](https://user-images.githubusercontent.com/109732299/198250420-17f5afff-f642-4e66-a145-51ee70765484.png)
 
-<h3>💜 나와 매칭된 사람을 확인할 수 있고, 내정보를 수정할  💜</h3>
+<h3>💜 나와 매칭된 사람을 확인할 수 있고, 내정보를 수정할 수 있음 💜</h3>
 
 # 채팅
 ![chatList](https://user-images.githubusercontent.com/109732299/198250525-47f61288-21f2-4092-9ab8-a32401d09ffc.png)
@@ -96,26 +96,28 @@ https://bright-may-715.notion.site/25c7750c1b8e48eb863f06b5c8dbfda1?v=8ea7250943
 
 # ⛳️  역할 담당
 👨‍👩‍👧 **Back-End**  
-로그인, 회원가입, 프로필페이지, 마이페이지, 관리자 권한, 서버 배포 (김규수)
+회원가입, 로그인, 마이페이지, 프로필 페이지, 프로필 상세 정보, https설정, 관리자 권한 (김규수)
 
-이미지업로드, 게시글 댓글 CRUD, 검색기능, 신고페이지, 매칭 (이지수)
+게시판/댓글, 신고, 게시글/댓글/회원Like/unlike, 검색, 매칭, S3다중 이미지 업로드 (이지수)
 
 채팅, Redis 설정, 젠킨스 설정 (박수정)
 
 
 
 👨‍👦 **Front-End** 
-로그인, 회원가입, 마이페이지, 관리자 권한 (박정서)
+마이페이지, 회원가입, 로그인, 상대방 프로필 상세정보, 관리자 권한 (박정서)
 
-프로필페이지, 화상채팅, 서버배포 (김태균)
+프로필 페이지, 화상채팅 , 회원간 매칭, https설정 (김태균)
 
-게시판페이지, 채팅 (강민택)
+게시판/댓글, 신고, 게시글/댓글좋아요, 검색, 채팅 (강민택)
 
 # 💡Trouble Shooting
 
 👨‍👩‍👧 **Back-End** 
 
 
+
+jenkins.plugins.publish_over.BapPublisherException: Failed to connect and initialize SSH connection. Message: [Failed to connect session for config [onperpleServer]. Message [Auth fail]]
 
 👨‍👦 **Front-End** 
 

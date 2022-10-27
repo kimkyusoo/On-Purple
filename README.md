@@ -17,7 +17,138 @@ https://on-purple.com/
 <h1>🔖 서비스 개요</h1>
 <h3>💜 매칭 서비스 기반의 데이팅 플랫폼 💜</h3>
 
-# 와이어프레임
+# API명세서
+# 로그인
+
+[회원가입](https://www.notion.so/635698c9156a4d2ab4c57d0189403444)
+
+[아이디 중복성 검사](https://www.notion.so/018545cf40f44ce98d43ed7641ce6f7b)
+
+[닉네임 중복성 검사](https://www.notion.so/69194a0563654d788394d4fb5cf0a873)
+
+[카카오톡 로그인](https://www.notion.so/f80452317a1c4a02b27dc1ab45213f18)
+
+[네이버 로그인](https://www.notion.so/2f481ca6d13a4f8ead12fa290ca1cb0b)
+
+[로그아웃](https://www.notion.so/4aff64922b3c4712b0538c8fb1b72900)
+
+[사용자 확인](https://www.notion.so/6b6c968f04bc485f879763341ec7a090)
+
+[](https://www.notion.so/0b51681d423544299b043645c16fca17)
+
+[](https://www.notion.so/e1328f7a62ad4609a2f3afc8a9c21f03)
+
+[관리자 회원가입](https://www.notion.so/74a1a66248564b538e1749f3ebc38f38)
+
+[관리자 로그인](https://www.notion.so/64aca7c22c48412996cc6e89dd10b66b)
+
+[관리자 게시글 삭제](https://www.notion.so/5254d165747c4770b100aaa568fd425a)
+
+[관리자 댓글 삭제](https://www.notion.so/52e58ca8ddb54d5398e8f04b176646fa)
+
+[](https://www.notion.so/f0e4014778854c078d0345fcd87cdf28)
+
+[](https://www.notion.so/56b7790b794f4dbe8453eb73bfe029e5)
+
+[게시글 작성](https://www.notion.so/3dfba5e93f954583b58d98a46573f199)
+
+[게시글 조회/카테고리기능 추가](https://www.notion.so/e4db37baac7d4f9db80a7b813ddb0ff2)
+
+[게시글 전체 조회 test/pageable](https://www.notion.so/test-pageable-0d7623b667344ec8b87914f3c41ead1b)
+
+[단일 게시글 조회](https://www.notion.so/b3c8c5e919c34546a0c7ddc97bd95321)
+
+[게시글 수정](https://www.notion.so/3e4b03b480e74120923b7431a4482c7f)
+
+[게시글 삭제](https://www.notion.so/8786bf19b36f41809e35812adb448172)
+
+[게시글 좋아요](https://www.notion.so/62d2a5fe985c4e7eb88ba14198e1ab97)
+
+[게시글 검색](https://www.notion.so/384d2b5048944138864c2caa11fc65f7)
+
+[](https://www.notion.so/26c51c753f8d4b489c6daea6fb18c3b9)
+
+[댓글 조회](https://www.notion.so/ad07c724aef64687bec6c89281fc5813)
+
+[댓글 작성](https://www.notion.so/dc2b641aba9c409ba07fbb467268c638)
+
+[댓글 수정](https://www.notion.so/a601a9e01ae342119099462bf22ce255)
+
+[댓글 삭제](https://www.notion.so/443e031a5bad4005b9d9747dc5aedd82)
+
+[댓글 좋아요](https://www.notion.so/daa77a2fc1504ccabfb0bccdf5b2f1b3)
+
+[](https://www.notion.so/8a12633c2f3e487da449c3a5e4c8885f)
+
+[대댓글 조회](https://www.notion.so/c9e098ad567a4c1489185a9c7b4298b2)
+
+[대댓글 작성](https://www.notion.so/a1aaf139035845b9aa271846c2435cae)
+
+[대댓글 수정](https://www.notion.so/3f0bc5a0832a44f3bb1948894b546388)
+
+[대댓글 삭제](https://www.notion.so/9dc04993e8d0457f8395e282bfbb2f77)
+
+[](https://www.notion.so/cf789a7e4937493faed68c2f5e2f27cf)
+
+[](https://www.notion.so/9b92660d5556435f9e6e3e73d88a0f84)
+
+[메인페이지 조회](https://www.notion.so/6a5e9e08f71e49fda02c2237fa09badf)
+
+[프로필페이지 조회](https://www.notion.so/d768e2a55b154822b129d5564b9c2c27)
+
+[회원 좋아요](https://www.notion.so/1d631a13ffbb4514a16fd20fb50b54e3)
+
+[서로 좋아요(매칭)](https://www.notion.so/2811ff76dcce484bbf648379634c24dd)
+
+[회원 싫어요](https://www.notion.so/2840e11e124d4fa0affdefb9ae55d21d)
+
+[내가 좋아요 한 사람](https://www.notion.so/fa2f9d1bf10d4f76af78b8435fd2233d)
+
+[](https://www.notion.so/6c0ec9294e7747249c0dc19798cf7866)
+
+[마이페이지](https://www.notion.so/267805a8b5784e5b8d5538d44581f7cb)
+
+[비밀번호 수정](https://www.notion.so/9b9adc57caf24d77abe252f0bc0bbad0)
+
+[이미지 수정](https://www.notion.so/edd2797d62454d10976f41e3d8c59df2)
+
+[프로필 정보 수정](https://www.notion.so/326901a151d54316aa1099564182e241)
+
+[](https://www.notion.so/53ea45013a9c4e64a46aace29df3049f)
+
+[endpoint](https://www.notion.so/endpoint-c92101e9f29246afac5ceaa35052276e)
+
+[채팅방 조회](https://www.notion.so/c36fdfe9a14d4876a7db6b5d41c56479)
+
+[채팅방 생성](https://www.notion.so/50e59dcd45ac48ec89efc0be113883bc)
+
+[특정채팅방 조회](https://www.notion.so/a6ce4004358d4318be425029cce026bf)
+
+[채팅방 삭제](https://www.notion.so/f257ad7adea0432b80cb2c06dba435da)
+
+[이전 채팅 메시지 불러오기](https://www.notion.so/701b89c6c7b74312b61638576bffade8)
+
+[채팅방 입장](https://www.notion.so/e16c047840724d849cdff5f2d7b98788)
+
+[[message type] 
+`TALK
+UNREAD_MESSAGE_COUNT_ALARM COMMENT_ALARM`](https://www.notion.so/message-type-TALK-UNREAD_MESSAGE_COUNT_ALARM-COMMENT_ALARM-add64f5fb951487db2db9a1e41eab865)
+
+[](https://www.notion.so/6c0a2bae4df74fe29cc4023e7f27e7be)
+
+[](https://www.notion.so/ecd9fbc124844193bf3ec85d259fb727)
+
+[](https://www.notion.so/1a316e5fa9574e6f9f2b8a2a5a202879)
+
+[](https://www.notion.so/b884e5280d78495294f139d6518e76aa)
+
+[](https://www.notion.so/f55d329edfe24452aa33a821e6a08eec)
+
+[신고글 작성](https://www.notion.so/631c4ff4220e4948b782f9849a46e497)
+
+[신고글 단일조회](https://www.notion.so/c0a8a3b7b8494837abacfb70949d52e7)
+
+[신고글 전체조회](https://www.notion.so/833762f593cc4304836380199ca4a344)
 
 # 📑 Service Architecture
 

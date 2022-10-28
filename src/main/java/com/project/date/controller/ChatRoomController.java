@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -53,19 +52,10 @@ public class ChatRoomController {
         return chatRoomService.getChatRoom(userDetails, page);
     }
 
-    //특정 채팅방 조회
-//    @GetMapping("/room/{roomId}")
-//    @ResponseBody
-//    public ChatRoom roomInfo(@PathVariable String roomId) {
-//        ChatRoom chatroom = chatRoomRepository.findByChatRoomUuid(roomId).;
-//        chatRoomService.existRoom()
-//    }
-
-
     //채팅방 삭제
     @DeleteMapping("/rooms/{roomId}")
     public void deleteChatRoom(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        //roonId=uuid
+        //roomId=uuid
         //방번호랑 나간 사람
         System.out.println(roomId+"삭제 요청");
         System.out.println(userDetails.getUser().getUsername()+"삭제 요청");
@@ -92,47 +82,5 @@ public class ChatRoomController {
         System.out.println(userDetails.getUser().getUsername()+ "채팅방 상대방정보 요청");
         return chatRoomService.getOtherUserInfo(roomId, userDetails);
     }
-
-//    private final ChatRoomRepository chatRoomRepository;
-//    private final TokenProvider opknProvider;
-//
-//    @GetMapping("/room")
-//    public String rooms() {
-//        return "/chat/room";
-//    }
-//
-//    @GetMapping("/rooms")
-//    @ResponseBody
-//    public List<ChatRoom> room() {
-//        List<ChatRoom> chatRooms = chatRoomRepository.findAllRoom();
-//        chatRooms.stream().forEach(room -> room.setUserCount(chatRoomRepository.getUserCount(room.getRoomId())));
-//        return chatRooms;
-//    }
-//
-//    @PostMapping("/room")
-//    @ResponseBody
-//    public ChatRoom createRoom(@RequestParam String name) {
-//        return chatRoomRepository.createChatRoom(name);
-//    }
-//
-//    @GetMapping("/room/enter/{roomId}")
-//    public String roomDetail(Model model, @PathVariable String roomId) {
-//        model.addAttribute("roomId", roomId);
-//        return "/chat/roomdetail";
-//    }
-//
-//    @GetMapping("/room/{roomId}")
-//    @ResponseBody
-//    public ChatRoom roomInfo(@PathVariable String roomId) {
-//        return chatRoomRepository.findRoomById(roomId);
-//    }
-
-//    @GetMapping("/user")
-//    @ResponseBody
-//    public LoginInfo getUserInfo() {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        String name = auth.getName();
-//        return LoginInfo.builder().name(name).token(TokenProvider.generateToken(name)).build();
-//    }
 }
 

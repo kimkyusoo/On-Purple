@@ -22,7 +22,6 @@ public class ChatRoomUser extends Timestamped {
     private String nickname;
     private String name;
     private String otherImageUrl;
-//    @ManyToOne
     private String myNickname;
     private String otherNickname;
 

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Message {
+public class MessageRequestDto {
     public enum MessageType {
         ENTER, TALK
     }

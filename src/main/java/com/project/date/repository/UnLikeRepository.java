@@ -11,4 +11,6 @@ public interface UnLikeRepository extends JpaRepository<UnLike, Long> {
     Optional<UnLike> findByUserAndTargetId(User user, Long targetId);
 
     List<UnLike> findAllByUser(User user);
+    //싫어요수 count
+    int countByTargetId(Long targetId);
 }

@@ -145,26 +145,22 @@ public class User extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void addLike(){
+    public void addLike(int num){
 
-        this.likes +=1;
+        this.likes = num;
     }
 
-    public void minusLike(){
+    public void minusLike(int num){
 
-        this.likes -=1;
+        this.likes = num;
     }
-    public void addUnLike(){
-        this.likes +=1;
-    }
-
-    public void minusUnLike(){
-
-        this.unLike -=1;
+    public void addUnLike(int num){
+        this.unLike;
     }
 
-    public void reportCount(){
-        this.reportCount +=1;
+    public void minusUnLike(int num){
+
+        this.unLike = num;
     }
 
 

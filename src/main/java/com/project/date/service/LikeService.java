@@ -4,6 +4,7 @@ import com.project.date.dto.response.*;
 import com.project.date.jwt.TokenProvider;
 import com.project.date.model.*;
 import com.project.date.repository.*;
+import freemarker.template.utility.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -159,11 +160,13 @@ public class LikeService {
                     .target(target)
                     .build();
             likeRepository.save(userLike);
-            user.addLike();
+            int addLike = likeRepository.countByTargetId(targetId);
+            target.addLike(addLike);
             return ResponseDto.success("좋아요 성공");
         } else {
             likeRepository.delete(liked);
-            user.minusLike();
+            int cancelLike = likeRepository.countByTargetId(targetId);
+            target.minusLike(cancelLike);
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
@@ -202,11 +205,15 @@ public class LikeService {
                     .target(target)
                     .build();
             unLikeRepository.save(userUnLike);
-            user.addUnLike();
+            int addUnLike = unLikeRepository.countByTargetId(targetId);
+            log.info("지금 싫어요 수 : "+addUnLike);
+            target.addUnLike(addUnLike);
             return ResponseDto.success("싫어요 성공");
         } else {
             unLikeRepository.delete(unLiked);
-            user.minusUnLike();
+            int cancelUnLike = unLikeRepository.countByTargetId(targetId);
+            log.info("지금 싫어요 수 : "+cancelUnLike);
+            target.minusUnLike(cancelLike);
             return ResponseDto.success("싫어요가 취소되었습니다.");
         }
     }

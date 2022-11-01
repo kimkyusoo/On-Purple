@@ -33,4 +33,5 @@ public class UserInfoRequestDto {
     private String likeMovieType;
 
     private String area;
+
 }

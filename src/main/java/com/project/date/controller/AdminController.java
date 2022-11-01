@@ -16,14 +16,14 @@ public class AdminController {
     private final AdminService adminService;
 
     @DeleteMapping( "/admin/post/{postId}")
-    public ResponseDto<?> deletePost(@PathVariable Long postId,
-                                     HttpServletRequest request) {
+    public ResponseDto<?> deletePost(@PathVariable Long postId, HttpServletRequest request) {
+
         return adminService.deletePostByAdmin(request, postId);
     }
 
     @DeleteMapping( "/admin/comment/{commentId}")
-    public ResponseDto<?> deleteComment(@PathVariable Long commentId,
-                                     HttpServletRequest request) {
+    public ResponseDto<?> deleteComment(@PathVariable Long commentId, HttpServletRequest request) {
+
         return adminService.deleteCommentByAdmin(request, commentId);
     }
 

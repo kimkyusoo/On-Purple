@@ -6,10 +6,6 @@ import com.project.date.model.*;
 import com.project.date.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -261,6 +257,8 @@ public class LikeService {
         return ResponseDto.success(userResponseDtos);
     }
 
+    //    내가 좋아요 한 사람 리스트 조회.
+//    프론트에서 나를 좋아요 한 사람을 찾아 프로필을 불러올 때 조건을 걸기 위해서 생성된 메소드.
     @Transactional(readOnly = true)
     public ResponseDto<?> getLike(HttpServletRequest request) {
 
@@ -279,6 +277,7 @@ public class LikeService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
+        //    토큰을 통해 user를 확인하고 확인된 유저 기준 좋아요를 누른 대상 모드를 찾아 리스트에 저장.
         List<Likes> likesList = likeRepository.findAllByUser(user);
         List<LikesResponseDto> likesResponseDtoList = new ArrayList<>();
         for (Likes likes : likesList) {
@@ -291,6 +290,8 @@ public class LikeService {
         return ResponseDto.success(likesResponseDtoList);
     }
 
+    //    내가 싫어요 한 사람 리스트 조회.
+//    264~295의 내가 좋아요한  사람 리스트 조회와 동일한 로직으로 구현.
     @Transactional(readOnly = true)
     public ResponseDto<?> getUnLike(HttpServletRequest request) {
 
@@ -321,13 +322,11 @@ public class LikeService {
         return ResponseDto.success(unLikesResponseDtoList);
     }
 
-
     @Transactional(readOnly = true)
     public User isPresentTarget(Long targetId) {
         Optional<User> optionalTarget = userRepository.findById(targetId);
         return optionalTarget.orElse(null);
     }
-
 
     @Transactional(readOnly = true)
     public Post isPresentPost(Long postId) {
@@ -341,13 +340,11 @@ public class LikeService {
         return optionalComment.orElse(null);
     }
 
-
     public User validateUser(HttpServletRequest request) {
         if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
         }
         return tokenProvider.getUserFromAuthentication();
     }
-
 
 }

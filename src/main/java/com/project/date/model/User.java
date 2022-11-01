@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.EnumType.STRING;
-
 @Builder
 @Getter
 @NoArgsConstructor
@@ -45,8 +43,6 @@ public class User extends Timestamped {
     @Enumerated(value = EnumType.STRING)
     private Authority role;
 
-//    @Enumerated(value = EnumType.STRING)
-//    private Gender gender;
     @Column(nullable = false)
     private String gender;
 
@@ -65,8 +61,6 @@ public class User extends Timestamped {
     //싫어요 count
     @Column(nullable = false)
     private int unLike;
-
-    //Profile
 
     @Column(nullable = false)
     private int age;
@@ -104,9 +98,6 @@ public class User extends Timestamped {
     @Column
     private int reportCount;
 
-
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -128,17 +119,6 @@ public class User extends Timestamped {
         return passwordEncoder.matches(password, this.password);
     }
 
-//    public boolean validateUser(User user) {
-//
-//        return !this.user.equals(user);
-//    }
-//
-//    public User(String username, String password, Authority role){
-//        this.username = username;
-//        this.password = password;
-//        this.role = role;
-//
-//    }
     public void update(UserUpdateRequestDto requestDto) {
         this.password = requestDto.getPassword();
     }

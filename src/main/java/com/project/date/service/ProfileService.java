@@ -10,6 +10,7 @@ import com.project.date.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,11 +29,13 @@ public class ProfileService {
     private final TokenProvider tokenProvider;
 
 
+    //    전체 프로필 조회(메인페이지). user DB에 저장된 모든 내용을 찾은 후 리스트에 저장.
+//    이후 저장한 내용을 반환.
     @Transactional(readOnly = true)
     public ResponseDto<?> getAllProfiles() {
         List<User> profileList = userRepository.findAll();
         List<ProfileResponseDto> profileResponseDto = new ArrayList<>();
-//        랜덤 추출 코드
+//        랜덤 추출 코드. 리스트를 불러올 때 기존의 경우 수정일자 순으로 정렬하였지만 무작위로 리스트를 불러올 때 사용.
         Collections.shuffle(profileList);
         for (User user : profileList) {
             List<Img> findImgList = imgRepository.findByUser_id(user.getId());
@@ -55,9 +58,10 @@ public class ProfileService {
         return ResponseDto.success(profileResponseDto);
     }
 
+    //    상세 프로필 조회(디테일페이지). userId를 찾아 해당 id가 있을 경우 해당 내용을 조회.
     @Transactional
     public ResponseDto<?> getProfile(Long userId) {
-        User user= isPresentProfile(userId);
+        User user = isPresentProfile(userId);
         if (null == user) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 프로필입니다.");
         }
@@ -89,6 +93,7 @@ public class ProfileService {
         );
     }
 
+    //    프로필 수정. DB에 저장된 유저의 정보들 중 프로필에 해당되는 내용을 수정.
     @Transactional
     public ResponseDto<?> updateProfile(ProfileUpdateRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("RefreshToken")) {

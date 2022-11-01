@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OtherLikeResponseDto {
+
     private Long userId;
+
     private String imageUrl;
 
 }

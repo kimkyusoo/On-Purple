@@ -16,12 +16,14 @@ public class ProfileController {
     private final ProfileService profileService;
 
     @GetMapping("/main")
-    public ResponseDto<?> getAllProfiles(HttpServletRequest request) {
+    public ResponseDto<?> getAllProfiles() {
+
         return profileService.getAllProfiles();
     }
 
     @GetMapping( "/profile/{userId}")
     public ResponseDto<?> getProfile(@PathVariable Long userId) {
+
         return profileService.getProfile(userId);
     }
 

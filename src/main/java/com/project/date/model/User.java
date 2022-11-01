@@ -154,17 +154,13 @@ public class User extends Timestamped {
 
         this.likes = num;
     }
-    public void addUnLike(){
-        this.likes +=1;
+    public void addUnLike(int num){
+        this.likes = num;
     }
 
-    public void minusUnLike(){
+    public void minusUnLike(int num){
 
-        this.unLike -=1;
-    }
-
-    public void reportCount(){
-        this.reportCount +=1;
+        this.unLike = num;
     }
 
 

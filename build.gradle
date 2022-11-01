@@ -83,6 +83,10 @@ dependencies {
 
     //embedded-redis
     implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    //image resize aws lambda
+    implementation 'com.github.downgoon:marvin:1.5.5'
+    implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
+    implementation 'org.springframework:spring-test'
 
 }
 

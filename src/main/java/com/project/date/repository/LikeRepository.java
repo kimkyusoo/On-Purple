@@ -23,6 +23,8 @@ public interface LikeRepository extends JpaRepository<Likes, Long> {
     //내가 좋아요 한 회원
     List<Likes> findAllByUser(User user);
 
+    int countByTargetId(Long targetId);
+
     @Query(value ="select l.user.id from Likes l where l.user.id in(select l.target.id from Likes l where l.user.id =:userId)")
     List<Integer> likeToLikeUserId(Long userId);
 }

@@ -145,14 +145,14 @@ public class User extends Timestamped {
         this.imageUrl = imageUrl;
     }
 
-    public void addLike(){
+    public void addLike(int num){
 
-        this.likes +=1;
+        this.likes = num;
     }
 
-    public void minusLike(){
+    public void minusLike(int num){
 
-        this.likes -=1;
+        this.likes = num;
     }
     public void addUnLike(){
         this.likes +=1;

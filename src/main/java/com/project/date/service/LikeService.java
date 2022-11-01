@@ -159,11 +159,13 @@ public class LikeService {
                     .target(target)
                     .build();
             likeRepository.save(userLike);
-            user.addLike();
+            int addLike = likeRepository.countByTargetId(targetId);
+            target.addLike(addLike);
             return ResponseDto.success("좋아요 성공");
         } else {
             likeRepository.delete(liked);
-            user.minusLike();
+            int cancelLike = likeRepository.countByTargetId(targetId);
+            target.minusLike(cancelLike);
             return ResponseDto.success("좋아요가 취소되었습니다.");
         }
     }
